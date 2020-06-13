@@ -5,7 +5,7 @@ import { DialogRef } from 'projects/ngneat/dialog/src/lib/dialog-ref';
 @Component({
   selector: 'app-test',
   template: `
-    <h1>Test modal {{ ref.id }}</h1>
+    <h1>{{ ref.data.title }}</h1>
 
     <div class="content">
       <p>Test component with a timer: {{ timer$ | async }}</p>

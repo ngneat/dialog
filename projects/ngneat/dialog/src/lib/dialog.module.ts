@@ -1,10 +1,24 @@
-import { NgModule } from '@angular/core';
+import { NgModule, ModuleWithProviders } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
-import { DialogComponent } from './dialog.component';
+import { DialogComponent, DIALOG_CONFIG } from './dialog.component';
+import { DialogConfig } from './config';
 
 @NgModule({
   declarations: [DialogComponent],
-  imports: [],
+  imports: [CommonModule],
   exports: [DialogComponent]
 })
-export class DialogModule {}
+export class DialogModule {
+  forRoot(config: Partial<DialogConfig>): ModuleWithProviders<DialogModule> {
+    return {
+      ngModule: DialogModule,
+      providers: [
+        {
+          provide: DIALOG_CONFIG,
+          useValue: config
+        }
+      ]
+    };
+  }
+}

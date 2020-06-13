@@ -10,43 +10,18 @@ import {
   ComponentRef
 } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
-import { fromEvent, merge, Subject } from 'rxjs';
-import { takeUntil, filter, first, tap } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 import { nanoid } from 'nanoid';
 
 import { DialogRef } from './dialog-ref';
-
-const dimensions = {
-  small: {
-    width: '100px',
-    height: '100px'
-  },
-  medium: {
-    width: '100px',
-    height: '100px'
-  },
-  large: {
-    width: '100px',
-    height: '100px'
-  }
-} as const;
-
-interface DialogConfig {
-  id: string;
-  backdrop: boolean;
-  container: HTMLElement;
-  windowClass: string;
-  enableClose: boolean;
-  size: keyof typeof dimensions;
-  width: string;
-  height: string;
-  draggable: boolean;
-  fullScreen: boolean;
-}
+import { DialogComponent, DIALOG_CONFIG, VIEW_TO_INSERT, DIALOG_DATA } from './dialog.component';
+import { DialogConfig } from './config';
 
 @Injectable({ providedIn: 'root' })
 export class DialogService {
   public dialogs: DialogRef[] = [];
+
+  private dialogFactory = this.componentFactoryResolver.resolveComponentFactory(DialogComponent);
 
   constructor(
     private appRef: ApplicationRef,
@@ -55,9 +30,9 @@ export class DialogService {
     private injector: Injector
   ) {}
 
-  open<T>(template: TemplateRef<T>, config?: Partial<DialogConfig>): DialogRef<TemplateRef<T>>;
-  open<T>(component: Type<T>, config?: Partial<DialogConfig>): DialogRef<ComponentRef<T>>;
-  open<T>(componentOrTemplate: Type<T> | TemplateRef<T>, config: Partial<DialogConfig> = {}): DialogRef<any> {
+  open<D, T = any>(template: TemplateRef<T>, config?: Partial<DialogConfig<D>>): DialogRef<D, TemplateRef<T>>;
+  open<D, T = any>(component: Type<T>, config?: Partial<DialogConfig<D>>): DialogRef<D, ComponentRef<T>>;
+  open(componentOrTemplate: Type<any> | TemplateRef<any>, config: Partial<DialogConfig> = {}): DialogRef {
     return componentOrTemplate instanceof TemplateRef
       ? this.openTemplate(componentOrTemplate, config)
       : typeof componentOrTemplate === 'function'
@@ -75,108 +50,85 @@ export class DialogService {
           {
             provide: DialogRef,
             useValue: dialogRef
+          },
+          {
+            provide: DIALOG_DATA,
+            useValue: config.data
           }
         ],
         parent: this.injector
       })
     );
 
-    return this.attach(
-      dialogRef,
-      componentRef,
-      [componentRef.location.nativeElement],
-      componentRef.hostView,
-      this.mergeConfig(config)
-    );
+    return this.attach(dialogRef, componentRef, componentRef.hostView, this.mergeConfig(config));
   }
 
   private openTemplate(template: TemplateRef<any>, config: Partial<DialogConfig>) {
     const dialogRef = new DialogRef();
 
     const view = template.createEmbeddedView({
-      get $implicit() {
-        return dialogRef;
-      }
+      $implicit: dialogRef,
+      data: config.data
     });
 
-    return this.attach(dialogRef, template, view.rootNodes, view, this.mergeConfig(config));
+    return this.attach(dialogRef, template, view, this.mergeConfig(config));
   }
 
   private attach<Ref extends ComponentRef<any> | TemplateRef<any>>(
     dialogRef: DialogRef,
     ref: Ref,
-    nodes: Element[],
     view: ViewRef,
     config: DialogConfig
   ) {
-    const root = this.document.createElement('div');
-    const dialogElement = this.document.createElement('div');
+    const dialog = this.createDialog(config, dialogRef, view);
 
-    let backdropClick$ = fromEvent<MouseEvent>(this.document.body, 'mouseup');
-
-    if (config.backdrop) {
-      const backdrop = this.document.createElement('div');
-      backdrop.classList.add('ngneat-dialog-backdrop');
-      root.appendChild(backdrop);
-
-      backdropClick$ = fromEvent<MouseEvent>(backdrop, 'mouseup');
-    }
-
-    if (config.windowClass) {
-      dialogElement.classList.add(config.windowClass);
-    }
-
-    if (config.width != null) {
-      dialogElement.style.width = config.width;
-    }
-
-    if (config.height != null) {
-      dialogElement.style.height = config.height;
-    }
-
-    if (config.fullScreen) {
-      dialogElement.classList.add('ngneat-dialog-fullscreen');
-    }
-
-    const destroy$ = new Subject();
-
-    const dispose = () => {
-      destroy$.next();
-      destroy$.complete();
-
-      this.dialogs = this.dialogs.filter(({ id }) => dialogRef.id !== id);
-
-      this.appRef.detachView(view);
-      view.destroy();
-      view = null;
-      config.container.removeChild(root);
+    const hooks = {
+      before: new Subject<() => void>(),
+      after: new Subject<void>()
     };
 
-    if (config.enableClose) {
-      merge(
-        fromEvent<KeyboardEvent>(this.document.body, 'keyup').pipe(filter(({ key }) => key === 'Escape')),
-        backdropClick$.pipe(filter(({ target }) => !dialogElement.contains(target as Element)))
-      )
-        .pipe(first(), tap(dispose), takeUntil(destroy$))
-        .subscribe();
-    }
+    hooks.before.subscribe({
+      complete: () => {
+        this.dialogs = this.dialogs.filter(({ id }) => dialogRef.id !== id);
 
-    dialogElement.classList.add('ngneat-dialog-content');
-    dialogElement.append(...nodes);
+        config.container.removeChild(dialog.location.nativeElement);
+        this.appRef.detachView(dialog.hostView);
 
-    root.classList.add('ngneat-dialog');
-    root.appendChild(dialogElement);
+        dialog.destroy();
+        view.destroy();
+
+        this.cleanDialogRef(dialogRef);
+
+        hooks.after.next();
+        hooks.after.complete();
+      }
+    });
+
+    const dispose = () => {
+      let canceled = false;
+      const cancel = () => (canceled = true);
+
+      hooks.before.next(cancel);
+
+      if (canceled) {
+        return;
+      }
+
+      hooks.before.complete();
+    };
 
     this.mutateDialogRef(dialogRef, {
       id: config.id,
       ref,
       dispose,
-      backdropClick$
+      data: config.data,
+      beforeClose$: hooks.before,
+      afterClosed$: hooks.after
     });
     this.dialogs.push(dialogRef);
 
-    this.appRef.attachView(view);
-    config.container.appendChild(root);
+    config.container.appendChild(dialog.location.nativeElement);
+    this.appRef.attachView(dialog.hostView);
 
     return dialogRef;
   }
@@ -192,7 +144,8 @@ export class DialogService {
       width: null,
       height: null,
       draggable: false,
-      fullScreen: false
+      fullScreen: false,
+      data: null
     };
 
     return {
@@ -206,11 +159,37 @@ export class DialogService {
     };
   }
 
-  private throwMustBeAComponentOrATemplateRef(value: any): never {
+  private createDialog(config: DialogConfig, dialogRef: DialogRef, view: ViewRef) {
+    return this.dialogFactory.create(
+      Injector.create({
+        providers: [
+          {
+            provide: DialogRef,
+            useValue: dialogRef
+          },
+          {
+            provide: DIALOG_CONFIG,
+            useValue: config
+          },
+          {
+            provide: VIEW_TO_INSERT,
+            useValue: view
+          }
+        ],
+        parent: this.injector
+      })
+    );
+  }
+
+  private throwMustBeAComponentOrATemplateRef(value: unknown): never {
     throw new Error(`${value} must be a Component or a TemplateRef`);
   }
 
   private mutateDialogRef(dialogRef: DialogRef, props: Partial<DialogRef>) {
     Object.assign(dialogRef, props);
+  }
+
+  private cleanDialogRef(dialogRef: DialogRef): void {
+    Object.keys(dialogRef).forEach(key => (dialogRef[key] = null));
   }
 }

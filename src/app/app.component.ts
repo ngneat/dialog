@@ -1,8 +1,8 @@
-import { Component, ViewChild, TemplateRef, ElementRef } from '@angular/core';
+import { Component, ViewChild, TemplateRef } from '@angular/core';
+import { interval } from 'rxjs';
 import { DialogService } from '@ngneat/dialog';
 
 import { TestComponent } from './test.component';
-import { interval } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -53,7 +53,12 @@ export class AppComponent {
   constructor(private dialog: DialogService) {}
 
   openDialogComponent() {
-    this.dialog.open(TestComponent, { fullScreen: true });
+    this.dialog.open(TestComponent, {
+      fullScreen: true,
+      data: {
+        title: 'My custom dialog'
+      }
+    });
   }
 
   openDialogTemplate(container?: HTMLElement) {
