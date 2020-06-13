@@ -1,16 +1,18 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 
-import { DialogComponent, DIALOG_CONFIG } from './dialog.component';
+import { DialogComponent } from './dialog.component';
 import { DialogConfig } from './config';
+import { DIALOG_CONFIG } from './tokens';
 
 @NgModule({
   declarations: [DialogComponent],
-  imports: [CommonModule],
+  imports: [CommonModule, DragDropModule],
   exports: [DialogComponent]
 })
 export class DialogModule {
-  forRoot(config: Partial<DialogConfig>): ModuleWithProviders<DialogModule> {
+  static forRoot(config: Partial<DialogConfig>): ModuleWithProviders<DialogModule> {
     return {
       ngModule: DialogModule,
       providers: [

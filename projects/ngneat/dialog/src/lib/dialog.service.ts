@@ -14,8 +14,9 @@ import { Subject } from 'rxjs';
 import { nanoid } from 'nanoid';
 
 import { DialogRef } from './dialog-ref';
-import { DialogComponent, DIALOG_CONFIG, VIEW_TO_INSERT, DIALOG_DATA } from './dialog.component';
+import { DialogComponent } from './dialog.component';
 import { DialogConfig } from './config';
+import { DIALOG_CONFIG, DIALOG_DATA, VIEW_TO_INSERT } from './tokens';
 
 @Injectable({ providedIn: 'root' })
 export class DialogService {
@@ -23,24 +24,56 @@ export class DialogService {
 
   private dialogFactory = this.componentFactoryResolver.resolveComponentFactory(DialogComponent);
 
+  private defaultConfig: DialogConfig = {
+    id: nanoid(),
+    container: this.document.body,
+    backdrop: true,
+    enableClose: true,
+    draggable: false,
+    fullScreen: false,
+    size: 'sm',
+    windowClass: undefined,
+    sizes: undefined,
+    width: undefined,
+    height: undefined,
+    data: undefined,
+    vcr: undefined
+  };
+
   constructor(
     private appRef: ApplicationRef,
-    @Inject(DOCUMENT) private document: Document,
+    @Inject(DOCUMENT)
+    private document: Document,
     private componentFactoryResolver: ComponentFactoryResolver,
-    private injector: Injector
+    private injector: Injector,
+    @Inject(DIALOG_CONFIG)
+    private globalConfig: Partial<DialogConfig> = {}
   ) {}
 
   open<D, T = any>(template: TemplateRef<T>, config?: Partial<DialogConfig<D>>): DialogRef<D, TemplateRef<T>>;
   open<D, T = any>(component: Type<T>, config?: Partial<DialogConfig<D>>): DialogRef<D, ComponentRef<T>>;
   open(componentOrTemplate: Type<any> | TemplateRef<any>, config: Partial<DialogConfig> = {}): DialogRef {
     return componentOrTemplate instanceof TemplateRef
-      ? this.openTemplate(componentOrTemplate, config)
+      ? this.openTemplate(componentOrTemplate, this.mergeConfig(config))
       : typeof componentOrTemplate === 'function'
-      ? this.openComponent(componentOrTemplate, config)
+      ? this.openComponent(componentOrTemplate, this.mergeConfig(config))
       : this.throwMustBeAComponentOrATemplateRef(componentOrTemplate);
   }
 
-  private openComponent(component: Type<any>, config: Partial<DialogConfig>) {
+  private openTemplate(template: TemplateRef<any>, config: DialogConfig) {
+    const dialogRef = new DialogRef();
+
+    const context = {
+      $implicit: dialogRef,
+      data: config.data
+    };
+
+    const view = template.createEmbeddedView(context);
+
+    return this.attach(dialogRef, template, view, config);
+  }
+
+  private openComponent(component: Type<any>, config: DialogConfig) {
     const dialogRef = new DialogRef();
 
     const factory = this.componentFactoryResolver.resolveComponentFactory(component);
@@ -56,22 +89,11 @@ export class DialogService {
             useValue: config.data
           }
         ],
-        parent: this.injector
+        parent: config.vcr?.injector || this.injector
       })
     );
 
     return this.attach(dialogRef, componentRef, componentRef.hostView, this.mergeConfig(config));
-  }
-
-  private openTemplate(template: TemplateRef<any>, config: Partial<DialogConfig>) {
-    const dialogRef = new DialogRef();
-
-    const view = template.createEmbeddedView({
-      $implicit: dialogRef,
-      data: config.data
-    });
-
-    return this.attach(dialogRef, template, view, this.mergeConfig(config));
   }
 
   private attach<Ref extends ComponentRef<any> | TemplateRef<any>>(
@@ -134,22 +156,9 @@ export class DialogService {
   }
 
   private mergeConfig(config: Partial<DialogConfig>): DialogConfig {
-    const defaultConfig: DialogConfig = {
-      id: nanoid(),
-      container: this.document.body,
-      backdrop: true,
-      windowClass: null,
-      enableClose: true,
-      size: 'small',
-      width: null,
-      height: null,
-      draggable: false,
-      fullScreen: false,
-      data: null
-    };
-
     return {
-      ...defaultConfig,
+      ...this.defaultConfig,
+      ...this.globalConfig,
       ...Object.entries(config).reduce((cleanConfig, [key, value]) => {
         if (value != null) {
           cleanConfig[key] = value;
@@ -182,7 +191,7 @@ export class DialogService {
   }
 
   private throwMustBeAComponentOrATemplateRef(value: unknown): never {
-    throw new Error(`${value} must be a Component or a TemplateRef`);
+    throw new TypeError(`Dialog must receive a Component or a TemplateRef, but this has been passed instead: ${value}`);
   }
 
   private mutateDialogRef(dialogRef: DialogRef, props: Partial<DialogRef>) {

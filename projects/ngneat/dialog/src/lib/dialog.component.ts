@@ -7,7 +7,7 @@ import {
   OnDestroy,
   ViewRef,
   ViewContainerRef,
-  InjectionToken
+  ViewEncapsulation
 } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { fromEvent, Subject, merge } from 'rxjs';
@@ -15,30 +15,50 @@ import { filter, takeUntil } from 'rxjs/operators';
 
 import { DialogRef } from './dialog-ref';
 import { DialogConfig } from './config';
-
-export const DIALOG_CONFIG = new InjectionToken<DialogConfig>('Dialog config token');
-export const VIEW_TO_INSERT = new InjectionToken<ViewRef>('View inserted into dialog');
-export const DIALOG_DATA = new InjectionToken<any>('Dialog data');
+import { DIALOG_CONFIG, VIEW_TO_INSERT } from './tokens';
 
 @Component({
   selector: 'ngneat-dialog',
   template: `
-    <div class="ngneat-dialog">
-      <div #backdrop *ngIf="config.backdrop" [class.ngneat-dialog-backdrop]="config.backdrop"></div>
+    <div #backdrop *ngIf="config.backdrop" [class.ngneat-dialog-backdrop]="config.backdrop"></div>
 
-      <div
-        #dialogElement
-        class="ngneat-dialog-content {{ config.windowClass }}"
-        [class.ngneat-dialog-fullscreen]="config.fullScreen"
-        [ngStyle]="{ width: config.width, height: config.height }"
+    <div
+      #dialogElement
+      class="ngneat-dialog-content {{ config.windowClass }}"
+      [class.ngneat-dialog-fullscreen]="config.fullScreen"
+      [ngStyle]="size"
+      style="transform: translate(-50%, -50%);"
+      cdkDrag
+      [cdkDragDisabled]="!config.draggable"
+    >
+      <svg
+        *ngIf="config.draggable"
+        cdkDragHandle
+        class="ngneat-drag-marker"
+        width="24px"
+        fill="currentColor"
+        viewBox="0 0 24 24"
       >
-        <ng-container #dialogContainer></ng-container>
-      </div>
+        <path
+          d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z"
+        ></path>
+        <path d="M0 0h24v24H0z" fill="none"></path>
+      </svg>
+      <ng-container #dialogContainer></ng-container>
     </div>
   `,
-  styles: []
+  styleUrls: [`./dialog.component.scss`],
+  encapsulation: ViewEncapsulation.None
 })
 export class DialogComponent implements OnInit, OnDestroy {
+  size = {
+    ...this.config.sizes?.[this.config.size],
+    ...{
+      width: this.config.width,
+      height: this.config.height
+    }
+  };
+
   @ViewChild('backdrop', { static: true })
   private backdrop: ElementRef<HTMLDivElement>;
 
