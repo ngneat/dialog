@@ -7,7 +7,8 @@ import {
   Injector,
   ApplicationRef,
   ComponentRef,
-  EmbeddedViewRef
+  EmbeddedViewRef,
+  ElementRef
 } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { Subject } from 'rxjs';
@@ -105,6 +106,7 @@ export class DialogService {
     config: DialogConfig
   ) {
     const dialog = this.createDialog(config, dialogRef, view);
+    const container = config.container instanceof ElementRef ? config.container.nativeElement : config.container;
 
     const hooks = {
       before: new Subject<() => void>(),
@@ -115,7 +117,7 @@ export class DialogService {
       complete: () => {
         this.dialogs = this.dialogs.filter(({ id }) => dialogRef.id !== id);
 
-        config.container.removeChild(dialog.location.nativeElement);
+        container.removeChild(dialog.location.nativeElement);
         this.appRef.detachView(dialog.hostView);
         this.appRef.detachView(view);
 
@@ -152,7 +154,7 @@ export class DialogService {
     });
     this.dialogs.push(dialogRef);
 
-    config.container.appendChild(dialog.location.nativeElement);
+    container.appendChild(dialog.location.nativeElement);
     this.appRef.attachView(dialog.hostView);
 
     return dialogRef;

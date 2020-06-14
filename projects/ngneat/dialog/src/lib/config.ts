@@ -1,11 +1,11 @@
-import { ViewContainerRef } from '@angular/core';
+import { ViewContainerRef, ElementRef } from '@angular/core';
 
 type Sizes = 'sm' | 'md' | 'lg';
 
 export interface DialogConfig<Data = any> {
   id: string;
   backdrop: boolean;
-  container: HTMLElement;
+  container: ElementRef<Element> | Element;
   windowClass: string;
   enableClose: boolean;
   sizes: Record<Sizes, { width: string; height: string }>;
