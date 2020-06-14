@@ -12,13 +12,13 @@ import { DialogDraggableDirective } from './draggable.directive';
   exports: [DialogComponent]
 })
 export class DialogModule {
-  static forRoot(config: DialogConfig['sizes']): ModuleWithProviders<DialogModule> {
+  static forRoot(sizes?: DialogConfig['sizes']): ModuleWithProviders<DialogModule> {
     return {
       ngModule: DialogModule,
       providers: [
         {
           provide: DIALOG_CONFIG,
-          useValue: config
+          useValue: sizes
         }
       ]
     };
