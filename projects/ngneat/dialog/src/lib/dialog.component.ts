@@ -1,14 +1,4 @@
-import {
-  Component,
-  ViewChild,
-  ElementRef,
-  Inject,
-  OnInit,
-  OnDestroy,
-  ViewRef,
-  ViewContainerRef,
-  ViewEncapsulation
-} from '@angular/core';
+import { Component, ViewChild, ElementRef, Inject, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { fromEvent, Subject, merge } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
@@ -22,28 +12,29 @@ import { DIALOG_CONFIG, NODES_TO_INSERT } from './tokens';
   template: `
     <div #backdrop *ngIf="config.backdrop" [class.ngneat-dialog-backdrop]="config.backdrop"></div>
 
-    <div
-      #dialogElement
-      class="ngneat-dialog-content {{ config.windowClass }}"
-      [class.ngneat-dialog-fullscreen]="config.fullScreen"
-      [ngStyle]="size"
-      style="transform: translate(-50%, -50%);"
-      cdkDrag
-      [cdkDragDisabled]="!config.draggable"
-    >
-      <svg
-        *ngIf="config.draggable"
-        cdkDragHandle
-        class="ngneat-drag-marker"
-        width="24px"
-        fill="currentColor"
-        viewBox="0 0 24 24"
+    <div class="ngneat-dialog-container">
+      <div
+        #dialog
+        class="ngneat-dialog-content {{ config.windowClass }}"
+        [class.ngneat-dialog-fullscreen]="config.fullScreen"
+        [ngStyle]="size"
       >
-        <path
-          d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z"
-        ></path>
-        <path d="M0 0h24v24H0z" fill="none"></path>
-      </svg>
+        <svg
+          *ngIf="config.draggable"
+          class="ngneat-drag-marker"
+          width="24px"
+          fill="currentColor"
+          viewBox="0 0 24 24"
+          dialogDraggable
+          [dialogDragEnabled]="true"
+          [dialogDragTarget]="dialog"
+        >
+          <path
+            d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z"
+          ></path>
+          <path d="M0 0h24v24H0z" fill="none"></path>
+        </svg>
+      </div>
     </div>
   `,
   styleUrls: [`./dialog.component.scss`],
@@ -61,7 +52,7 @@ export class DialogComponent implements OnInit, OnDestroy {
   @ViewChild('backdrop', { static: true })
   private backdrop: ElementRef<HTMLDivElement>;
 
-  @ViewChild('dialogElement', { static: true })
+  @ViewChild('dialog', { static: true })
   private dialogElement: ElementRef<HTMLElement>;
 
   private destroy$ = new Subject<void>();
