@@ -6,8 +6,8 @@ import {
   ComponentFactoryResolver,
   Injector,
   ApplicationRef,
-  ViewRef,
-  ComponentRef
+  ComponentRef,
+  EmbeddedViewRef
 } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { Subject } from 'rxjs';
@@ -16,7 +16,7 @@ import { nanoid } from 'nanoid';
 import { DialogRef } from './dialog-ref';
 import { DialogComponent } from './dialog.component';
 import { DialogConfig } from './config';
-import { DIALOG_CONFIG, DIALOG_DATA, VIEW_TO_INSERT } from './tokens';
+import { DIALOG_CONFIG, DIALOG_DATA, NODES_TO_INSERT } from './tokens';
 
 @Injectable({ providedIn: 'root' })
 export class DialogService {
@@ -68,7 +68,7 @@ export class DialogService {
       data: config.data
     };
 
-    const view = template.createEmbeddedView(context);
+    const view = config.vcr?.createEmbeddedView(template, context) || template.createEmbeddedView(context);
 
     return this.attach(dialogRef, template, view, config);
   }
@@ -93,13 +93,15 @@ export class DialogService {
       })
     );
 
-    return this.attach(dialogRef, componentRef, componentRef.hostView, this.mergeConfig(config));
+    this.appRef.attachView(componentRef.hostView);
+
+    return this.attach(dialogRef, componentRef, componentRef.hostView as EmbeddedViewRef<any>, config);
   }
 
   private attach<Ref extends ComponentRef<any> | TemplateRef<any>>(
     dialogRef: DialogRef,
     ref: Ref,
-    view: ViewRef,
+    view: EmbeddedViewRef<any>,
     config: DialogConfig
   ) {
     const dialog = this.createDialog(config, dialogRef, view);
@@ -115,6 +117,7 @@ export class DialogService {
 
         config.container.removeChild(dialog.location.nativeElement);
         this.appRef.detachView(dialog.hostView);
+        this.appRef.detachView(view);
 
         dialog.destroy();
         view.destroy();
@@ -144,8 +147,8 @@ export class DialogService {
       ref,
       dispose,
       data: config.data,
-      beforeClose$: hooks.before,
-      afterClosed$: hooks.after
+      beforeClose$: hooks.before.asObservable(),
+      afterClosed$: hooks.after.asObservable()
     });
     this.dialogs.push(dialogRef);
 
@@ -168,7 +171,7 @@ export class DialogService {
     };
   }
 
-  private createDialog(config: DialogConfig, dialogRef: DialogRef, view: ViewRef) {
+  private createDialog(config: DialogConfig, dialogRef: DialogRef, view: EmbeddedViewRef<any>) {
     return this.dialogFactory.create(
       Injector.create({
         providers: [
@@ -181,8 +184,8 @@ export class DialogService {
             useValue: config
           },
           {
-            provide: VIEW_TO_INSERT,
-            useValue: view
+            provide: NODES_TO_INSERT,
+            useValue: view.rootNodes
           }
         ],
         parent: this.injector

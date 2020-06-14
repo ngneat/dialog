@@ -15,7 +15,7 @@ import { filter, takeUntil } from 'rxjs/operators';
 
 import { DialogRef } from './dialog-ref';
 import { DialogConfig } from './config';
-import { DIALOG_CONFIG, VIEW_TO_INSERT } from './tokens';
+import { DIALOG_CONFIG, NODES_TO_INSERT } from './tokens';
 
 @Component({
   selector: 'ngneat-dialog',
@@ -44,7 +44,6 @@ import { DIALOG_CONFIG, VIEW_TO_INSERT } from './tokens';
         ></path>
         <path d="M0 0h24v24H0z" fill="none"></path>
       </svg>
-      <ng-container #dialogContainer></ng-container>
     </div>
   `,
   styleUrls: [`./dialog.component.scss`],
@@ -65,9 +64,6 @@ export class DialogComponent implements OnInit, OnDestroy {
   @ViewChild('dialogElement', { static: true })
   private dialogElement: ElementRef<HTMLElement>;
 
-  @ViewChild('dialogContainer', { static: true, read: ViewContainerRef })
-  private dialogVCR: ViewContainerRef;
-
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -77,8 +73,8 @@ export class DialogComponent implements OnInit, OnDestroy {
     private dialogRef: DialogRef,
     @Inject(DIALOG_CONFIG)
     public config: DialogConfig,
-    @Inject(VIEW_TO_INSERT)
-    private view: ViewRef
+    @Inject(NODES_TO_INSERT)
+    private nodes: Element[]
   ) {}
 
   ngOnInit() {
@@ -96,15 +92,14 @@ export class DialogComponent implements OnInit, OnDestroy {
         .subscribe({ next: this.dialogRef.dispose });
     }
 
-    this.dialogVCR.insert(this.view);
+    dialogElement.append(...this.nodes);
   }
 
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
 
-    this.dialogVCR.clear();
-
     this.dialogRef = null;
+    this.nodes = null;
   }
 }
