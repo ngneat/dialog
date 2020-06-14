@@ -1,3 +1,18 @@
+ngneat-dialog {
+  @keyframes dialog-open {
+    0% {
+      opacity: 0;
+      transform: translate3d(0, 25%, 0) scale(0.9);
+    }
+    100% {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  animation: dialog-open 400ms cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
 .ngneat-dialog-content {
   border-radius: 4px;
   box-sizing: border-box;
