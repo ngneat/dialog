@@ -44,7 +44,284 @@ Accusantium aliquid corporis cupiditate dolores eum exercitationem illo iure lab
 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid assumenda atque blanditiis cum delectus eligendi ipsam iste iure, maxime modi molestiae nihil obcaecati odit officiis pariatur quibusdam suscipit temporibus unde.
 
 ```ts
-function helloWorld() {}
+import { DialogModule } from '@ngneat/dialog';
+
+@NgModule({
+  declarations: [AppComponent],
+  imports: [
+    DialogModule.forRoot(
+      // You can set sizes
+      {
+        // sm is the dafault size when sizes are configured
+        sm: {
+          width: '300px',
+          height: '250px'
+        },
+        md: {
+          width: '60vw',
+          height: '60vh'
+        },
+        lg: {
+          // This's the size of fullScreen
+          width: '90vw',
+          height: '90vh'
+        }
+      }
+    )
+  ],
+  bootstrap: [AppComponent]
+})
+export class AppModule {}
+```
+
+Now you can use it.
+
+## Examples
+
+You can use a TemplateRef or a Component:
+
+### Using a TemplateRef
+
+```ts
+import { Component, ViewChild, TemplateRef } from '@angular/core';
+import { DialogService } from '@ngneat/dialog';
+
+@Component({
+  selector: 'app-root',
+  template: `
+    <ng-template #template let-ref let-data="data">
+      <h1>{{ data.title }}</h1>
+      <p>{{ ref.data.content }}</p>
+
+      <button (click)="ref.dispose()">Close</button>
+    </ng-template>
+  `
+})
+export class AppComponent implements OnInit {
+  @ViewChild('template', { static: true })
+  tmpl: TemplateRef<any>;
+
+  constructor(private dialog: DialogService) {}
+
+  ngOnInit() {
+    this.dialog.open(this.tmpl, {
+      data: {
+        title: 'Example dialog',
+        content: 'This is a test dialog'
+      }
+    });
+  }
+}
+```
+
+### Using a Component
+
+```ts
+import { DialogService, DialogRef, DIALOG_DATA } from '@ngneat/dialog';
+
+@Component({
+  selector: 'app-dialog-test',
+  template: `
+    <h1>{{ ref.data.title }}</h1>
+
+    <p class="content">
+      {{ data.content }}
+    </p>
+
+      <div class="buttons">
+        <button (click)="ref.dispose()">Close</button>
+      </div>
+    </div>
+  `,
+  styles: [
+    `
+      h1 {
+        border-bottom: 1px solid black;
+        padding: 18px;
+      }
+
+      .content {
+        padding: 18px;
+        padding-top: 0;
+      }
+
+      .buttons {
+        text-align: right;
+      }
+    `
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush
+})
+export class TestComponent implements OnInit {
+  constructor(public ref: DialogRef, @Inject(DIALOG_DATA) public data: any) {}
+
+  ngOnInit() {
+    console.log(`Dialog with ID ${this.ref.id} opened`);
+  }
+}
+
+@Component({
+  selector: 'app-root',
+  template: ``
+})
+export class AppComponent implements OnInit {
+  constructor(private dialog: DialogService) {}
+
+  ngOnInit() {
+    this.dialog.open(TestComponent, {
+      data: {
+        title: 'Example dialog',
+        content: 'This is a test dialog'
+      }
+    });
+  }
+}
+```
+
+### DialogRef
+
+When you open a dialog, it returns a `DialogRef`:
+
+```ts
+@Component({
+  selector: 'app-root',
+  template: ``
+})
+export class AppComponent implements OnInit {
+  constructor(private dialog: DialogService) {}
+
+  ngOnInit() {
+    const dialogRef = this.dialog.open(TestComponent, {
+      data: {
+        title: 'Example dialog',
+        content: 'This is a test dialog'
+      }
+    });
+
+    let dialogMustBeOpen = true;
+
+    dialogRef.backdropClick$.subscribe({
+      next: () => console.log('Backdrop has been clicked')
+    });
+
+    dialogRef.beforeClose$.subscribe({
+      next: cancel => {
+        console.log('You can abort the close');
+
+        if (dialogMustBeOpen) {
+          cancel();
+        }
+      }
+    });
+
+    dialogRef.afterClosed$.subscribe({
+      next: () => console.log('After dialog has been closed')
+    });
+
+    // Allow to close the dialog only after 5s
+    timer(5_000).subscribe({ next: () => (dialogMustBeOpen = false) });
+  }
+}
+```
+
+### Some options
+
+#### container
+
+```ts
+@Component({
+  selector: 'app-root',
+  template: `
+    <div #container>The dialog will be placed here</div>
+  `
+})
+export class AppComponent implements OnInit {
+  @ViewChild('container', { static: true })
+  private container: ElementRef<HTMLDivElement>;
+
+  constructor(private dialog: DialogService) {}
+
+  ngOnInit() {
+    this.dialog.open(TestComponent, {
+      container: this.container,
+      data: {
+        title: 'Dialog into container',
+        content: 'This is a test dialog'
+      }
+    });
+  }
+}
+```
+
+#### backdrop
+
+```ts
+@Component({
+  selector: 'app-root',
+  template: ``
+})
+export class AppComponent implements OnInit {
+  constructor(private dialog: DialogService) {}
+
+  ngOnInit() {
+    this.dialog.open(TestComponent, {
+      // backdropClick$ will point to document.body
+      backdrop: false,
+      data: {
+        title: 'Dialog without backdrop',
+        content: 'This is a test dialog'
+      }
+    });
+  }
+}
+```
+
+#### draggable
+
+```ts
+@Component({
+  selector: 'app-root',
+  template: ``
+})
+export class AppComponent implements OnInit {
+  constructor(private dialog: DialogService) {}
+
+  ngOnInit() {
+    this.dialog.open(TestComponent, {
+      draggable: true,
+      data: {
+        title: 'Draggable dialog',
+        content: 'This is a test dialog'
+      }
+    });
+  }
+}
+```
+
+## Styling
+
+You can customize the styles with this classes:
+
+```scss
+ngneat-dialog {
+  .ngneat-dialog-container {
+    // dialog container
+    .ngneat-dialog-content {
+      // dialgo content, where your component/template is placed
+      &.ngneat-dialog-fullscreen {
+        // when dialog is fullScreen
+      }
+    }
+  }
+
+  .ngneat-dialog-backdrop {
+    // backdrop styles
+  }
+
+  .ngneat-drag-marker {
+    // draggable marker
+  }
+}
 ```
 
 ## FAQ
