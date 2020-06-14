@@ -15,7 +15,7 @@ import { DIALOG_CONFIG, NODES_TO_INSERT } from './tokens';
     <div class="ngneat-dialog-container">
       <div
         #dialog
-        class="ngneat-dialog-content {{ config.windowClass }}"
+        class="ngneat-dialog-content"
         [class.ngneat-dialog-fullscreen]="config.fullScreen"
         [ngStyle]="styles"
       >
@@ -57,13 +57,18 @@ export class DialogComponent implements OnInit, OnDestroy {
   constructor(
     @Inject(DOCUMENT)
     private document: Document,
+    { nativeElement: host }: ElementRef<HTMLElement>,
 
     private dialogRef: DialogRef,
     @Inject(DIALOG_CONFIG)
     public config: DialogConfig,
     @Inject(NODES_TO_INSERT)
     private nodes: Element[]
-  ) {}
+  ) {
+    if (config.windowClass) {
+      host.classList.add(config.windowClass);
+    }
+  }
 
   ngOnInit() {
     const backdrop = this.backdrop?.nativeElement;
