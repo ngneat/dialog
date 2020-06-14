@@ -17,7 +17,7 @@ import { DIALOG_CONFIG, NODES_TO_INSERT } from './tokens';
         #dialog
         class="ngneat-dialog-content {{ config.windowClass }}"
         [class.ngneat-dialog-fullscreen]="config.fullScreen"
-        [ngStyle]="size"
+        [ngStyle]="styles"
       >
         <svg
           *ngIf="config.draggable"
@@ -41,12 +41,9 @@ import { DIALOG_CONFIG, NODES_TO_INSERT } from './tokens';
   encapsulation: ViewEncapsulation.None
 })
 export class DialogComponent implements OnInit, OnDestroy {
-  size = {
-    ...this.config.sizes?.[this.config.size],
-    ...{
-      width: this.config.width,
-      height: this.config.height
-    }
+  styles = {
+    width: this.config.width || this.config.fullScreen || this.config.sizes?.[this.config.size].width,
+    height: this.config.height || this.config.fullScreen || this.config.sizes?.[this.config.size].height
   };
 
   @ViewChild('backdrop', { static: true })

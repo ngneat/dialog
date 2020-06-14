@@ -47,7 +47,7 @@ export class DialogService {
     private componentFactoryResolver: ComponentFactoryResolver,
     private injector: Injector,
     @Inject(DIALOG_CONFIG)
-    private globalConfig: Partial<DialogConfig> = {}
+    private sizes: DialogConfig['sizes']
   ) {}
 
   open<D, T = any>(template: TemplateRef<T>, config?: Partial<DialogConfig<D>>): DialogRef<D, TemplateRef<T>>;
@@ -161,7 +161,7 @@ export class DialogService {
   private mergeConfig(config: Partial<DialogConfig>): DialogConfig {
     return {
       ...this.defaultConfig,
-      ...this.globalConfig,
+      ...{ sizes: this.sizes },
       ...Object.entries(config).reduce((cleanConfig, [key, value]) => {
         if (value != null) {
           cleanConfig[key] = value;
