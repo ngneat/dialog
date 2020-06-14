@@ -124,7 +124,13 @@ export class DialogService {
         dialog.destroy();
         view.destroy();
 
-        this.cleanDialogRef(dialogRef);
+        this.mutateDialogRef(dialogRef, {
+          ref: null,
+          dispose: null,
+          afterClosed$: null,
+          backdropClick$: null,
+          beforeClose$: null
+        });
 
         hooks.after.next();
         hooks.after.complete();
@@ -201,9 +207,5 @@ export class DialogService {
 
   private mutateDialogRef(dialogRef: DialogRef, props: Partial<DialogRef>) {
     Object.assign(dialogRef, props);
-  }
-
-  private cleanDialogRef(dialogRef: DialogRef): void {
-    Object.keys(dialogRef).forEach(key => (dialogRef[key] = null));
   }
 }
