@@ -12,9 +12,10 @@ import {
 } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { Subject } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { nanoid } from 'nanoid';
 
-import { DialogRef } from './dialog-ref';
+import { DialogRef, InternalDialogRef } from './dialog-ref';
 import { DialogComponent } from './dialog.component';
 import { DialogConfig } from './config';
 import { DIALOG_CONFIG, DIALOG_DATA, NODES_TO_INSERT } from './tokens';
@@ -51,8 +52,11 @@ export class DialogService {
     private sizes: DialogConfig['sizes']
   ) {}
 
-  open<D, T = any>(template: TemplateRef<T>, config?: Partial<DialogConfig<D>>): DialogRef<D, TemplateRef<T>>;
-  open<D, T = any>(component: Type<T>, config?: Partial<DialogConfig<D>>): DialogRef<D, ComponentRef<T>>;
+  open<D, R = any, T = any>(
+    template: TemplateRef<T>,
+    config?: Partial<DialogConfig<D>>
+  ): DialogRef<D, R, TemplateRef<T>>;
+  open<D, R = any, T = any>(component: Type<T>, config?: Partial<DialogConfig<D>>): DialogRef<D, R, ComponentRef<T>>;
   open(componentOrTemplate: Type<any> | TemplateRef<any>, config: Partial<DialogConfig> = {}): DialogRef {
     return componentOrTemplate instanceof TemplateRef
       ? this.openTemplate(componentOrTemplate, this.mergeConfig(config))
@@ -62,7 +66,7 @@ export class DialogService {
   }
 
   private openTemplate(template: TemplateRef<any>, config: DialogConfig) {
-    const dialogRef = new DialogRef();
+    const dialogRef = new InternalDialogRef();
 
     const context = {
       $implicit: dialogRef,
@@ -75,7 +79,7 @@ export class DialogService {
   }
 
   private openComponent(component: Type<any>, config: DialogConfig) {
-    const dialogRef = new DialogRef();
+    const dialogRef = new InternalDialogRef();
 
     const factory = this.componentFactoryResolver.resolveComponentFactory(component);
     const componentRef = factory.create(
@@ -100,7 +104,7 @@ export class DialogService {
   }
 
   private attach<Ref extends ComponentRef<any> | TemplateRef<any>>(
-    dialogRef: DialogRef,
+    dialogRef: InternalDialogRef,
     ref: Ref,
     view: EmbeddedViewRef<any>,
     config: DialogConfig
@@ -129,7 +133,7 @@ export class DialogService {
           close: null,
           afterClosed$: null,
           backdropClick$: null,
-          beforeClose$: null
+          beforeCloseGuards: null
         });
 
         hooks.after.next();
@@ -137,17 +141,16 @@ export class DialogService {
       }
     });
 
-    const close = () => {
-      let canceled = false;
-      const cancel = () => (canceled = true);
-
-      hooks.before.next(cancel);
-
-      if (canceled) {
-        return;
-      }
-
-      hooks.before.complete();
+    const close = (result?: unknown) => {
+      dialogRef
+        .canClose(result)
+        .pipe(filter<boolean>(Boolean))
+        .subscribe({
+          next() {
+            hooks.before.next();
+            hooks.before.complete();
+          }
+        });
     };
 
     this.mutateDialogRef(dialogRef, {
@@ -155,7 +158,6 @@ export class DialogService {
       ref,
       close,
       data: config.data,
-      beforeClose$: hooks.before.asObservable(),
       afterClosed$: hooks.after.asObservable()
     });
     this.dialogs.push(dialogRef);
@@ -163,7 +165,7 @@ export class DialogService {
     container.appendChild(dialog.location.nativeElement);
     this.appRef.attachView(dialog.hostView);
 
-    return dialogRef;
+    return dialogRef.asDialogRef();
   }
 
   private mergeConfig(config: Partial<DialogConfig>): DialogConfig {
@@ -205,7 +207,7 @@ export class DialogService {
     throw new TypeError(`Dialog must receive a Component or a TemplateRef, but this has been passed instead: ${value}`);
   }
 
-  private mutateDialogRef(dialogRef: DialogRef, props: Partial<DialogRef>) {
+  private mutateDialogRef(dialogRef: InternalDialogRef, props: Partial<InternalDialogRef>) {
     Object.assign(dialogRef, props);
   }
 }

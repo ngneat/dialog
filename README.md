@@ -188,7 +188,7 @@ When you open a dialog, it returns a `DialogRef`:
   template: ``
 })
 export class AppComponent implements OnInit {
-  constructor(private dialog: DialogService) {}
+  constructor(private dialog: DialogService, private service: OneService) {}
 
   ngOnInit() {
     const dialogRef = this.dialog.open(TestComponent, {
@@ -198,28 +198,30 @@ export class AppComponent implements OnInit {
       }
     });
 
-    let dialogMustBeOpen = true;
+    let dialogCanBeClosed = false;
 
-    dialogRef.backdropClick$.subscribe({
-      next: () => console.log('Backdrop has been clicked')
+    // Allow to close the dialog only after 5s
+    timer(5_000).subscribe({ next: () => (dialogCanBeClosed = true) });
+
+    dialogRef.beforeClose(() => {
+      console.log('You can abort to close the dialog');
+
+      return dialogCanBeClosed;
     });
 
-    dialogRef.beforeClose$.subscribe({
-      next: cancel => {
-        console.log('You can abort the close');
+    dialogRef.beforeClose(result => {
+      console.log('Or perform more complex checks');
 
-        if (dialogMustBeOpen) {
-          cancel();
-        }
-      }
+      return this.service.returnAnObservableOrPromise(result);
     });
 
     dialogRef.afterClosed$.subscribe({
       next: () => console.log('After dialog has been closed')
     });
 
-    // Allow to close the dialog only after 5s
-    timer(5_000).subscribe({ next: () => (dialogMustBeOpen = false) });
+    dialogRef.backdropClick$.subscribe({
+      next: () => console.log('Backdrop has been clicked')
+    });
   }
 }
 ```

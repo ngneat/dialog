@@ -1,11 +1,14 @@
 import { ApplicationRef, ComponentFactoryResolver, TemplateRef, Injector, InjectionToken } from '@angular/core';
+import { fakeAsync, tick } from '@angular/core/testing';
+import { timer } from 'rxjs';
+import { mapTo } from 'rxjs/operators';
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator';
 
 import { DialogService } from './dialog.service';
 import { DIALOG_CONFIG, NODES_TO_INSERT, DIALOG_DATA } from './tokens';
 import { DOCUMENT } from '@angular/common';
 import { DialogConfig } from './config';
-import { DialogRef } from './dialog-ref';
+import { InternalDialogRef, DialogRef } from './dialog-ref';
 import { DialogComponent } from './dialog.component';
 
 class FakeFactoryResolver extends ComponentFactoryResolver {
@@ -255,23 +258,133 @@ describe('DialogService', () => {
   });
 
   describe('on close', () => {
-    let dialog: DialogRef;
+    let dialog: InternalDialogRef;
     let fakeTemplate: FakeTemplateRef;
 
     beforeEach(() => {
       fakeTemplate = new FakeTemplateRef();
-      dialog = service.open(fakeTemplate);
+      dialog = service.open(fakeTemplate) as InternalDialogRef;
     });
 
-    it('beforeClose$ should be able of cancel close', () => {
-      let afterClosedCalled = false;
-      dialog.beforeClose$.subscribe({ next: cancel => cancel() });
-      dialog.afterClosed$.subscribe({ next: () => (afterClosedCalled = true) });
+    describe('using beforeClose', () => {
+      let dialogHasBeenClosed: boolean;
 
-      dialog.close();
+      beforeEach(() => {
+        dialogHasBeenClosed = false;
+        dialog.afterClosed$.subscribe({ next: () => (dialogHasBeenClosed = true) });
+      });
 
-      expect(dialog.close).toBeTruthy();
-      expect(afterClosedCalled).toBeFalse();
+      it('should close if there are no guards', () => {
+        expect(dialog.beforeCloseGuards).toEqual([]);
+
+        dialog.close();
+
+        expect(dialogHasBeenClosed).toBeTrue();
+      });
+
+      it('should pass result to guard', () => {
+        dialog.beforeClose(result => {
+          expect(result).toBe('test');
+
+          return true;
+        });
+
+        dialog.close('test');
+      });
+
+      it('should add guard', () => {
+        const guard = () => false;
+
+        dialog.beforeClose(guard);
+
+        expect(dialog.beforeCloseGuards).toEqual([guard]);
+      });
+
+      describe('should abort close', () => {
+        it('using a sync function', () => {
+          dialog.beforeClose(() => false);
+
+          dialog.close();
+
+          expect(dialogHasBeenClosed).toBeFalse();
+        });
+
+        it('using a promise', fakeAsync(() => {
+          dialog.beforeClose(
+            () => new Promise<boolean>(r => setTimeout(() => r(false), 1000))
+          );
+
+          dialog.close();
+
+          tick(1000);
+
+          expect(dialogHasBeenClosed).toBeFalse();
+        }));
+
+        it('using an observable', fakeAsync(() => {
+          dialog.beforeClose(() => timer(1000).pipe(mapTo(false)));
+
+          dialog.close();
+
+          tick(1000);
+
+          expect(dialogHasBeenClosed).toBeFalse();
+        }));
+
+        it('using more than one guard', fakeAsync(() => {
+          dialog.beforeClose(() => false);
+          dialog.beforeClose(
+            () => new Promise<boolean>(r => setTimeout(() => r(false), 1000))
+          );
+          dialog.beforeClose(() => timer(1000).pipe(mapTo(false)));
+
+          dialog.close();
+
+          tick(1000);
+
+          expect(dialogHasBeenClosed).toBeFalse();
+        }));
+
+        it('when only one guard returns false', fakeAsync(() => {
+          dialog.beforeClose(() => true);
+          dialog.beforeClose(
+            () => new Promise<boolean>(r => setTimeout(() => r(false), 1000))
+          );
+          dialog.beforeClose(() => timer(3000).pipe(mapTo(true)));
+
+          dialog.close();
+
+          expect(dialogHasBeenClosed).toBeFalse();
+
+          tick(1000);
+
+          expect(dialogHasBeenClosed).toBeFalse();
+
+          tick(2000);
+
+          expect(dialogHasBeenClosed).toBeFalse();
+        }));
+      });
+
+      it('should close dialog after all guards return true', fakeAsync(() => {
+        dialog.beforeClose(() => true);
+        dialog.beforeClose(
+          () => new Promise<boolean>(r => setTimeout(() => r(true), 1000))
+        );
+        dialog.beforeClose(() => timer(3000).pipe(mapTo(true)));
+
+        dialog.close();
+
+        expect(dialogHasBeenClosed).toBeFalse();
+
+        tick(1000);
+
+        expect(dialogHasBeenClosed).toBeFalse();
+
+        tick(2000);
+
+        expect(dialogHasBeenClosed).toBeTrue();
+      }));
     });
 
     it('should remove dialog from dialogs', () => {
@@ -303,12 +416,12 @@ describe('DialogService', () => {
     it('should remove references from DialogRef', () => {
       dialog.close();
 
-      const dialogCleaned: DialogRef = {
+      const dialogCleaned: Partial<InternalDialogRef> = {
         id: dialog.id,
         data: dialog.data,
         afterClosed$: null,
         backdropClick$: null,
-        beforeClose$: null,
+        beforeCloseGuards: null,
         close: null,
         ref: null
       };
