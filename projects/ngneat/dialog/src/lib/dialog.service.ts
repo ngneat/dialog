@@ -126,7 +126,7 @@ export class DialogService {
 
         this.mutateDialogRef(dialogRef, {
           ref: null,
-          dispose: null,
+          close: null,
           afterClosed$: null,
           backdropClick$: null,
           beforeClose$: null
@@ -137,7 +137,7 @@ export class DialogService {
       }
     });
 
-    const dispose = () => {
+    const close = () => {
       let canceled = false;
       const cancel = () => (canceled = true);
 
@@ -153,7 +153,7 @@ export class DialogService {
     this.mutateDialogRef(dialogRef, {
       id: config.id,
       ref,
-      dispose,
+      close,
       data: config.data,
       beforeClose$: hooks.before.asObservable(),
       afterClosed$: hooks.after.asObservable()

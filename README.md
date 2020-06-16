@@ -93,7 +93,7 @@ import { DialogService } from '@ngneat/dialog';
       <h1>{{ data.title }}</h1>
       <p>{{ ref.data.content }}</p>
 
-      <button (click)="ref.dispose()">Close</button>
+      <button (click)="ref.close()">Close</button>
     </ng-template>
   `
 })
@@ -129,7 +129,7 @@ import { DialogService, DialogRef, DIALOG_DATA } from '@ngneat/dialog';
     </p>
 
       <div class="buttons">
-        <button (click)="ref.dispose()">Close</button>
+        <button (click)="ref.close()">Close</button>
       </div>
     </div>
   `,

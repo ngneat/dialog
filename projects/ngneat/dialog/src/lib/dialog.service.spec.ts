@@ -254,7 +254,7 @@ describe('DialogService', () => {
     });
   });
 
-  describe('on dispose', () => {
+  describe('on close', () => {
     let dialog: DialogRef;
     let fakeTemplate: FakeTemplateRef;
 
@@ -263,25 +263,25 @@ describe('DialogService', () => {
       dialog = service.open(fakeTemplate);
     });
 
-    it('beforeClose$ should be able of cancel dispose', () => {
+    it('beforeClose$ should be able of cancel close', () => {
       let afterClosedCalled = false;
       dialog.beforeClose$.subscribe({ next: cancel => cancel() });
       dialog.afterClosed$.subscribe({ next: () => (afterClosedCalled = true) });
 
-      dialog.dispose();
+      dialog.close();
 
-      expect(dialog.dispose).toBeTruthy();
+      expect(dialog.close).toBeTruthy();
       expect(afterClosedCalled).toBeFalse();
     });
 
     it('should remove dialog from dialogs', () => {
-      dialog.dispose();
+      dialog.close();
 
       expect(service.dialogs).toEqual([]);
     });
 
     it('should remove child from container', () => {
-      dialog.dispose();
+      dialog.close();
       const fakeDialogView = fakeFactory.componentOne;
 
       expect(fakeDocument.body.removeChild).toHaveBeenCalledTimes(1);
@@ -289,7 +289,7 @@ describe('DialogService', () => {
     });
 
     it('should detach view from ApplicationRef', () => {
-      dialog.dispose();
+      dialog.close();
 
       expect(fakeAppRef.detachView).toHaveBeenCalledTimes(2);
       const attachSpyCalls = (fakeAppRef.detachView as jasmine.Spy).calls.allArgs();
@@ -301,7 +301,7 @@ describe('DialogService', () => {
     });
 
     it('should remove references from DialogRef', () => {
-      dialog.dispose();
+      dialog.close();
 
       const dialogCleaned: DialogRef = {
         id: dialog.id,
@@ -309,7 +309,7 @@ describe('DialogService', () => {
         afterClosed$: null,
         backdropClick$: null,
         beforeClose$: null,
-        dispose: null,
+        close: null,
         ref: null
       };
 
@@ -321,7 +321,7 @@ describe('DialogService', () => {
       let hasCompleted = false;
       dialog.afterClosed$.subscribe({ next: () => (hasNext = true), complete: () => (hasCompleted = true) });
 
-      dialog.dispose();
+      dialog.close();
 
       expect(hasNext).toBeTrue();
       expect(hasCompleted).toBeTrue();

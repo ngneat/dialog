@@ -44,7 +44,7 @@ describe('DialogComponent', () => {
       {
         provide: DialogRef,
         useFactory: () => ({
-          dispose: jasmine.createSpy()
+          close: jasmine.createSpy()
         })
       },
       {
@@ -114,63 +114,63 @@ describe('DialogComponent', () => {
     });
   });
 
-  describe('when enableClose is enabled should call dispose', () => {
+  describe('when enableClose is enabled should call close', () => {
     beforeEach(() => (spectator = createComponent(withConfig({ enableClose: true }))));
 
     it('on escape', () => {
-      const { dispose } = spectator.get(DialogRef);
+      const { close } = spectator.get(DialogRef);
 
       spectator.dispatchKeyboardEvent(document.body, 'keyup', 'Enter');
 
-      expect(dispose).not.toHaveBeenCalled();
+      expect(close).not.toHaveBeenCalled();
 
       spectator.dispatchKeyboardEvent(document.body, 'keyup', 'Escape');
 
-      expect(dispose).toHaveBeenCalled();
+      expect(close).toHaveBeenCalled();
     });
 
     it('on click backdrop', () => {
-      const { dispose } = spectator.get(DialogRef);
+      const { close } = spectator.get(DialogRef);
 
       spectator.dispatchMouseEvent('.ngneat-dialog-container', 'mouseup');
 
-      expect(dispose).not.toHaveBeenCalled();
+      expect(close).not.toHaveBeenCalled();
 
       spectator.dispatchMouseEvent(document.body, 'mouseup');
 
-      expect(dispose).not.toHaveBeenCalled();
+      expect(close).not.toHaveBeenCalled();
 
       spectator.dispatchMouseEvent('.ngneat-dialog-backdrop', 'mouseup');
 
-      expect(dispose).toHaveBeenCalled();
+      expect(close).toHaveBeenCalled();
     });
   });
 
-  describe('when enableClose is disabled should not call dispose', () => {
+  describe('when enableClose is disabled should not call close', () => {
     beforeEach(() => (spectator = createComponent(withConfig({ enableClose: false }))));
 
     it('on escape', () => {
-      const { dispose } = spectator.get(DialogRef);
+      const { close } = spectator.get(DialogRef);
 
       spectator.dispatchKeyboardEvent(document.body, 'keyup', 'Escape');
 
-      expect(dispose).not.toHaveBeenCalled();
+      expect(close).not.toHaveBeenCalled();
     });
 
     it('on click backdrop', () => {
-      const { dispose } = spectator.get(DialogRef);
+      const { close: close } = spectator.get(DialogRef);
 
       spectator.dispatchMouseEvent('.ngneat-dialog-container', 'mouseup');
 
-      expect(dispose).not.toHaveBeenCalled();
+      expect(close).not.toHaveBeenCalled();
 
       spectator.dispatchMouseEvent(document.body, 'mouseup');
 
-      expect(dispose).not.toHaveBeenCalled();
+      expect(close).not.toHaveBeenCalled();
 
       spectator.dispatchMouseEvent('.ngneat-dialog-backdrop', 'mouseup');
 
-      expect(dispose).not.toHaveBeenCalled();
+      expect(close).not.toHaveBeenCalled();
     });
   });
 

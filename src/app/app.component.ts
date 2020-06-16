@@ -12,7 +12,7 @@ import { TestComponent } from './test.component';
         <h1>Test modal {{ ref.id }}</h1>
         <p>This is a modal with a timer: {{ timer$ | async }}</p>
 
-        <button (click)="ref.dispose()">Close</button>
+        <button (click)="ref.close()">Close</button>
       </div>
     </ng-template>
 

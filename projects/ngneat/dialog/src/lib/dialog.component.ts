@@ -82,7 +82,7 @@ export class DialogComponent implements OnInit, OnDestroy {
         this.dialogRef.backdropClick$.pipe(filter(({ target }) => !dialogElement.contains(target as Element)))
       )
         .pipe(takeUntil(this.destroy$))
-        .subscribe({ next: this.dialogRef.dispose });
+        .subscribe({ next: this.dialogRef.close });
     }
 
     dialogElement.append(...this.nodes);

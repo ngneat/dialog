@@ -27,7 +27,7 @@ import { DialogRef } from '@ngneat/dialog';
       </p>
 
       <div class="buttons">
-        <button (click)="ref.dispose()">Close</button>
+        <button (click)="ref.close()">Close</button>
       </div>
     </div>
   `,
