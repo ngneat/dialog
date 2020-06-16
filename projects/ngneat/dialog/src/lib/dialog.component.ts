@@ -10,7 +10,7 @@ import { DIALOG_CONFIG, NODES_TO_INSERT } from './tokens';
 @Component({
   selector: 'ngneat-dialog',
   template: `
-    <div #backdrop *ngIf="config.backdrop" [class.ngneat-dialog-backdrop]="config.backdrop"></div>
+    <div #backdrop [hidden]="!config.backdrop" [class.ngneat-dialog-backdrop]="config.backdrop"></div>
 
     <div class="ngneat-dialog-container">
       <div
@@ -71,10 +71,10 @@ export class DialogComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    const backdrop = this.backdrop?.nativeElement;
+    const backdrop = this.config.backdrop ? this.backdrop.nativeElement : this.document.body;
     const dialogElement = this.dialogElement.nativeElement;
 
-    this.dialogRef.backdropClick$ = fromEvent<MouseEvent>(backdrop || this.document.body, 'mouseup');
+    this.dialogRef.backdropClick$ = fromEvent<MouseEvent>(backdrop, 'mouseup');
 
     if (this.config.enableClose) {
       merge(
