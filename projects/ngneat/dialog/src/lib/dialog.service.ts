@@ -114,12 +114,12 @@ export class DialogService {
     const container = config.container instanceof ElementRef ? config.container.nativeElement : config.container;
 
     const hooks = {
-      before: new Subject<() => void>(),
-      after: new Subject<void>()
+      before: new Subject<unknown>(),
+      after: new Subject<unknown>()
     };
 
     hooks.before.subscribe({
-      complete: () => {
+      next: result => {
         this.dialogs = this.dialogs.filter(({ id }) => dialogRef.id !== id);
 
         container.removeChild(dialog.location.nativeElement);
@@ -137,7 +137,7 @@ export class DialogService {
           beforeCloseGuards: null
         });
 
-        hooks.after.next();
+        hooks.after.next(result);
         hooks.after.complete();
       }
     });
@@ -148,7 +148,7 @@ export class DialogService {
         .pipe(filter<boolean>(Boolean))
         .subscribe({
           next() {
-            hooks.before.next();
+            hooks.before.next(result);
             hooks.before.complete();
           }
         });

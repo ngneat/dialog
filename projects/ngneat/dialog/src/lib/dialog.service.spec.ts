@@ -439,6 +439,12 @@ describe('DialogService', () => {
       expect(hasNext).toBeTrue();
       expect(hasCompleted).toBeTrue();
     });
+
+    it('should send result in afterClosed$', () => {
+      dialog.afterClosed$.subscribe({ next: result => expect(result).toBe('test') });
+
+      dialog.close('test');
+    });
   });
 
   it('should use container to place dialog element', () => {
