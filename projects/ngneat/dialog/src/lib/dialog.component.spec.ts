@@ -50,7 +50,7 @@ describe('DialogComponent', () => {
       },
       {
         provide: NODES_TO_INSERT,
-        useValue: [document.createTextNode('nodes'), document.createTextNode('inserted')]
+        useValue: [document.createTextNode('nodes '), document.createTextNode('inserted')]
       },
       {
         provide: DIALOG_CONFIG,
@@ -74,7 +74,7 @@ describe('DialogComponent', () => {
   it('should place nodes into dialog-content', () => {
     spectator = createComponent();
 
-    spectator.query(byText('nodes inserted'));
+    expect(spectator.query(byText('nodes inserted'))).toBeTruthy();
   });
 
   describe('when backdrop is enabled', () => {
