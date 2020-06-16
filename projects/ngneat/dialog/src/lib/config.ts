@@ -14,6 +14,7 @@ export interface DialogConfig<Data = any> {
   height: string;
   draggable: boolean;
   fullScreen: boolean;
+  resizable: boolean;
   data: Data;
   vcr: ViewContainerRef;
 }

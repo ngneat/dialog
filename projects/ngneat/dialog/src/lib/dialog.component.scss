@@ -38,6 +38,10 @@
       width: 90vw;
       height: 90vh;
     }
+
+    &.ngneat-dialog-resizable {
+      resize: both;
+    }
   }
 }
 

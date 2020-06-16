@@ -16,7 +16,10 @@ import { DIALOG_CONFIG, NODES_TO_INSERT } from './tokens';
       <div
         #dialog
         class="ngneat-dialog-content"
-        [class.ngneat-dialog-fullscreen]="config.fullScreen"
+        [ngClass]="{
+          'ngneat-dialog-fullscreen': config.fullScreen,
+          'ngneat-dialog-resizable': config.resizable
+        }"
         [ngStyle]="styles"
       >
         <svg

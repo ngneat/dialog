@@ -15,6 +15,7 @@ describe('DialogComponent', () => {
     enableClose: true,
     draggable: false,
     fullScreen: false,
+    resizable: false,
     size: 'sm',
     windowClass: undefined,
     sizes: undefined,
@@ -196,6 +197,12 @@ describe('DialogComponent', () => {
     spectator = createComponent(withConfig({ fullScreen: true }));
 
     expect(spectator.query('.ngneat-dialog-fullscreen')).toBeTruthy();
+  });
+
+  it('when resizable is enabled should set its class', () => {
+    spectator = createComponent(withConfig({ resizable: true }));
+
+    expect(spectator.query('.ngneat-dialog-resizable')).toBeTruthy();
   });
 
   it('should set windowClass at host element', () => {

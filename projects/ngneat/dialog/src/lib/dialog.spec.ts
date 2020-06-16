@@ -16,6 +16,7 @@ describe('Dialog', () => {
     enableClose: true,
     draggable: false,
     fullScreen: false,
+    resizable: false,
     size: 'sm',
     windowClass: undefined,
     sizes: undefined,
