@@ -1,4 +1,4 @@
-import { Component, ViewChild, TemplateRef } from '@angular/core';
+import { Component, ViewChild, TemplateRef, ViewContainerRef } from '@angular/core';
 import { interval } from 'rxjs';
 import { DialogService } from '@ngneat/dialog';
 
@@ -35,6 +35,10 @@ import { TestComponent } from './test.component';
     <div #container>
       The dialog will be appended here
     </div>
+
+    <div #vcr>
+      VCR
+    </div>
   `,
   styles: [
     `
@@ -42,11 +46,20 @@ import { TestComponent } from './test.component';
         padding: 15px;
       }
     `
+  ],
+  viewProviders: [
+    {
+      provide: 'VCRProvider',
+      useValue: 'Value getted from view container injector'
+    }
   ]
 })
 export class AppComponent {
   @ViewChild('template', { static: true })
   tmpl: TemplateRef<any>;
+
+  @ViewChild('vcr', { read: ViewContainerRef })
+  vcr: ViewContainerRef;
 
   timer$ = interval(1000);
 
@@ -57,7 +70,8 @@ export class AppComponent {
       fullScreen: true,
       data: {
         title: 'My custom dialog'
-      }
+      },
+      vcr: this.vcr
     });
   }
 
@@ -69,7 +83,8 @@ export class AppComponent {
       backdrop: false,
       enableClose: false,
       fullScreen: true,
-      container
+      container,
+      vcr: this.vcr
     });
   }
 }

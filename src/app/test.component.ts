@@ -1,6 +1,7 @@
-import { Component, ChangeDetectionStrategy, OnInit } from '@angular/core';
+import { Component, ChangeDetectionStrategy, OnInit, Optional, Inject } from '@angular/core';
 import { interval } from 'rxjs';
-import { DialogRef } from 'projects/ngneat/dialog/src/lib/dialog-ref';
+
+import { DialogRef } from '@ngneat/dialog';
 
 @Component({
   selector: 'app-test',
@@ -9,6 +10,9 @@ import { DialogRef } from 'projects/ngneat/dialog/src/lib/dialog-ref';
 
     <div class="content">
       <p>Test component with a timer: {{ timer$ | async }}</p>
+      <p *ngIf="valueFromVCRParentInjector">
+        Injected from View Container Ref injector: {{ valueFromVCRParentInjector }}
+      </p>
       <p>
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sit amet placerat erat, ac suscipit nisl.
         Phasellus euismod massa id leo facilisis eleifend. Sed bibendum pharetra molestie. Cras a odio lorem. Donec
@@ -51,7 +55,7 @@ export class TestComponent implements OnInit {
 
   timer$ = interval(1000);
 
-  constructor(public ref: DialogRef) {}
+  constructor(public ref: DialogRef, @Optional() @Inject('VCRProvider') public valueFromVCRParentInjector: string) {}
 
   ngOnInit() {
     console.log(`Dialog with ID ${this.ref.id} opened`);

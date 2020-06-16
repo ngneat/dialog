@@ -7,12 +7,7 @@ import { DialogModule } from '@ngneat/dialog';
 
 @NgModule({
   declarations: [AppComponent, TestComponent],
-  imports: [
-    BrowserModule,
-    DialogModule.forRoot({
-      draggable: true
-    })
-  ],
+  imports: [BrowserModule, DialogModule.forRoot()],
   providers: [],
   bootstrap: [AppComponent]
 })
