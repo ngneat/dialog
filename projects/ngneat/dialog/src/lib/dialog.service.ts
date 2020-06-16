@@ -12,7 +12,6 @@ import {
 } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { Subject } from 'rxjs';
-import { filter } from 'rxjs/operators';
 import { nanoid } from 'nanoid';
 
 import { DialogRef, InternalDialogRef } from './dialog-ref';
@@ -114,51 +113,36 @@ export class DialogService {
     const container = config.container instanceof ElementRef ? config.container.nativeElement : config.container;
 
     const hooks = {
-      before: new Subject<unknown>(),
       after: new Subject<unknown>()
     };
 
-    hooks.before.subscribe({
-      next: result => {
-        this.dialogs = this.dialogs.filter(({ id }) => dialogRef.id !== id);
+    const onClose = (result: unknown) => {
+      this.dialogs = this.dialogs.filter(({ id }) => dialogRef.id !== id);
 
-        container.removeChild(dialog.location.nativeElement);
-        this.appRef.detachView(dialog.hostView);
-        this.appRef.detachView(view);
+      container.removeChild(dialog.location.nativeElement);
+      this.appRef.detachView(dialog.hostView);
+      this.appRef.detachView(view);
 
-        dialog.destroy();
-        view.destroy();
+      dialog.destroy();
+      view.destroy();
 
-        this.mutateDialogRef(dialogRef, {
-          ref: null,
-          close: null,
-          afterClosed$: null,
-          backdropClick$: null,
-          beforeCloseGuards: null
-        });
+      dialogRef.mutate({
+        ref: null,
+        onClose: null,
+        afterClosed$: null,
+        backdropClick$: null,
+        beforeCloseGuards: null
+      });
 
-        hooks.after.next(result);
-        hooks.after.complete();
-      }
-    });
-
-    const close = (result?: unknown) => {
-      dialogRef
-        .canClose(result)
-        .pipe(filter<boolean>(Boolean))
-        .subscribe({
-          next() {
-            hooks.before.next(result);
-            hooks.before.complete();
-          }
-        });
+      hooks.after.next(result);
+      hooks.after.complete();
     };
 
-    this.mutateDialogRef(dialogRef, {
+    dialogRef.mutate({
       id: config.id,
-      ref,
-      close,
       data: config.data,
+      ref,
+      onClose,
       afterClosed$: hooks.after.asObservable()
     });
     this.dialogs.push(dialogRef);
@@ -206,9 +190,5 @@ export class DialogService {
 
   private throwMustBeAComponentOrATemplateRef(value: unknown): never {
     throw new TypeError(`Dialog must receive a Component or a TemplateRef, but this has been passed instead: ${value}`);
-  }
-
-  private mutateDialogRef(dialogRef: InternalDialogRef, props: Partial<InternalDialogRef>) {
-    Object.assign(dialogRef, props);
   }
 }

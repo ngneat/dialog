@@ -2,7 +2,6 @@ import { ComponentRef, TemplateRef } from '@angular/core';
 import { Observable, of, from, merge } from 'rxjs';
 import { filter, first, defaultIfEmpty } from 'rxjs/operators';
 
-type CloseFN<R> = (result?: R) => void;
 type GuardFN<R> = (result?: R) => Observable<boolean> | Promise<boolean> | boolean;
 type RefType = ComponentRef<any> | TemplateRef<any>;
 
@@ -10,16 +9,24 @@ export abstract class DialogRef<Data = any, Result = any, Ref extends RefType = 
   public ref: Ref;
   public id: string;
   public data: Data;
-  public close: CloseFN<Result>;
 
   public backdropClick$: Observable<MouseEvent>;
   public afterClosed$: Observable<Result>;
 
-  abstract beforeClose(preventFn: GuardFN<Result>): void;
+  abstract close(result?: Result): void;
+  abstract beforeClose(guard: GuardFN<Result>): void;
 }
 
 export class InternalDialogRef extends DialogRef {
   beforeCloseGuards: GuardFN<unknown>[] = [];
+
+  onClose: (result?: unknown) => void;
+
+  close(result?: unknown): void {
+    this.canClose(result)
+      .pipe(filter<boolean>(Boolean))
+      .subscribe({ next: () => this.onClose(result) });
+  }
 
   beforeClose(guard: GuardFN<unknown>) {
     this.beforeCloseGuards.push(guard);
@@ -34,6 +41,10 @@ export class InternalDialogRef extends DialogRef {
       });
 
     return merge(...guards$).pipe(defaultIfEmpty(true), first());
+  }
+
+  mutate(props: Partial<InternalDialogRef>) {
+    Object.assign(this, props);
   }
 
   asDialogRef(): DialogRef {

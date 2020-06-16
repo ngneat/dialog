@@ -60,10 +60,10 @@ describe('DialogComponent', () => {
   });
 
   afterAll(() => {
-    const containerEl = document.querySelector('.ngneat-dialog-container');
-    const backdropEl = document.querySelector('.ngneat-dialog-backdrop');
+    const containerEls = document.querySelectorAll('.ngneat-dialog-container');
+    const backdropEls = document.querySelectorAll('.ngneat-dialog-backdrop');
 
-    [containerEl, backdropEl].filter(Boolean).forEach(el => el.remove());
+    [...Array.from(containerEls), ...Array.from(backdropEls)].filter(Boolean).forEach(el => el.remove());
   });
 
   it('should create', () => {

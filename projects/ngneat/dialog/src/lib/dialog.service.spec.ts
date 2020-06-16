@@ -422,7 +422,7 @@ describe('DialogService', () => {
         afterClosed$: null,
         backdropClick$: null,
         beforeCloseGuards: null,
-        close: null,
+        onClose: null,
         ref: null
       };
 

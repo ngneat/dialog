@@ -77,9 +77,11 @@ describe('Dialog', () => {
   });
 
   afterAll(() => {
-    const dialogEl = document.querySelector('ngneat-dialog');
+    const dialogEls = document.querySelectorAll('ngneat-dialog');
 
-    [dialogEl].filter(Boolean).forEach(el => el.remove());
+    Array.from(dialogEls)
+      .filter(Boolean)
+      .forEach(el => el.remove());
   });
 
   it('should create it', () => {
