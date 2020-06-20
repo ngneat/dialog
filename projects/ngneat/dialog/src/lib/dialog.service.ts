@@ -10,14 +10,24 @@ import {
   EmbeddedViewRef,
   ElementRef
 } from '@angular/core';
-import { DOCUMENT } from '@angular/common';
 import { Subject } from 'rxjs';
 import { nanoid } from 'nanoid';
 
 import { DialogRef, InternalDialogRef } from './dialog-ref';
 import { DialogComponent } from './dialog.component';
-import { DialogConfig } from './config';
-import { DIALOG_CONFIG, DIALOG_DATA, NODES_TO_INSERT } from './tokens';
+import { DialogConfig, GlobalDialogConfig } from './config';
+import { DIALOG_CONFIG, DIALOG_DATA, NODES_TO_INSERT, GLOBAL_DIALOG_CONFIG } from './tokens';
+import {
+  DialogContent,
+  DialogContentSymbol,
+  DialogTitleAndBody,
+  DialogContentTypes as DialogContentType
+} from './types';
+
+interface OpenParams {
+  config: DialogConfig;
+  dialogRef: InternalDialogRef;
+}
 
 @Injectable({ providedIn: 'root' })
 export class DialogService {
@@ -25,32 +35,42 @@ export class DialogService {
 
   private dialogFactory = this.componentFactoryResolver.resolveComponentFactory(DialogComponent);
 
-  private defaultConfig: DialogConfig = {
-    id: nanoid(),
-    container: this.document.body,
-    backdrop: true,
-    enableClose: true,
-    draggable: false,
-    fullScreen: false,
-    resizable: false,
-    size: 'sm',
-    windowClass: undefined,
-    sizes: undefined,
-    width: undefined,
-    height: undefined,
-    data: undefined,
-    vcr: undefined
-  };
-
   constructor(
     private appRef: ApplicationRef,
-    @Inject(DOCUMENT)
-    private document: Document,
     private componentFactoryResolver: ComponentFactoryResolver,
     private injector: Injector,
     @Inject(DIALOG_CONFIG)
-    private sizes: DialogConfig['sizes']
+    private defaultConfig: DialogConfig,
+    @Inject(GLOBAL_DIALOG_CONFIG)
+    private globalConfig: GlobalDialogConfig
   ) {}
+
+  success<D>(
+    content: DialogContent | DialogTitleAndBody,
+    config: Partial<DialogConfig<D>> = {}
+  ): DialogRef<D, void, ComponentRef<any>> {
+    const configWithDefaults = this.mergeConfigWithContent(config, content);
+
+    return this.open(configWithDefaults.success.component, configWithDefaults);
+  }
+
+  confirm<D>(
+    content: DialogContent | DialogTitleAndBody,
+    config: Partial<DialogConfig<D>> = {}
+  ): DialogRef<D, boolean, ComponentRef<any>> {
+    const configWithDefaults = this.mergeConfigWithContent(config, content);
+
+    return this.open(configWithDefaults.confirm.component, configWithDefaults);
+  }
+
+  error<D>(
+    content: DialogContent | DialogTitleAndBody,
+    config: Partial<DialogConfig<D>> = {}
+  ): DialogRef<D, void, ComponentRef<any>> {
+    const configWithDefaults = this.mergeConfigWithContent(config, content);
+
+    return this.open(configWithDefaults.error.component, configWithDefaults);
+  }
 
   open<D, R = any, T = any>(
     template: TemplateRef<T>,
@@ -58,16 +78,24 @@ export class DialogService {
   ): DialogRef<D, R, TemplateRef<T>>;
   open<D, R = any, T = any>(component: Type<T>, config?: Partial<DialogConfig<D>>): DialogRef<D, R, ComponentRef<T>>;
   open(componentOrTemplate: Type<any> | TemplateRef<any>, config: Partial<DialogConfig> = {}): DialogRef {
+    const configWithDefaults = this.mergeConfig(config);
+    const dialogRef = new InternalDialogRef({
+      id: configWithDefaults.id,
+      data: configWithDefaults.data
+    });
+    const params: OpenParams = {
+      config: configWithDefaults,
+      dialogRef
+    };
+
     return componentOrTemplate instanceof TemplateRef
-      ? this.openTemplate(componentOrTemplate, this.mergeConfig(config))
+      ? this.openTemplate(componentOrTemplate, params)
       : typeof componentOrTemplate === 'function'
-      ? this.openComponent(componentOrTemplate, this.mergeConfig(config))
+      ? this.openComponent(componentOrTemplate, params)
       : this.throwMustBeAComponentOrATemplateRef(componentOrTemplate);
   }
 
-  private openTemplate(template: TemplateRef<any>, config: DialogConfig) {
-    const dialogRef = new InternalDialogRef();
-
+  private openTemplate(template: TemplateRef<any>, { config, dialogRef }: OpenParams) {
     const context = {
       $implicit: dialogRef,
       data: config.data
@@ -78,9 +106,7 @@ export class DialogService {
     return this.attach(dialogRef, template, view, config);
   }
 
-  private openComponent(component: Type<any>, config: DialogConfig) {
-    const dialogRef = new InternalDialogRef();
-
+  private openComponent(component: Type<any>, { config, dialogRef }: OpenParams) {
     const factory = this.componentFactoryResolver.resolveComponentFactory(component);
     const componentRef = factory.create(
       Injector.create({
@@ -108,7 +134,7 @@ export class DialogService {
     ref: Ref,
     view: EmbeddedViewRef<any>,
     config: DialogConfig
-  ) {
+  ): DialogRef<any, any, any> {
     const dialog = this.createDialog(config, dialogRef, view);
     const container = config.container instanceof ElementRef ? config.container.nativeElement : config.container;
 
@@ -153,19 +179,6 @@ export class DialogService {
     return dialogRef.asDialogRef();
   }
 
-  private mergeConfig(config: Partial<DialogConfig>): DialogConfig {
-    return {
-      ...this.defaultConfig,
-      ...{ sizes: this.sizes },
-      ...Object.entries(config).reduce((cleanConfig, [key, value]) => {
-        if (value != null) {
-          cleanConfig[key] = value;
-        }
-        return cleanConfig;
-      }, {})
-    };
-  }
-
   private createDialog(config: DialogConfig, dialogRef: DialogRef, view: EmbeddedViewRef<any>) {
     return this.dialogFactory.create(
       Injector.create({
@@ -186,6 +199,55 @@ export class DialogService {
         parent: this.injector
       })
     );
+  }
+
+  private mergeConfig(config: Partial<DialogConfig>): DialogConfig {
+    return {
+      id: nanoid(),
+      ...this.defaultConfig,
+      ...this.globalConfig,
+      ...Object.entries(config).reduce((cleanConfig, [key, value]) => {
+        if (value != null) {
+          cleanConfig[key] = value;
+        }
+        return cleanConfig;
+      }, {})
+    };
+  }
+
+  private mergeConfigWithContent(config: Partial<DialogConfig>, content: DialogContent | DialogTitleAndBody) {
+    const { data, ...configWithDefaults } = this.mergeConfig(config);
+
+    return {
+      ...configWithDefaults,
+      data: {
+        ...data,
+        [DialogContentSymbol]: this.isTemplateOrString(content)
+          ? {
+              title: null,
+              body: {
+                type: this.getTypeOfContent(content),
+                content
+              }
+            }
+          : Object.entries(content).reduce((acc, [key, value]) => {
+              acc[key] = {
+                type: this.getTypeOfContent(value),
+                content: value
+              };
+
+              return acc;
+            }, {})
+      }
+    };
+  }
+
+  private isTemplateOrString(content: DialogContent | DialogTitleAndBody): content is DialogContent {
+    return content instanceof TemplateRef || typeof content === 'string';
+  }
+
+  private getTypeOfContent(content: DialogContent): DialogContentType {
+    return content instanceof TemplateRef ? 'template' : 'string';
   }
 
   private throwMustBeAComponentOrATemplateRef(value: unknown): never {

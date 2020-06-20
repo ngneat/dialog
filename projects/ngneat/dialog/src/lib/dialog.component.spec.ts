@@ -2,13 +2,13 @@ import { Provider } from '@angular/core';
 import { Spectator, createComponentFactory, byText } from '@ngneat/spectator';
 
 import { DialogComponent } from './dialog.component';
-import { NODES_TO_INSERT, DIALOG_CONFIG } from './tokens';
+import { NODES_TO_INSERT, DIALOG_CONFIG, GLOBAL_DIALOG_CONFIG } from './tokens';
 import { DialogRef } from './dialog-ref';
 import { DialogDraggableDirective } from './draggable.directive';
 import { DialogConfig } from './config';
 
 describe('DialogComponent', () => {
-  const defaultConfig: DialogConfig = {
+  const defaultConfig: Partial<DialogConfig> = {
     id: 'test',
     container: document.body,
     backdrop: true,
@@ -43,6 +43,10 @@ describe('DialogComponent', () => {
     declarations: [DialogDraggableDirective],
     providers: [
       {
+        provide: GLOBAL_DIALOG_CONFIG,
+        useValue: {}
+      },
+      {
         provide: DialogRef,
         useFactory: () => ({
           close: jasmine.createSpy()
@@ -51,15 +55,11 @@ describe('DialogComponent', () => {
       {
         provide: NODES_TO_INSERT,
         useValue: [document.createTextNode('nodes '), document.createTextNode('inserted')]
-      },
-      {
-        provide: DIALOG_CONFIG,
-        useValue: defaultConfig
       }
     ]
   });
 
-  afterAll(() => {
+  afterEach(() => {
     const containerEls = document.querySelectorAll('.ngneat-dialog-container');
     const backdropEls = document.querySelectorAll('.ngneat-dialog-backdrop');
 
@@ -208,7 +208,7 @@ describe('DialogComponent', () => {
   it('should set windowClass at host element', () => {
     spectator = createComponent(withConfig({ windowClass: 'this-is-a-test-class' }));
 
-    const host = document.querySelector('.this-is-a-test-class');
+    const host = spectator.query('.this-is-a-test-class', { root: true });
 
     expect(host).toBeTruthy();
     expect(host).toBe(spectator.fixture.nativeElement);

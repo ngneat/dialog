@@ -9,7 +9,7 @@ import { DialogService } from './dialog.service';
 import { DialogModule } from './dialog.module';
 
 describe('Dialog', () => {
-  const defaultConfig: DialogConfig = {
+  const defaultConfig: Partial<DialogConfig> = {
     id: 'test',
     container: document.body,
     backdrop: true,
@@ -66,6 +66,8 @@ describe('Dialog', () => {
     tmplChanges$ = new Subject<string>();
 
     constructor(public dialog: DialogService) {}
+
+    confirm() {}
   }
 
   let spectator: Spectator<TestComponent>;
@@ -76,7 +78,7 @@ describe('Dialog', () => {
     imports: [DialogModule.forRoot()]
   });
 
-  afterAll(() => {
+  afterEach(() => {
     const dialogEls = document.querySelectorAll('ngneat-dialog');
 
     Array.from(dialogEls)
@@ -110,6 +112,144 @@ describe('Dialog', () => {
     spectator.detectChanges();
 
     expect(document.querySelector('test-dialog')).toContainText('component dialog');
+  });
+
+  describe('built-in dialogs', () => {
+    let component: TestComponent;
+    let service: DialogService;
+
+    beforeEach(() => {
+      spectator = createComponent();
+      component = spectator.component;
+      service = component.dialog;
+    });
+
+    ['confirm', 'error', 'success'].forEach(method => {
+      describe('should open a built-in dialog', () => {
+        it('using a ng-template', () => {
+          service[method](component.tmpl);
+
+          spectator.detectChanges();
+
+          expect(spectator.query(`ngneat-dialog-${method}`, { root: true })).toBeTruthy();
+          expect(spectator.query('.dialog-content', { root: true })).toContainText('template dialog');
+        });
+
+        it('apending HTML', () => {
+          service[method]('<div>test</div>');
+
+          spectator.detectChanges();
+
+          const content = spectator.query('.dialog-content', { root: true });
+          expect(spectator.query(`ngneat-dialog-${method}`, { root: true })).toBeTruthy();
+          expect(content.firstElementChild.innerHTML).toBe('<div>test</div>');
+        });
+
+        it('using a string', () => {
+          service[method]('content is a string');
+
+          spectator.detectChanges();
+
+          expect(spectator.query(`ngneat-dialog-${method}`, { root: true })).toBeTruthy();
+          expect(spectator.query('.dialog-content', { root: true })).toContainText('content is a string');
+        });
+      });
+
+      describe('should show title and body', () => {
+        it('using an ng-template', () => {
+          service[method]({
+            title: component.tmpl,
+            body: component.tmpl
+          });
+
+          spectator.detectChanges();
+
+          expect(spectator.query(`ngneat-dialog-${method}`, { root: true })).toBeTruthy();
+          expect(spectator.query('.dialog-header', { root: true })).toContainText('template dialog');
+          expect(spectator.query('.dialog-content', { root: true })).toContainText('template dialog');
+        });
+
+        it('appending HTML', () => {
+          service[method]({
+            title: '<div>title into a div</div>',
+            body: '<div>content into a div</div>'
+          });
+
+          spectator.detectChanges();
+
+          const title = spectator.query('.dialog-header', { root: true });
+          const body = spectator.query('.dialog-content', { root: true });
+
+          expect(spectator.query(`ngneat-dialog-${method}`, { root: true })).toBeTruthy();
+          expect(title.lastElementChild.innerHTML).toBe('<div>title into a div</div>');
+          expect(body.firstElementChild.innerHTML).toBe('<div>content into a div</div>');
+        });
+
+        it('using a string', () => {
+          service[method]({
+            title: 'title is a string',
+            body: 'content is a string'
+          });
+
+          spectator.detectChanges();
+
+          expect(spectator.query(`ngneat-dialog-${method}`, { root: true })).toBeTruthy();
+          expect(spectator.query('.dialog-header', { root: true })).toContainText('title is a string');
+          expect(spectator.query('.dialog-content', { root: true })).toContainText('content is a string');
+        });
+      });
+
+      it('should close it', () => {
+        service[method]('test');
+        spectator.detectChanges();
+
+        spectator.click(spectator.queryLast('.btn', { root: true }));
+
+        expect(spectator.query(`ngneat-dialog-${method}`, { root: true })).toBeFalsy();
+      });
+    });
+
+    it('confirm should return true if click OK', () => {
+      const values = [];
+      const dialogRef = service.confirm('test');
+
+      spectator.detectChanges();
+
+      dialogRef.beforeClose(confirmed => {
+        values.push(confirmed);
+
+        return true;
+      });
+
+      dialogRef.afterClosed$.subscribe({
+        next: confirmed => values.push(confirmed)
+      });
+
+      spectator.click(spectator.queryLast('.btn-success', { root: true }));
+
+      expect(values).toEqual([true, true]);
+    });
+
+    it('confirm should return false if click Cancel', () => {
+      const values = [];
+      const dialogRef = service.confirm('test');
+
+      spectator.detectChanges();
+
+      dialogRef.beforeClose(confirmed => {
+        values.push(confirmed);
+
+        return true;
+      });
+
+      dialogRef.afterClosed$.subscribe({
+        next: confirmed => values.push(confirmed)
+      });
+
+      spectator.click(spectator.queryLast('.btn-cancel', { root: true }));
+
+      expect(values).toEqual([false, false]);
+    });
   });
 
   it('should run change detection');

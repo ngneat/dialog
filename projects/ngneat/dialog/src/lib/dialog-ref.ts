@@ -2,6 +2,8 @@ import { ComponentRef, TemplateRef } from '@angular/core';
 import { Observable, of, from, merge } from 'rxjs';
 import { filter, first, defaultIfEmpty } from 'rxjs/operators';
 
+import { JustProps } from './types';
+
 type GuardFN<R> = (result?: R) => Observable<boolean> | Promise<boolean> | boolean;
 type RefType = ComponentRef<any> | TemplateRef<any>;
 
@@ -19,6 +21,11 @@ export abstract class DialogRef<Data = any, Result = any, Ref extends RefType = 
 
 export class InternalDialogRef extends DialogRef {
   beforeCloseGuards: GuardFN<unknown>[] = [];
+
+  constructor(props: Partial<JustProps<DialogRef>> = {}) {
+    super();
+    this.mutate(props);
+  }
 
   onClose: (result?: unknown) => void;
 

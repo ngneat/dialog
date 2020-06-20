@@ -1,12 +1,12 @@
 import { ApplicationRef, ComponentFactoryResolver, TemplateRef, Injector, InjectionToken } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
 import { fakeAsync, tick } from '@angular/core/testing';
+import { createServiceFactory, SpectatorService } from '@ngneat/spectator';
 import { timer } from 'rxjs';
 import { mapTo } from 'rxjs/operators';
-import { createServiceFactory, SpectatorService } from '@ngneat/spectator';
 
 import { DialogService } from './dialog.service';
-import { DIALOG_CONFIG, NODES_TO_INSERT, DIALOG_DATA } from './tokens';
-import { DOCUMENT } from '@angular/common';
+import { NODES_TO_INSERT, DIALOG_DATA, GLOBAL_DIALOG_CONFIG, DIALOG_CONFIG } from './tokens';
 import { DialogConfig } from './config';
 import { InternalDialogRef, DialogRef } from './dialog-ref';
 import { DialogComponent } from './dialog.component';
@@ -64,11 +64,13 @@ describe('DialogService', () => {
     mocks: [ApplicationRef],
     providers: [
       {
-        provide: DIALOG_CONFIG,
+        provide: GLOBAL_DIALOG_CONFIG,
         useValue: {
-          sm: 'other sm',
-          md: 'other md',
-          lg: 'other lg'
+          sizes: {
+            sm: 'other sm',
+            md: 'other md',
+            lg: 'other lg'
+          }
         }
       },
       {
