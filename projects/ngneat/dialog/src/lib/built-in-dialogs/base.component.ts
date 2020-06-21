@@ -21,8 +21,8 @@ import { DialogRef } from '../dialog-ref';
         </div>
 
         <div class="dialog-content" [ngSwitch]="body.type">
-          <p *ngSwitchCase="'string'" [innerHTML]="body.content"></p>
-          <p *ngSwitchCase="'template'">
+          <p *ngSwitchCase="'string'" [class.with-title]="title" [innerHTML]="body.content"></p>
+          <p *ngSwitchCase="'template'" [class.with-title]="title">
             <ng-container *ngTemplateOutlet="body.content; context: context"></ng-container>
           </p>
         </div>
