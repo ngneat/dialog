@@ -62,12 +62,20 @@ export class DialogComponent implements OnInit, OnDestroy {
     private document: Document,
     { nativeElement: host }: ElementRef<HTMLElement>,
 
-    private dialogRef: DialogRef,
+    public dialogRef: DialogRef,
     @Inject(DIALOG_CONFIG)
     public config: DialogConfig,
     @Inject(NODES_TO_INSERT)
     private nodes: Element[]
   ) {
+    host.id = this.config.id;
+
+    // Append nodes to dialog component, template or component could need
+    // something from the dialog component
+    // for example, if `[dialogClose]` is used into a directive,
+    // DialogRef will be getted from DialogService instead of DI
+    host.append(...this.nodes);
+
     if (config.windowClass) {
       host.classList.add(config.windowClass);
     }
@@ -88,6 +96,8 @@ export class DialogComponent implements OnInit, OnDestroy {
         .subscribe({ next: () => this.dialogRef.close() });
     }
 
+    // `dialogElement` is resolvesd at this point
+    // And here is where dialog finally will be placed
     dialogElement.append(...this.nodes);
   }
 

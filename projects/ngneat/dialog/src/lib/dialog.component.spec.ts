@@ -2,7 +2,7 @@ import { Provider } from '@angular/core';
 import { Spectator, createComponentFactory, byText } from '@ngneat/spectator';
 
 import { DialogComponent } from './dialog.component';
-import { NODES_TO_INSERT, DIALOG_CONFIG, GLOBAL_DIALOG_CONFIG } from './tokens';
+import { NODES_TO_INSERT, DIALOG_CONFIG } from './tokens';
 import { DialogRef } from './dialog-ref';
 import { DialogDraggableDirective } from './draggable.directive';
 import { DialogConfig } from './config';
@@ -43,7 +43,7 @@ describe('DialogComponent', () => {
     declarations: [DialogDraggableDirective],
     providers: [
       {
-        provide: GLOBAL_DIALOG_CONFIG,
+        provide: DIALOG_CONFIG,
         useValue: {}
       },
       {
@@ -69,6 +69,14 @@ describe('DialogComponent', () => {
   it('should create', () => {
     spectator = createComponent();
     expect(spectator.component).toBeTruthy();
+  });
+
+  it('should set id in its host', () => {
+    spectator = createComponent(withConfig({ id: 'test' }));
+
+    spectator.detectChanges();
+
+    expect(spectator.element.id).toBe('test');
   });
 
   it('should place nodes into dialog-content', () => {

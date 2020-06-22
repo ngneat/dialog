@@ -2,6 +2,7 @@ import { NgModule, ModuleWithProviders } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { DialogComponent } from './dialog.component';
+import { DialogCloseDirective } from './dialog-close.directive';
 import { GlobalDialogConfig } from './config';
 import { GLOBAL_DIALOG_CONFIG } from './tokens';
 import { DialogDraggableDirective } from './draggable.directive';
@@ -15,9 +16,9 @@ import {
 const BuiltIns = [BaseDialogComponent, SuccessDialogComponent, ConfirmDialogComponent, ErrorDialogComponent];
 
 @NgModule({
-  declarations: [DialogComponent, DialogDraggableDirective, BuiltIns],
+  declarations: [DialogComponent, DialogCloseDirective, DialogDraggableDirective, BuiltIns],
   imports: [CommonModule],
-  exports: [DialogComponent]
+  exports: [DialogComponent, DialogCloseDirective]
 })
 export class DialogModule {
   static forRoot(config?: GlobalDialogConfig): ModuleWithProviders<DialogModule> {

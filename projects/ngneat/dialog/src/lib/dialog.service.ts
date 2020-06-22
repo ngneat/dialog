@@ -29,6 +29,14 @@ interface OpenParams {
   dialogRef: InternalDialogRef;
 }
 
+interface AtachOptions {
+  dialogRef: InternalDialogRef;
+  ref: ComponentRef<any> | TemplateRef<any>;
+  view: EmbeddedViewRef<any>;
+  attachToApp: boolean;
+  config: DialogConfig;
+}
+
 @Injectable({ providedIn: 'root' })
 export class DialogService {
   public dialogs: DialogRef[] = [];
@@ -88,6 +96,10 @@ export class DialogService {
       dialogRef
     };
 
+    this.throwIfIDAlreadyExists(config.id);
+
+    this.dialogs.push(dialogRef);
+
     return componentOrTemplate instanceof TemplateRef
       ? this.openTemplate(componentOrTemplate, params)
       : typeof componentOrTemplate === 'function'
@@ -103,7 +115,13 @@ export class DialogService {
 
     const view = config.vcr?.createEmbeddedView(template, context) || template.createEmbeddedView(context);
 
-    return this.attach(dialogRef, template, view, config);
+    return this.attach({
+      dialogRef,
+      config,
+      ref: template,
+      view,
+      attachToApp: !config.vcr
+    });
   }
 
   private openComponent(component: Type<any>, { config, dialogRef }: OpenParams) {
@@ -124,17 +142,16 @@ export class DialogService {
       })
     );
 
-    this.appRef.attachView(componentRef.hostView);
-
-    return this.attach(dialogRef, componentRef, componentRef.hostView as EmbeddedViewRef<any>, config);
+    return this.attach({
+      dialogRef,
+      config,
+      ref: componentRef,
+      view: componentRef.hostView as EmbeddedViewRef<any>,
+      attachToApp: true
+    });
   }
 
-  private attach<Ref extends ComponentRef<any> | TemplateRef<any>>(
-    dialogRef: InternalDialogRef,
-    ref: Ref,
-    view: EmbeddedViewRef<any>,
-    config: DialogConfig
-  ): DialogRef<any, any, any> {
+  private attach({ dialogRef, config, ref, view, attachToApp }: AtachOptions): DialogRef<any, any, any> {
     const dialog = this.createDialog(config, dialogRef, view);
     const container = config.container instanceof ElementRef ? config.container.nativeElement : config.container;
 
@@ -171,10 +188,13 @@ export class DialogService {
       onClose,
       afterClosed$: hooks.after.asObservable()
     });
-    this.dialogs.push(dialogRef);
 
     container.appendChild(dialog.location.nativeElement);
     this.appRef.attachView(dialog.hostView);
+
+    if (attachToApp) {
+      this.appRef.attachView(view);
+    }
 
     return dialogRef.asDialogRef();
   }
@@ -203,8 +223,8 @@ export class DialogService {
 
   private mergeConfig(config: Partial<DialogConfig>): DialogConfig {
     return {
-      id: nanoid(),
       ...this.defaultConfig,
+      id: nanoid(),
       ...this.globalConfig,
       ...Object.entries(config).reduce((cleanConfig, [key, value]) => {
         if (value != null) {
@@ -252,5 +272,11 @@ export class DialogService {
 
   private throwMustBeAComponentOrATemplateRef(value: unknown): never {
     throw new TypeError(`Dialog must receive a Component or a TemplateRef, but this has been passed instead: ${value}`);
+  }
+
+  private throwIfIDAlreadyExists(id: string) {
+    if (this.dialogs.find(dialog => dialog.id === id)) {
+      throw new Error(`Please, ID must be unique, but there is already a dialog created with this ID: ${id}`);
+    }
   }
 }

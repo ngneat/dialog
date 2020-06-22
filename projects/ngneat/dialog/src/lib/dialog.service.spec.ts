@@ -115,6 +115,14 @@ describe('DialogService', () => {
     );
   });
 
+  it('should throw if two dialogs has the same id', () => {
+    service.open(new FakeTemplateRef(), { id: 'same' });
+
+    expect(() => service.open(new FakeTemplateRef(), { id: 'same' })).toThrowError(
+      'Please, ID must be unique, but there is already a dialog created with this ID: same'
+    );
+  });
+
   describe('using a template', () => {
     it('should open it', () => expect(service.open(new FakeTemplateRef())).toBeTruthy());
 
@@ -161,12 +169,15 @@ describe('DialogService', () => {
     });
 
     it('should attach view to ApplicationRef', () => {
-      service.open(new FakeTemplateRef());
+      const fakeTemplate = new FakeTemplateRef();
+      service.open(fakeTemplate);
 
       const fakeDialogView = fakeFactory.componentOne;
 
-      expect(fakeAppRef.attachView).toHaveBeenCalledTimes(1);
-      expect(fakeAppRef.attachView).toHaveBeenCalledWith(fakeDialogView.hostView as any);
+      const attachSpyCalls = (fakeAppRef.attachView as jasmine.Spy).calls.allArgs();
+
+      expect(fakeAppRef.attachView).toHaveBeenCalledTimes(2);
+      expect(attachSpyCalls).toEqual([[fakeDialogView.hostView], [fakeTemplate.view]]);
     });
 
     it('should use vcr to instanciate template', () => {
@@ -238,12 +249,12 @@ describe('DialogService', () => {
     it('should attach view to ApplicationRef', () => {
       service.open(FakeComponent);
 
-      const { componentOne: fakeDialogView, componentTwo: fakeComponentView } = fakeFactory;
+      const { componentOne: fakeComponentInjectedIntoDialog, componentTwo: fakeDialogView } = fakeFactory;
 
       const attachSpyCalls = (fakeAppRef.attachView as jasmine.Spy).calls.allArgs();
 
       expect(fakeAppRef.attachView).toHaveBeenCalledTimes(2);
-      expect(attachSpyCalls).toEqual([[fakeDialogView.hostView], [fakeComponentView.hostView]]);
+      expect(attachSpyCalls).toEqual([[fakeDialogView.hostView], [fakeComponentInjectedIntoDialog.hostView]]);
     });
 
     it('should use injector of vcr as parent injector', () => {

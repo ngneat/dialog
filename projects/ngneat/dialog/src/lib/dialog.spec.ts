@@ -46,6 +46,12 @@ describe('Dialog', () => {
   }
 
   @Component({
+    selector: 'test-dialog',
+    template: '<button id="closeUsingDialog" [dialogClose]="true">Close using dialogClose</button>'
+  })
+  class TestDialogClosableUsingDialogCloseComponent {}
+
+  @Component({
     template: `
       <ng-template #tmpl>
         <div id="tmpl">
@@ -54,6 +60,14 @@ describe('Dialog', () => {
         </div>
       </ng-template>
       <div id="otherVCR" #otherVCR></div>
+
+      <ng-template #usingDialogClose>
+        <button id="closeUsingDialog" [dialogClose]="true">Close using dialogClose</button>
+      </ng-template>
+
+      <ng-template #usingDialogCloseWithoutResult>
+        <button id="closeUsingDialog" dialogClose>Close using dialogClose</button>
+      </ng-template>
     `
   })
   class TestComponent {
@@ -63,18 +77,22 @@ describe('Dialog', () => {
     @ViewChild('tmpl')
     tmpl: TemplateRef<any>;
 
+    @ViewChild('usingDialogClose')
+    tmplWithDialogClose: TemplateRef<any>;
+
+    @ViewChild('usingDialogCloseWithoutResult')
+    tmplWithDialogCloseWithoutResult: TemplateRef<any>;
+
     tmplChanges$ = new Subject<string>();
 
     constructor(public dialog: DialogService) {}
-
-    confirm() {}
   }
 
   let spectator: Spectator<TestComponent>;
 
   const createComponent = createComponentFactory({
     component: TestComponent,
-    declarations: [DialogDraggableDirective, TestDialogComponent],
+    declarations: [DialogDraggableDirective, TestDialogComponent, TestDialogClosableUsingDialogCloseComponent],
     imports: [DialogModule.forRoot()]
   });
 
@@ -249,6 +267,86 @@ describe('Dialog', () => {
       spectator.click(spectator.queryLast('.btn-cancel', { root: true }));
 
       expect(values).toEqual([false, false]);
+    });
+  });
+
+  describe('should close using dialogClose directive', () => {
+    it('into a template', () => {
+      let value = false;
+      spectator = createComponent();
+      spectator.component.dialog.open(spectator.component.tmplWithDialogClose).afterClosed$.subscribe({
+        next: result => (value = result)
+      });
+
+      spectator.detectChanges();
+
+      spectator.click(spectator.query('#closeUsingDialog', { root: true }));
+
+      expect(value).toBeTrue();
+    });
+
+    it('into a template without binding return empty string', () => {
+      let value = 'should be empty';
+      spectator = createComponent();
+      spectator.component.dialog.open(spectator.component.tmplWithDialogCloseWithoutResult).afterClosed$.subscribe({
+        next: result => (value = result)
+      });
+
+      spectator.detectChanges();
+
+      spectator.click(spectator.query('#closeUsingDialog', { root: true }));
+
+      expect(value).toBe('');
+    });
+
+    it('into a template using a view container ref', () => {
+      let value = false;
+      spectator = createComponent();
+      spectator.component.dialog
+        .open(spectator.component.tmplWithDialogClose, {
+          vcr: spectator.component.otherVCR
+        })
+        .afterClosed$.subscribe({
+          next: result => (value = result)
+        });
+
+      spectator.detectChanges();
+
+      spectator.click(spectator.query('#closeUsingDialog', { root: true }));
+
+      expect(value).toBeTrue();
+    });
+
+    it('into a component', () => {
+      let value = false;
+      spectator = createComponent();
+      spectator.component.dialog.open(TestDialogClosableUsingDialogCloseComponent).afterClosed$.subscribe({
+        next: result => (value = result)
+      });
+
+      spectator.detectChanges();
+
+      spectator.click(spectator.query('#closeUsingDialog', { root: true }));
+
+      expect(value).toBeTrue();
+    });
+
+    it('into a component using a view container ref', () => {
+      let value = false;
+      spectator = createComponent();
+      spectator.component.dialog
+        .open(TestDialogClosableUsingDialogCloseComponent, {
+          vcr: spectator.component.otherVCR
+        })
+        .afterClosed$.subscribe({
+          next: result => (value = result)
+        });
+
+      spectator.detectChanges();
+
+      spectator.click(spectator.query('#closeUsingDialog', { root: true }));
+
+      expect(value).toBeTrue();
     });
   });
 
