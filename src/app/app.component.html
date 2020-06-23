@@ -1,0 +1,201 @@
+<ng-template #template let-ref>
+  <div class="dialog">
+    <h2>Test dialog using a custom template</h2>
+    <p>This dialog has been opened with this custom config</p>
+    <pre style="background-color: gainsboro">{{ cleanConfig | json }}</pre>
+
+    <button dialogClose>Click me to close the dialog 😉</button>
+  </div>
+</ng-template>
+
+<div class="block">
+  <h2>Configure your dialog</h2>
+  <form [formGroup]="config">
+    <div>
+      <label>ID 🏷️</label>
+      <input placeholder="For default is a random ID" formControlName="id" />
+    </div>
+    <div>
+      <label>Width</label>
+      <input placeholder="600px, 90vw, auto, ..." formControlName="width" />
+    </div>
+    <div>
+      <label>Height</label>
+      <input placeholder="300px, 90vh, auto, ..." formControlName="height" />
+    </div>
+    <div>
+      <label>Custom class</label>
+      <input placeholder="Set a custom class" formControlName="windowClass" />
+    </div>
+    <div>
+      <label>Size 📏</label>
+      <input placeholder="sm, md or lg. Default is sm" formControlName="size" />
+    </div>
+    <div>
+      <label>Backdrop</label>
+      <input type="checkbox" formControlName="backdrop" />
+    </div>
+    <div>
+      <label>Draggable</label>
+      <input type="checkbox" formControlName="draggable" />
+    </div>
+
+    <div>
+      <label>Full Screen</label>
+      <input type="checkbox" formControlName="fullScreen" />
+    </div>
+    <div>
+      <label>Resizable</label>
+      <input type="checkbox" formControlName="resizable" />
+    </div>
+    <div>
+      <label>Enable Close ❌</label>
+      <input type="checkbox" formControlName="enableClose" />
+    </div>
+  </form>
+
+  <p *ngIf="backDropClicked">
+    You've clicked the backdrop 👏
+  </p>
+</div>
+
+<div class="block">
+  <button (click)="openDialog(template, config.value)">Open dialog using an ng-template!</button>
+  <button (click)="openDialog(component, config.value)">Open dialog using a component!</button>
+</div>
+
+<div class="block note">
+  📢 This configuration is used in all the dialogs you open ☝️
+</div>
+
+<div class="block">
+  <h2>Built-ins dialog</h2>
+  <form [formGroup]="builtIn">
+    <div>
+      <label>Title</label>
+      <input placeholder="Title of the dialog" formControlName="title" />
+    </div>
+    <div>
+      <label>Body</label>
+      <textarea cols="40" placeholder="Body of the dialog" formControlName="body"></textarea>
+    </div>
+    <div>
+      <label>Type</label>
+      <select formControlName="type">
+        <option value="confirm" default>Confirm</option>
+        <option value="success" default>Success</option>
+        <option value="error" default>Error</option>
+      </select>
+    </div>
+
+    <p *ngIf="result === true">You have confirmed 👍</p>
+    <p *ngIf="result === false">You haven't confirmed 👎</p>
+  </form>
+
+  <button (click)="openBuiltIn(builtIn.value, config.value)">Open the built-in dialog</button>
+</div>
+
+<div class="block note">
+  <p>📢 The body or title can be a string or a TemplateRef (ng-template)</p>
+  <p>📢 You can override the built-in dialogs with your own</p>
+</div>
+
+<div class="block">
+  <h2>Use a custom container</h2>
+
+  <div #container>
+    Open the dialog into this div 👇
+  </div>
+
+  <ng-template #dialogIntoCustomContainer>
+    <div class="dialog">
+      <p>
+        Inspect the dialog to see where it's placed 👀
+      </p>
+
+      <button dialogClose>Close</button>
+    </div>
+  </ng-template>
+
+  <button (click)="openDialogWithCustomContainer(dialogIntoCustomContainer, container, config.value)">
+    Open the dialog with a custom container
+  </button>
+</div>
+
+<div class="block">
+  <h2>Use a custom view container</h2>
+
+  <p>
+    This is only a timer <b>{{ (timer$ | async) || 0 }}</b> ⏰
+  </p>
+
+  <ng-container #vcr></ng-container>
+
+  <ng-template #dialogVCR>
+    <div class="dialog">
+      <p>
+        This dialog isn't attached to the ApplicationRef. It's attached to a custom ViewContainerRef.
+      </p>
+
+      <p>
+        You can take control of this view (this dialog) and, for example, dettach it from the change detection.
+      </p>
+
+      <p>
+        When you click Toggle button, this timer (same timer of main page) will stop:
+        <b>{{ timer$ | async }}</b>
+      </p>
+      <p>Click on Detect changes to run a change detection or click again to reattach it</p>
+
+      <button (click)="toggleDialogFromVCR()">Toggle</button>
+      <button (click)="detectChangesIntoDialog()">
+        Detect changes into template
+      </button>
+      <button dialogClose>Close</button>
+    </div>
+  </ng-template>
+
+  <button (click)="openDialogWithCustomVCR(dialogVCR, config.value)">
+    Open the dialog with a custom View Container Ref
+  </button>
+</div>
+
+<div class="block">
+  <h2>Use guards to prevent closing</h2>
+
+  <ng-template #dialogWithGuard>
+    <div class="dialog">
+      <p *ngIf="closeOnce">
+        This is embarrassing but..., why you didn't close me?
+      </p>
+
+      <button dialogClose>Try to close me 😜</button>
+    </div>
+  </ng-template>
+  <button (click)="openDialogWithGuard(dialogWithGuard, config.value)">
+    Open a dialog with double check
+  </button>
+</div>
+
+<div class="block">
+  <h2>Pass data to the dialog and get a result</h2>
+  <p>You can pass any data to your dialog:</p>
+  <form [formGroup]="data">
+    <div>
+      <label>Pass a title</label>
+      <input formControlName="title" />
+    </div>
+    <div>
+      <label>Do you want to return something?</label>
+      <input type="checkbox" formControlName="withResult" />
+    </div>
+  </form>
+
+  <p>
+    Your last result from the dialog was: <b>{{ messageFromDialog || 'nothing 😢' }}</b>
+  </p>
+
+  <button (click)="openDialogWithCustomData(component, data.value, config.value)">
+    Open
+  </button>
+</div>

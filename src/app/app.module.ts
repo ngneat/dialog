@@ -1,13 +1,33 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-
-import { AppComponent } from './app.component';
-import { TestComponent } from './test.component';
+import { ReactiveFormsModule } from '@angular/forms';
 import { DialogModule } from '@ngneat/dialog';
 
+import { AppComponent } from './app.component';
+import { TestDialogComponent } from './test-dialog.component';
+
 @NgModule({
-  declarations: [AppComponent, TestComponent],
-  imports: [BrowserModule, DialogModule.forRoot()],
+  declarations: [AppComponent, TestDialogComponent],
+  imports: [
+    BrowserModule,
+    ReactiveFormsModule,
+    DialogModule.forRoot({
+      sizes: {
+        sm: {
+          width: 'auto',
+          height: 'auto'
+        },
+        md: {
+          width: '600px',
+          height: '250px'
+        },
+        lg: {
+          width: '800px',
+          height: '400px'
+        }
+      }
+    })
+  ],
   providers: [],
   bootstrap: [AppComponent]
 })
