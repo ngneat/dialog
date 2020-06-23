@@ -85,7 +85,7 @@ export class DialogService {
     config?: Partial<DialogConfig<D>>
   ): DialogRef<D, R, TemplateRef<T>>;
   open<D, R = any, T = any>(component: Type<T>, config?: Partial<DialogConfig<D>>): DialogRef<D, R, ComponentRef<T>>;
-  open<D, R = any, T = any>(template: Type<any> | TemplateRef<any>, config?: Partial<DialogConfig<D>>): DialogRef<D, R>;
+  open<D, R = any>(template: Type<any> | TemplateRef<any>, config?: Partial<DialogConfig<D>>): DialogRef<D, R>;
   open(componentOrTemplate: Type<any> | TemplateRef<any>, config: Partial<DialogConfig> = {}): DialogRef {
     const configWithDefaults = this.mergeConfig(config);
     const dialogRef = new InternalDialogRef({
