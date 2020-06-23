@@ -1,5 +1,5 @@
 import { ComponentRef, TemplateRef } from '@angular/core';
-import { Observable, of, from, merge } from 'rxjs';
+import { Observable, of, from, merge, Subject } from 'rxjs';
 import { filter, first, defaultIfEmpty } from 'rxjs/operators';
 
 import { JustProps } from './types';
@@ -23,9 +23,11 @@ export abstract class DialogRef<
 }
 
 export class InternalDialogRef extends DialogRef {
+  public backdropClick$: Subject<MouseEvent>;
+
   beforeCloseGuards: GuardFN<unknown>[] = [];
 
-  constructor(props: Partial<JustProps<DialogRef>> = {}) {
+  constructor(props: Partial<JustProps<InternalDialogRef>> = {}) {
     super();
     this.mutate(props);
   }

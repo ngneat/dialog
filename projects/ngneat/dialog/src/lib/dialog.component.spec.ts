@@ -1,9 +1,10 @@
 import { Provider } from '@angular/core';
 import { Spectator, createComponentFactory, byText } from '@ngneat/spectator';
+import { Subject } from 'rxjs';
 
 import { DialogComponent } from './dialog.component';
 import { NODES_TO_INSERT, DIALOG_CONFIG } from './tokens';
-import { DialogRef } from './dialog-ref';
+import { InternalDialogRef } from './dialog-ref';
 import { DialogDraggableDirective } from './draggable.directive';
 import { DialogConfig } from './config';
 
@@ -47,9 +48,10 @@ describe('DialogComponent', () => {
         useValue: {}
       },
       {
-        provide: DialogRef,
+        provide: InternalDialogRef,
         useFactory: () => ({
-          close: jasmine.createSpy()
+          close: jasmine.createSpy(),
+          backdropClick$: new Subject()
         })
       },
       {
@@ -94,7 +96,7 @@ describe('DialogComponent', () => {
 
     it('backdropClick$ should point to element', () => {
       let backdropClicked = false;
-      spectator.get(DialogRef).backdropClick$.subscribe({
+      spectator.get(InternalDialogRef).backdropClick$.subscribe({
         next: () => (backdropClicked = true)
       });
 
@@ -113,7 +115,7 @@ describe('DialogComponent', () => {
 
     it('backdropClick$ should point to body', () => {
       let backdropClicked = false;
-      spectator.get(DialogRef).backdropClick$.subscribe({
+      spectator.get(InternalDialogRef).backdropClick$.subscribe({
         next: () => (backdropClicked = true)
       });
 
@@ -127,7 +129,7 @@ describe('DialogComponent', () => {
     beforeEach(() => (spectator = createComponent(withConfig({ enableClose: true }))));
 
     it('on escape', () => {
-      const { close } = spectator.get(DialogRef);
+      const { close } = spectator.get(InternalDialogRef);
 
       spectator.dispatchKeyboardEvent(document.body, 'keyup', 'Enter');
 
@@ -139,7 +141,7 @@ describe('DialogComponent', () => {
     });
 
     it('on click backdrop', () => {
-      const { close } = spectator.get(DialogRef);
+      const { close } = spectator.get(InternalDialogRef);
 
       spectator.dispatchMouseEvent('.ngneat-dialog-container', 'mouseup');
 
@@ -159,7 +161,7 @@ describe('DialogComponent', () => {
     beforeEach(() => (spectator = createComponent(withConfig({ enableClose: false }))));
 
     it('on escape', () => {
-      const { close } = spectator.get(DialogRef);
+      const { close } = spectator.get(InternalDialogRef);
 
       spectator.dispatchKeyboardEvent(document.body, 'keyup', 'Escape');
 
@@ -167,7 +169,7 @@ describe('DialogComponent', () => {
     });
 
     it('on click backdrop', () => {
-      const { close: close } = spectator.get(DialogRef);
+      const { close: close } = spectator.get(InternalDialogRef);
 
       spectator.dispatchMouseEvent('.ngneat-dialog-container', 'mouseup');
 

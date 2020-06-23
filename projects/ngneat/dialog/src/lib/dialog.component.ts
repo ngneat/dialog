@@ -3,7 +3,7 @@ import { DOCUMENT } from '@angular/common';
 import { fromEvent, Subject, merge } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 
-import { DialogRef } from './dialog-ref';
+import { InternalDialogRef } from './dialog-ref';
 import { DialogConfig } from './config';
 import { DIALOG_CONFIG, NODES_TO_INSERT } from './tokens';
 
@@ -62,7 +62,7 @@ export class DialogComponent implements OnInit, OnDestroy {
     private document: Document,
     { nativeElement: host }: ElementRef<HTMLElement>,
 
-    public dialogRef: DialogRef,
+    public dialogRef: InternalDialogRef,
     @Inject(DIALOG_CONFIG)
     public config: DialogConfig,
     @Inject(NODES_TO_INSERT)
@@ -85,12 +85,14 @@ export class DialogComponent implements OnInit, OnDestroy {
     const backdrop = this.config.backdrop ? this.backdrop.nativeElement : this.document.body;
     const dialogElement = this.dialogElement.nativeElement;
 
-    this.dialogRef.backdropClick$ = fromEvent<MouseEvent>(backdrop, 'mouseup');
+    const backdropClick$ = fromEvent<MouseEvent>(backdrop, 'mouseup');
+
+    backdropClick$.pipe(takeUntil(this.destroy$)).subscribe(this.dialogRef.backdropClick$);
 
     if (this.config.enableClose) {
       merge(
         fromEvent<KeyboardEvent>(this.document.body, 'keyup').pipe(filter(({ key }) => key === 'Escape')),
-        this.dialogRef.backdropClick$.pipe(filter(({ target }) => !dialogElement.contains(target as Element)))
+        backdropClick$.pipe(filter(({ target }) => !dialogElement.contains(target as Element)))
       )
         .pipe(takeUntil(this.destroy$))
         .subscribe({ next: () => this.dialogRef.close() });

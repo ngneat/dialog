@@ -149,13 +149,13 @@ describe('DialogService', () => {
 
     it('should fill dialog injector', () => {
       const fakeTemplate = new FakeTemplateRef();
-      const dialog = service.open(fakeTemplate);
+      const dialog = service.open(fakeTemplate) as InternalDialogRef;
 
       const fakeTemplateView = fakeTemplate.view;
 
       expect(fakeFactory.factory.create).toHaveBeenCalledTimes(1);
       const [injector]: Injector[] = fakeFactory.factory.create.calls.mostRecent().args;
-      expect(injector.get(DialogRef)).toBe(dialog);
+      expect(injector.get(InternalDialogRef)).toBe(dialog);
       expect(injector.get<any>(NODES_TO_INSERT)).toBe(fakeTemplateView.rootNodes);
     });
 
@@ -221,7 +221,7 @@ describe('DialogService', () => {
     it('should fill component and dialog injector', () => {
       const dialog = service.open(FakeComponent, {
         data: 'test'
-      });
+      }) as InternalDialogRef;
 
       const [
         [fakeComponentInjector],
@@ -233,7 +233,7 @@ describe('DialogService', () => {
 
       const fakeDialogView = fakeFactory.componentOne;
 
-      expect(dialogInjector.get(DialogRef)).toBe(dialog);
+      expect(dialogInjector.get(InternalDialogRef)).toBe(dialog);
       expect(dialogInjector.get<any>(NODES_TO_INSERT)).toBe(fakeDialogView.hostView.rootNodes);
     });
 

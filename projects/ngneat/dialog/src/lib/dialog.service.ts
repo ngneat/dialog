@@ -90,7 +90,8 @@ export class DialogService {
     const configWithDefaults = this.mergeConfig(config);
     const dialogRef = new InternalDialogRef({
       id: configWithDefaults.id,
-      data: configWithDefaults.data
+      data: configWithDefaults.data,
+      backdropClick$: new Subject<MouseEvent>()
     });
     const params: OpenParams = {
       config: configWithDefaults,
@@ -170,6 +171,8 @@ export class DialogService {
       dialog.destroy();
       view.destroy();
 
+      dialogRef.backdropClick$.complete();
+
       dialogRef.mutate({
         ref: null,
         onClose: null,
@@ -200,12 +203,12 @@ export class DialogService {
     return dialogRef.asDialogRef();
   }
 
-  private createDialog(config: DialogConfig, dialogRef: DialogRef, view: EmbeddedViewRef<any>) {
+  private createDialog(config: DialogConfig, dialogRef: InternalDialogRef, view: EmbeddedViewRef<any>) {
     return this.dialogFactory.create(
       Injector.create({
         providers: [
           {
-            provide: DialogRef,
+            provide: InternalDialogRef,
             useValue: dialogRef
           },
           {

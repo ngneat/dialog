@@ -121,6 +121,16 @@ describe('Dialog', () => {
     expect(document.querySelector('#tmpl')).toContainText('template dialog');
   });
 
+  it('should be able of subscribe to afterClosed$ and backdropClick$', () => {
+    spectator = createComponent();
+    const { component } = spectator;
+
+    const dialogRef = component.dialog.open(component.tmpl);
+
+    expect(() => dialogRef.afterClosed$.subscribe()).not.toThrow();
+    expect(() => dialogRef.backdropClick$.subscribe()).not.toThrow();
+  });
+
   it('should open dialog with a component', () => {
     spectator = createComponent();
     const { component } = spectator;
