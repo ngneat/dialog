@@ -177,9 +177,7 @@ export class DialogDraggableDirective implements AfterViewInit, OnChanges, OnDes
         : document.querySelector(this.dialogDragTarget as string);
 
     this.setupEvents();
-    /** Move the element to init values if those were given */
-    if (this.offset.x !== 0 || this.offset.y !== 0) {
-      this.translate();
-    }
+
+    this.translate();
   }
 }
