@@ -5,9 +5,12 @@ import { filter, first, defaultIfEmpty } from 'rxjs/operators';
 import { JustProps } from './types';
 
 type GuardFN<R> = (result?: R) => Observable<boolean> | Promise<boolean> | boolean;
-type RefType = ComponentRef<any> | TemplateRef<any>;
 
-export abstract class DialogRef<Data = any, Result = any, Ref extends RefType = RefType> {
+export abstract class DialogRef<
+  Data = any,
+  Result = any,
+  Ref extends ComponentRef<any> | TemplateRef<any> = ComponentRef<any> | TemplateRef<any>
+> {
   public ref: Ref;
   public id: string;
   public data: Data;
