@@ -29,7 +29,7 @@ interface OpenParams {
   dialogRef: InternalDialogRef;
 }
 
-interface AtachOptions {
+interface AttachOptions {
   dialogRef: InternalDialogRef;
   ref: ComponentRef<any> | TemplateRef<any>;
   view: EmbeddedViewRef<any>;
@@ -96,7 +96,7 @@ export class DialogService {
       dialogRef
     };
 
-    this.throwIfIDAlreadyExists(config.id);
+    this.throwIfIDAlreadyExists(configWithDefaults.id);
 
     this.dialogs.push(dialogRef);
 
@@ -151,7 +151,7 @@ export class DialogService {
     });
   }
 
-  private attach({ dialogRef, config, ref, view, attachToApp }: AtachOptions): DialogRef<any, any, any> {
+  private attach({ dialogRef, config, ref, view, attachToApp }: AttachOptions): DialogRef<any, any, any> {
     const dialog = this.createDialog(config, dialogRef, view);
     const container = config.container instanceof ElementRef ? config.container.nativeElement : config.container;
 
