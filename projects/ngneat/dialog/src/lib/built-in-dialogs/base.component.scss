@@ -20,21 +20,23 @@
   width: 100%;
   margin: 0;
 
-  .icon {
-    width: 30px;
-    margin-right: 10px;
-  }
+  .dialog-icon ::ng-deep {
+    .icon {
+      width: 30px;
+      margin-right: 10px;
+    }
 
-  .icon-success {
-    fill: #72c140;
-  }
+    .icon-success {
+      fill: #72c140;
+    }
 
-  .icon-question {
-    fill: #f0af41;
-  }
+    .icon-question {
+      fill: #f0af41;
+    }
 
-  .icon-error {
-    fill: #e74c3c;
+    .icon-error {
+      fill: #e74c3c;
+    }
   }
 
   h2 {
@@ -59,7 +61,7 @@
   }
 }
 
-.dialog-footer {
+.dialog-footer ::ng-deep {
   display: flex;
   width: 100%;
   justify-content: flex-end;

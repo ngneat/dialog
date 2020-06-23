@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, ViewEncapsulation } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 
 import { DialogContentSymbol, DialogContentData } from '../types';
 import { DialogRef } from '../dialog-ref';
@@ -34,7 +34,6 @@ import { DialogRef } from '../dialog-ref';
     </div>
   `,
   styleUrls: ['./base.component.scss'],
-  encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BaseDialogComponent {
