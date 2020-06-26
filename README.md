@@ -12,7 +12,7 @@
 [![ngneat](https://img.shields.io/badge/@-ngneat-383636?style=flat-square&labelColor=8f68d4)](https://github.com/ngneat/)
 [![spectator](https://img.shields.io/badge/tested%20with-spectator-2196F3.svg?style=flat-square)]()
 
-> The Library Slogan
+> Simple to use, highly customizable, and powerful modal
 
 ## Features
 
@@ -228,6 +228,9 @@ Now we can access it inside our modal component or template, by using `ref.data`
 - `windowClass` - Add a custom class to the modal container
 - `width` - Set custom width
 - `height` - Set custom height
+- `container` - A custom element to which we append the modal
+- `vcr` - A custom `ViewContainerRef` to use
+- `data` - A `data` that will be passed to the modal template or component
 
 ```ts
 this.dialog.open(compOrTemplate, {
@@ -368,6 +371,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 
 <!-- markdownlint-enable -->
 <!-- prettier-ignore-end -->
+
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
