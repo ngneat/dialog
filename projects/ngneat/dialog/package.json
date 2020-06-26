@@ -1,17 +1,15 @@
 {
   "name": "@ngneat/dialog",
   "version": "1.0.0",
-  "peerDependencies": {
-    "@angular/common": "^9.1.11",
-    "@angular/core": "^9.1.11"
-  },
+  "description": "Simple to use, highly customizable, and powerful modal for Angular Apps",
   "dependencies": {
     "tslib": "^1.10.0"
   },
   "keywords": [
     "angular",
-    "angular 2",
-    "dialog"
+    "dialog",
+    "modal",
+    "angular modal"
   ],
   "license": "MIT",
   "publishConfig": {

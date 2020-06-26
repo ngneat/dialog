@@ -12,7 +12,7 @@
 [![ngneat](https://img.shields.io/badge/@-ngneat-383636?style=flat-square&labelColor=8f68d4)](https://github.com/ngneat/)
 [![spectator](https://img.shields.io/badge/tested%20with-spectator-2196F3.svg?style=flat-square)]()
 
-> Simple to use, highly customizable, and powerful modal
+> Simple to use, highly customizable, and powerful modal for Angular Applications
 
 ## Features
 
