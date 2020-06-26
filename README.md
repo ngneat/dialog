@@ -14,34 +14,262 @@
 
 > The Library Slogan
 
-Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid assumenda atque blanditiis cum delectus eligendi ipsam iste iure, maxime modi molestiae nihil obcaecati odit officiis pariatur quibusdam suscipit temporibus unde.
-Accusantium aliquid corporis cupiditate dolores eum exercitationem illo iure laborum minus nihil numquam odit officiis possimus quas quasi quos similique, temporibus veritatis? Exercitationem, iure magni nulla quo sapiente soluta. Esse?
-
 ## Features
 
-- ✅ One
-- ✅ Two
-- ✅ Three
+✅ TemplateRef/Component Support <br>
+✅ Dialog Guards Support <br>
+✅ Resizable <br>
+✅ Draggable <br>
+✅ Multiple Dialogs Support <br>
+✅ Built-in Confirm/Success/Error Dialogs <br>
+✅ Customizable
 
 ## Table of Contents
 
 - [Installation](#installation)
 - [Usage](#usage)
-- [FAQ](#faq)
+  - [Using a Component](#using-a-component)
+  - [DialogRef API](#DialogRef-API)
+  - [Using a TemplateRef](#using-a-TemplateRef)
+  - [Passing Data to Modal](#Passing-Data-to-Modal)
+- [Modal Options](#modal-options)
+- [Built-in Confirm/Success/Error Modals](#Built-in-modals)
+- [Custom Sizes](#Custom-Sizes)
+- [Styling](#styling)
 
 ## Installation
 
-### NPM
+`ng add @ngneat/dialog`
 
-`npm install @ngneat/dialog --save-dev`
+The command will import the `DialogModule.forRoot()` in your `AppModule`:
 
-### Yarn
+```ts
+import { DialogModule } from '@ngneat/dialog';
 
-`yarn add @ngneat/dialog --dev`
+@NgModule({
+  declarations: [AppComponent],
+  imports: [DialogModule.forRoot()],
+  bootstrap: [AppComponent]
+})
+export class AppModule {}
+```
 
 ## Usage
 
-Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid assumenda atque blanditiis cum delectus eligendi ipsam iste iure, maxime modi molestiae nihil obcaecati odit officiis pariatur quibusdam suscipit temporibus unde.
+### Using a Component
+
+First, we need to create the modal component:
+
+```ts
+import { DialogService, DialogRef } from '@ngneat/dialog';
+
+@Component({
+  template: `
+    <h1>Hello World</h1>
+    <button (click)="ref.close()">Close</button>
+  `
+  changeDetection: ChangeDetectionStrategy.OnPush
+})
+export class HelloWorldComponent {
+  constructor(public ref: DialogRef) {}
+}
+```
+
+Inside the component, you'll have access to a `DialogRef` provider. You can call its `close()` method to close the current modal. You can also pass `data` that'll be available for any `afterClosed$` subscribers.
+
+Now we can use the `DialogService` to open it:
+
+```ts
+import { DialogService } from '@ngneat/dialog';
+
+@Component({
+  template: `
+    <button (click)="open()">Open</button>
+  `
+})
+export class AppComponent implements OnInit {
+  constructor(private dialog: DialogService) {}
+
+  ngOnInit() {
+    const dialogRef = this.dialog.open(HelloWorldComponent);
+  }
+}
+```
+
+### DialogRef API
+
+The `DialogRef` instance exposes the following API:
+
+- `afterClosed$` - An observable that emits after the dialog closes:
+
+```ts
+const dialogRef = this.dialog.open(HelloWorldComponent);
+dialogRef.afterClosed$.subscribe(result => {
+  console.log(`After dialog has been closed ${result}`);
+});
+```
+
+- `backdropClick$` - An observable that emits when the user clicks on the backdrop:
+
+```ts
+const dialogRef = this.dialog.open(HelloWorldComponent);
+dialogRef.backdropClick$.subscribe(() => {
+  console.log('Backdrop has been clicked');
+});
+```
+
+- `beforeClose` - A guard that should returns a `boolean`, an `observable`, or a `promise` indicates wheter the modal can be closed:
+
+```ts
+dialogRef.beforeClose(result => dialogCanBeClosed);
+dialogRef.beforeClose(result => this.service.someMethod(result));
+```
+
+- `ref.data` - A reference to the `data` that is passed by the opening component:
+
+```ts
+import { DialogService, DialogRef } from '@ngneat/dialog';
+
+@Component({
+  template: `
+    <h1>{{ ref.data.title }}</h1>
+    <button (click)="ref.close()">Close</button>
+  `
+  changeDetection: ChangeDetectionStrategy.OnPush
+})
+export class HelloWorldComponent {
+  constructor(public ref: DialogRef) {}
+}
+```
+
+The library also provides the `dialogClose` directive helper that you can use to close the modal:
+
+```ts
+import { DialogService, DialogRef } from '@ngneat/dialog';
+
+@Component({
+  template: `
+    <h1>Hello World</h1>
+    <button dialogClose>Close</button>
+    <button [dialogClose]="result">Close with result</button>
+  `
+})
+export class HelloWorldComponent {}
+```
+
+### Using a TemplateRef
+
+Sometimes it can be overkill to create a component. In these cases, you can pass a reference to a `<ng-template>`:
+
+```ts
+import { DialogService } from '@ngneat/dialog';
+
+@Component({
+  selector: 'app-root',
+  template: `
+    <ng-template #modalTpl let-ref>
+      <h1>Hello World</h1>
+
+      <button (click)="ref.close()">Close</button>
+    </ng-template>
+
+    <button (click)="open(modalTpl)">Open</button>
+  `
+})
+export class AppComponent {
+  constructor(private dialog: DialogService) {}
+
+  open(tpl: TemplateRef<any>) {
+    this.dialog.open(tpl);
+  }
+}
+```
+
+Note that in this case, you can access the `ref` object by using the context property `$implicit`.
+
+### Passing Data to Modal
+
+Sometimes we need to pass data from the opening component to our modal component. In this cases, we can use the `data` property, and pass any data we need:
+
+```ts
+import { DialogService } from '@ngneat/dialog';
+
+@Component({
+  template: `
+    <button (click)="open()">Open</button>
+  `
+})
+export class AppComponent implements OnInit {
+  private id = '...';
+
+  constructor(private dialog: DialogService) {}
+
+  ngOnInit() {
+    const dialogRef = this.dialog.open(HelloWorldComponent, {
+      data: {
+        id: this.id
+      }
+    });
+  }
+}
+```
+
+Now we can access it inside our modal component or template, by using `ref.data` property.
+
+### Modal Options
+
+- `id` - The modal unique id. (defaults to random id)
+- `enableClose` - Whether a click on the backdrop should close the modal
+- `fullScreen` - Open the modal in full screen mode
+- `backdrop` - Wheteher to show the backdrop element
+- `resizable` - Whether the modal show be resizeable
+- `draggable` - Whether the modal show be draggable
+- `size` - Set the modal size. The available options are `sm`, `md`, and `lg`
+- `windowClass` - Add a custom class to the modal container
+- `width` - Set custom width
+- `height` - Set custom height
+
+```ts
+this.dialog.open(compOrTemplate, {
+  id: string,
+  enableClose: boolean,
+  fullScreen: boolean,
+  backdrop: boolean,
+  resizable: boolean,
+  draggable: boolean,
+  size: sm | md | lg,
+  windowClass: string,
+  width: string,
+  height: string
+});
+```
+
+## Built-in Modals
+
+The library provides a built-in dialogs for common cases where we need to show a confirmation, a success, or an error dialog:
+
+```ts
+this.dialog
+  .confirm({
+    title: 'Are you sure?',
+    body: 'The dialog body'
+  })
+  .afterClosed$.subscribe(confirmed => console.log(confirmed));
+
+this.dialog.success({
+  title: 'Hurray!',
+  body: 'The dialog body'
+});
+
+this.dialog.error({
+  title: 'Oh no',
+  body: 'The dialog body'
+});
+```
+
+The `content` type can be a `string`, `HTML`, or a `<ng-template>`.
+
+You can also change the default dialogs and use your own:
 
 ```ts
 import { DialogModule } from '@ngneat/dialog';
@@ -49,256 +277,54 @@ import { DialogModule } from '@ngneat/dialog';
 @NgModule({
   declarations: [AppComponent],
   imports: [
-    DialogModule.forRoot(
-      // You can set sizes
-      {
-        // sm is the dafault size when sizes are configured
-        sm: {
-          width: '300px',
-          height: '250px'
-        },
-        md: {
-          width: '60vw',
-          height: '60vh'
-        },
-        lg: {
-          // This's the size of fullScreen
-          width: '90vw',
-          height: '90vh'
-        }
+    DialogModule.forRoot({
+      success: {
+        component: AppSuccessDialog
+      },
+      confirm: {
+        component: AppConfirmDialog
+      },
+      error: {
+        component: AppErrorDialog
       }
-    )
+    })
   ],
   bootstrap: [AppComponent]
 })
 export class AppModule {}
 ```
 
-Now you can use it.
+## Custom Sizes
 
-## Examples
-
-You can use a TemplateRef or a Component:
-
-### Using a TemplateRef
+You can define the modal sizes globally by using the `sizes` options:
 
 ```ts
-import { Component, ViewChild, TemplateRef } from '@angular/core';
-import { DialogService } from '@ngneat/dialog';
+import { DialogModule } from '@ngneat/dialog';
 
-@Component({
-  selector: 'app-root',
-  template: `
-    <ng-template #template let-ref let-data="data">
-      <h1>{{ data.title }}</h1>
-      <p>{{ ref.data.content }}</p>
-
-      <button (click)="ref.close()">Close</button>
-    </ng-template>
-  `
-})
-export class AppComponent implements OnInit {
-  @ViewChild('template', { static: true })
-  tmpl: TemplateRef<any>;
-
-  constructor(private dialog: DialogService) {}
-
-  ngOnInit() {
-    this.dialog.open(this.tmpl, {
-      data: {
-        title: 'Example dialog',
-        content: 'This is a test dialog'
+@NgModule({
+  declarations: [AppComponent],
+  imports: [
+    DialogModule.forRoot({
+      sm: {
+        width: '300px',
+        height: '250px'
+      },
+      md: {
+        width: '60vw',
+        height: '60vh'
+      },
+      lg: {
+        width: '90vw',
+        height: '90vh'
       }
-    });
-  }
-}
-```
-
-### Using a Component
-
-```ts
-import { DialogService, DialogRef, DIALOG_DATA } from '@ngneat/dialog';
-
-@Component({
-  selector: 'app-dialog-test',
-  template: `
-    <h1>{{ ref.data.title }}</h1>
-
-    <p class="content">
-      {{ data.content }}
-    </p>
-
-      <div class="buttons">
-        <button (click)="ref.close()">Close</button>
-      </div>
-    </div>
-  `,
-  styles: [
-    `
-      h1 {
-        border-bottom: 1px solid black;
-        padding: 18px;
-      }
-
-      .content {
-        padding: 18px;
-        padding-top: 0;
-      }
-
-      .buttons {
-        text-align: right;
-      }
-    `
+    })
   ],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  bootstrap: [AppComponent]
 })
-export class TestComponent implements OnInit {
-  constructor(public ref: DialogRef, @Inject(DIALOG_DATA) public data: any) {}
-
-  ngOnInit() {
-    console.log(`Dialog with ID ${this.ref.id} opened`);
-  }
-}
-
-@Component({
-  selector: 'app-root',
-  template: ``
-})
-export class AppComponent implements OnInit {
-  constructor(private dialog: DialogService) {}
-
-  ngOnInit() {
-    this.dialog.open(TestComponent, {
-      data: {
-        title: 'Example dialog',
-        content: 'This is a test dialog'
-      }
-    });
-  }
-}
+export class AppModule {}
 ```
 
-### DialogRef
-
-When you open a dialog, it returns a `DialogRef`:
-
-```ts
-@Component({
-  selector: 'app-root',
-  template: ``
-})
-export class AppComponent implements OnInit {
-  constructor(private dialog: DialogService, private service: OneService) {}
-
-  ngOnInit() {
-    const dialogRef = this.dialog.open(TestComponent, {
-      data: {
-        title: 'Example dialog',
-        content: 'This is a test dialog'
-      }
-    });
-
-    let dialogCanBeClosed = false;
-
-    // Allow to close the dialog only after 5s
-    timer(5_000).subscribe({ next: () => (dialogCanBeClosed = true) });
-
-    dialogRef.beforeClose(() => {
-      console.log('You can abort to close the dialog');
-
-      return dialogCanBeClosed;
-    });
-
-    dialogRef.beforeClose(result => {
-      console.log('Or perform more complex checks');
-
-      return this.service.returnAnObservableOrPromise(result);
-    });
-
-    dialogRef.afterClosed$.subscribe({
-      next: () => console.log('After dialog has been closed')
-    });
-
-    dialogRef.backdropClick$.subscribe({
-      next: () => console.log('Backdrop has been clicked')
-    });
-  }
-}
-```
-
-### Some options
-
-#### container
-
-```ts
-@Component({
-  selector: 'app-root',
-  template: `
-    <div #container>The dialog will be placed here</div>
-  `
-})
-export class AppComponent implements OnInit {
-  @ViewChild('container', { static: true })
-  private container: ElementRef<HTMLDivElement>;
-
-  constructor(private dialog: DialogService) {}
-
-  ngOnInit() {
-    this.dialog.open(TestComponent, {
-      container: this.container,
-      data: {
-        title: 'Dialog into container',
-        content: 'This is a test dialog'
-      }
-    });
-  }
-}
-```
-
-#### backdrop
-
-```ts
-@Component({
-  selector: 'app-root',
-  template: ``
-})
-export class AppComponent implements OnInit {
-  constructor(private dialog: DialogService) {}
-
-  ngOnInit() {
-    this.dialog.open(TestComponent, {
-      // backdropClick$ will point to document.body
-      backdrop: false,
-      data: {
-        title: 'Dialog without backdrop',
-        content: 'This is a test dialog'
-      }
-    });
-  }
-}
-```
-
-#### draggable
-
-```ts
-@Component({
-  selector: 'app-root',
-  template: ``
-})
-export class AppComponent implements OnInit {
-  constructor(private dialog: DialogService) {}
-
-  ngOnInit() {
-    this.dialog.open(TestComponent, {
-      draggable: true,
-      data: {
-        title: 'Draggable dialog',
-        content: 'This is a test dialog'
-      }
-    });
-  }
-}
-```
+The default size is `md`.
 
 ## Styling
 
@@ -326,12 +352,6 @@ ngneat-dialog {
 }
 ```
 
-## FAQ
-
-## How to ...
-
-Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid assumenda atque blanditiis cum delectus eligendi ips
-
 ## Contributors ✨
 
 Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
@@ -339,9 +359,14 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
+<table>
+  <tr>
+    <td align="center"><a href="https://github.com/tonivj5"><img src="https://avatars2.githubusercontent.com/u/7110786?v=4" width="100px;" alt=""/><br /><sub><b>Toni Villena</b></sub></a><br /><a href="https://github.com/@ngneat/dialog/commits?author=tonivj5" title="Code">💻</a> <a href="#infra-tonivj5" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a> <a href="https://github.com/@ngneat/dialog/commits?author=tonivj5" title="Tests">⚠️</a></td>
+  </tr>
+</table>
+
 <!-- markdownlint-enable -->
 <!-- prettier-ignore-end -->
-
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
