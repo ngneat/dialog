@@ -1,7 +1,7 @@
 import { Component, ChangeDetectionStrategy, Inject } from '@angular/core';
 import { interval } from 'rxjs';
 
-import { DialogRef, DIALOG_DATA } from '@ngneat/dialog';
+import { DialogRef } from '@ngneat/dialog';
 import { FormControl } from '@angular/forms';
 
 interface DialogData {
@@ -17,7 +17,7 @@ interface DialogData {
     <div class="content">
       <p>This is a test dialog with a timer: {{ timer$ | async }}</p>
 
-      <div *ngIf="data?.withResult; else dontWantReturnAnything">
+      <div *ngIf="ref.data?.withResult; else dontWantReturnAnything">
         <label style="display: block">What is the message you want to return on close?</label>
         <input style="display: block; width: 100%;" [formControl]="message" />
       </div>
@@ -33,7 +33,7 @@ interface DialogData {
       </ng-template>
 
       <div class="buttons">
-        <button (click)="ref.close(message.value)">{{ data?.withResult ? 'Send your message' : 'Close' }}</button>
+        <button (click)="ref.close(message.value)">{{ ref.data?.withResult ? 'Send your message' : 'Close' }}</button>
       </div>
     </div>
   `,
@@ -61,5 +61,5 @@ export class TestDialogComponent {
 
   message = new FormControl('This dialog looks pretty cool 😎');
 
-  constructor(public ref: DialogRef<DialogData>, @Inject(DIALOG_DATA) public data: DialogData) {}
+  constructor(public ref: DialogRef<DialogData>) {}
 }

@@ -16,7 +16,7 @@ import { nanoid } from 'nanoid';
 import { DialogRef, InternalDialogRef } from './dialog-ref';
 import { DialogComponent } from './dialog.component';
 import { DialogConfig, GlobalDialogConfig } from './config';
-import { DIALOG_CONFIG, DIALOG_DATA, NODES_TO_INSERT, GLOBAL_DIALOG_CONFIG } from './tokens';
+import { DIALOG_CONFIG, NODES_TO_INSERT, GLOBAL_DIALOG_CONFIG } from './tokens';
 import {
   DialogContent,
   DialogContentSymbol,
@@ -111,8 +111,7 @@ export class DialogService {
 
   private openTemplate(template: TemplateRef<any>, { config, dialogRef }: OpenParams) {
     const context = {
-      $implicit: dialogRef,
-      data: config.data
+      $implicit: dialogRef
     };
 
     const view = config.vcr?.createEmbeddedView(template, context) || template.createEmbeddedView(context);
@@ -134,10 +133,6 @@ export class DialogService {
           {
             provide: DialogRef,
             useValue: dialogRef
-          },
-          {
-            provide: DIALOG_DATA,
-            useValue: config.data
           }
         ],
         parent: config.vcr?.injector || this.injector

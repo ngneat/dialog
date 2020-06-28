@@ -6,7 +6,7 @@ import { timer } from 'rxjs';
 import { mapTo } from 'rxjs/operators';
 
 import { DialogService } from './dialog.service';
-import { NODES_TO_INSERT, DIALOG_DATA, GLOBAL_DIALOG_CONFIG, DIALOG_CONFIG } from './tokens';
+import { NODES_TO_INSERT, GLOBAL_DIALOG_CONFIG, DIALOG_CONFIG } from './tokens';
 import { DialogConfig } from './config';
 import { InternalDialogRef, DialogRef } from './dialog-ref';
 import { DialogComponent } from './dialog.component';
@@ -144,8 +144,7 @@ describe('DialogService', () => {
       expect(dialog.ref).toBe(fakeTemplate);
       expect(fakeTemplate.createEmbeddedView).toHaveBeenCalledTimes(1);
       expect(fakeTemplate.createEmbeddedView).toHaveBeenCalledWith({
-        $implicit: dialog,
-        data: 'test'
+        $implicit: dialog
       });
     });
 
@@ -193,8 +192,7 @@ describe('DialogService', () => {
 
       expect(template.createEmbeddedView).not.toHaveBeenCalled();
       expect(otherVCR.createEmbeddedView).toHaveBeenCalledWith(template, {
-        $implicit: dialog,
-        data: 'test'
+        $implicit: dialog
       });
     });
   });
@@ -231,7 +229,6 @@ describe('DialogService', () => {
       ]: readonly Injector[][] = fakeFactory.factory.create.calls.allArgs();
       expect(fakeComponentInjector.get(DialogRef)).toBe(dialog);
       expect(fakeComponentInjector.get<any>(NODES_TO_INSERT, null)).toBeNull();
-      expect(fakeComponentInjector.get(DIALOG_DATA)).toBe('test');
 
       const fakeDialogView = fakeFactory.componentOne;
 

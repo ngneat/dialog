@@ -50,4 +50,3 @@ export const DIALOG_CONFIG = new InjectionToken<DialogConfig>('Dialog config tok
   })
 });
 export const NODES_TO_INSERT = new InjectionToken<ViewRef>('Nodes inserted into the dialog');
-export const DIALOG_DATA = new InjectionToken<any>('Dialog data');
