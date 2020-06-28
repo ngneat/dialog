@@ -15,9 +15,8 @@ describe('DialogComponent', () => {
     backdrop: true,
     enableClose: true,
     draggable: false,
-    fullScreen: false,
     resizable: false,
-    size: 'sm',
+    size: 'md',
     windowClass: undefined,
     sizes: undefined,
     width: undefined,
@@ -201,12 +200,6 @@ describe('DialogComponent', () => {
       expect(spectator.query('.ngneat-drag-marker')).toBeFalsy();
       expect(spectator.query(DialogDraggableDirective)).toBeFalsy();
     });
-  });
-
-  it('when fullScreen is enabled should set its class', () => {
-    spectator = createComponent(withConfig({ fullScreen: true }));
-
-    expect(spectator.query('.ngneat-dialog-fullscreen')).toBeTruthy();
   });
 
   it('when resizable is enabled should set its class', () => {

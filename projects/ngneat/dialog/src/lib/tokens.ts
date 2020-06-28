@@ -13,15 +13,31 @@ export const DIALOG_CONFIG = new InjectionToken<DialogConfig>('Dialog config tok
     backdrop: true,
     enableClose: true,
     draggable: false,
-    fullScreen: false,
     resizable: false,
-    size: 'sm',
+    size: 'md',
     windowClass: undefined,
-    sizes: undefined,
     width: undefined,
     height: undefined,
     data: undefined,
     vcr: undefined,
+    sizes: {
+      sm: {
+        height: '300px',
+        width: '300px'
+      },
+      md: {
+        height: '300px',
+        width: '300px'
+      },
+      lg: {
+        height: '300px',
+        width: '300px'
+      },
+      fullScreen: {
+        height: '100vh',
+        width: '100vw'
+      }
+    },
     success: {
       component: SuccessDialogComponent
     },

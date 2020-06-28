@@ -1,6 +1,6 @@
 import { ViewContainerRef, ElementRef, Type } from '@angular/core';
 
-type Sizes = 'sm' | 'md' | 'lg';
+type Sizes = 'sm' | 'md' | 'lg' | 'fullScreen';
 
 export interface GlobalDialogConfig {
   success: {
@@ -12,10 +12,10 @@ export interface GlobalDialogConfig {
   error: {
     component: Type<any>;
   };
-  sizes: Record<Sizes, { width: string; height: string }>;
+  sizes: Partial<Record<Sizes, { width: string; height: string }>>;
 }
 
-export interface DialogConfig<Data = any> extends GlobalDialogConfig {
+export interface DialogConfig<Data = any> extends Required<GlobalDialogConfig> {
   id: string;
   backdrop: boolean;
   container: ElementRef<Element> | Element;
@@ -25,7 +25,6 @@ export interface DialogConfig<Data = any> extends GlobalDialogConfig {
   width: string;
   height: string;
   draggable: boolean;
-  fullScreen: boolean;
   resizable: boolean;
   data: Data;
   vcr: ViewContainerRef;

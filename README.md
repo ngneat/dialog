@@ -223,7 +223,7 @@ Now we can access it inside our modal component or template, by using `ref.data`
 - `backdrop` - Wheteher to show the backdrop element
 - `resizable` - Whether the modal show be resizeable
 - `draggable` - Whether the modal show be draggable
-- `size` - Set the modal size. The available options are `sm`, `md`, and `lg`
+- `size` - Set the modal size. The available options are `sm`, `md`, `lg` and `fullScreen`
 - `windowClass` - Add a custom class to the modal container
 - `width` - Set custom width
 - `height` - Set custom height
@@ -235,7 +235,6 @@ Now we can access it inside our modal component or template, by using `ref.data`
 this.dialog.open(compOrTemplate, {
   id: string,
   enableClose: boolean,
-  fullScreen: boolean,
   backdrop: boolean,
   resizable: boolean,
   draggable: boolean,
@@ -307,17 +306,23 @@ import { DialogModule } from '@ngneat/dialog';
   declarations: [AppComponent],
   imports: [
     DialogModule.forRoot({
-      sm: {
-        width: '300px',
-        height: '250px'
-      },
-      md: {
-        width: '60vw',
-        height: '60vh'
-      },
-      lg: {
-        width: '90vw',
-        height: '90vh'
+      sizes: {
+        sm: {
+          width: '300px',
+          height: '250px'
+        },
+        md: {
+          width: '60vw',
+          height: '60vh'
+        },
+        lg: {
+          width: '90vw',
+          height: '90vh'
+        },
+        fullScreen: {
+          width: '100vw',
+          height: '100vh'
+        }
       }
     })
   ],
@@ -338,9 +343,6 @@ ngneat-dialog {
     // dialog container
     .ngneat-dialog-content {
       // dialgo content, where your component/template is placed
-      &.ngneat-dialog-fullscreen {
-        // when dialog is fullScreen
-      }
     }
   }
 

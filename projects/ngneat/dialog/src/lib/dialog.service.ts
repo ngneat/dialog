@@ -235,7 +235,12 @@ export class DialogService {
           cleanConfig[key] = value;
         }
         return cleanConfig;
-      }, {})
+      }, {}),
+      sizes: {
+        ...this.defaultConfig.sizes,
+        ...this.globalConfig?.sizes,
+        ...config?.sizes
+      }
     };
   }
 

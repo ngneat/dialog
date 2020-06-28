@@ -17,7 +17,6 @@ import { DIALOG_CONFIG, NODES_TO_INSERT } from './tokens';
         #dialog
         class="ngneat-dialog-content"
         [ngClass]="{
-          'ngneat-dialog-fullscreen': config.fullScreen,
           'ngneat-dialog-resizable': config.resizable
         }"
         [ngStyle]="styles"
@@ -45,8 +44,8 @@ import { DIALOG_CONFIG, NODES_TO_INSERT } from './tokens';
 })
 export class DialogComponent implements OnInit, OnDestroy {
   styles = {
-    width: this.config.width || this.config.fullScreen || this.config.sizes?.[this.config.size].width,
-    height: this.config.height || this.config.fullScreen || this.config.sizes?.[this.config.size].height
+    width: this.config.width || this.config.sizes?.[this.config.size].width,
+    height: this.config.height || this.config.sizes?.[this.config.size].height
   };
 
   @ViewChild('backdrop', { static: true })

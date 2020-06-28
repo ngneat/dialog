@@ -85,14 +85,8 @@ function addModuleToImports(options: Schema): Rule {
           width: '300px',
           height: '250px'
         },
-        md: {
-          width: '600px',
-          height: '250px'
-        },
-        lg: {
-          width: '800px',
-          height: '400px'
-        }
+        // You can customize the default sizes
+        // ...
       }
     })`;
 

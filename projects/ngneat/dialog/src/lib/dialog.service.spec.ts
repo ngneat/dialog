@@ -69,7 +69,8 @@ describe('DialogService', () => {
           sizes: {
             sm: 'other sm',
             md: 'other md',
-            lg: 'other lg'
+            lg: 'other lg',
+            fullScreen: 'other fullScreen'
           }
         }
       },
@@ -110,7 +111,8 @@ describe('DialogService', () => {
       jasmine.objectContaining({
         sm: 'other sm',
         md: 'other md',
-        lg: 'other lg'
+        lg: 'other lg',
+        fullScreen: 'other fullScreen'
       })
     );
   });
@@ -479,7 +481,6 @@ describe('DialogService', () => {
 
     const otherConfig: Partial<DialogConfig> = {
       draggable: true,
-      fullScreen: true,
       size: 'lg',
       width: '99999px',
       height: '-999999px',
@@ -489,13 +490,23 @@ describe('DialogService', () => {
       windowClass: 'test',
       sizes: {
         lg: 'test' as any
-      } as any
+      }
     };
 
     service.open(template, otherConfig);
 
     const [injector]: Injector[] = fakeFactory.factory.create.calls.mostRecent().args;
 
-    expect(injector.get(DIALOG_CONFIG)).toEqual(jasmine.objectContaining(otherConfig));
+    expect(injector.get(DIALOG_CONFIG)).toEqual(
+      jasmine.objectContaining({
+        ...otherConfig,
+        sizes: {
+          sm: 'other sm',
+          md: 'other md',
+          fullScreen: 'other fullScreen',
+          ...otherConfig.sizes
+        }
+      })
+    );
   });
 });
