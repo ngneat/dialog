@@ -220,7 +220,6 @@ Now we can access it inside our modal component or template, by using `ref.data`
 
 - `id` - The modal unique id. (defaults to random id)
 - `enableClose` - Whether a click on the backdrop should close the modal
-- `fullScreen` - Open the modal in full screen mode
 - `backdrop` - Wheteher to show the backdrop element
 - `resizable` - Whether the modal show be resizeable
 - `draggable` - Whether the modal show be draggable
@@ -240,7 +239,7 @@ this.dialog.open(compOrTemplate, {
   backdrop: boolean,
   resizable: boolean,
   draggable: boolean,
-  size: sm | md | lg,
+  size: sm | md | lg | fullScreen,
   windowClass: string,
   width: string,
   height: string
