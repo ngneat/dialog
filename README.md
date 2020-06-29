@@ -1,8 +1,10 @@
 <p align="center">
  <img width="20%" height="20%" src="./logo.svg">
 </p>
-
 <br />
+
+> A simple to use, highly customizable, and powerful modal for Angular Applications
+
 
 [![MIT](https://img.shields.io/packagist/l/doctrine/orm.svg?style=flat-square)]()
 [![commitizen](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg?style=flat-square)]()
@@ -11,8 +13,6 @@
 [![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors-)
 [![ngneat](https://img.shields.io/badge/@-ngneat-383636?style=flat-square&labelColor=8f68d4)](https://github.com/ngneat/)
 [![spectator](https://img.shields.io/badge/tested%20with-spectator-2196F3.svg?style=flat-square)]()
-
-> Simple to use, highly customizable, and powerful modal for Angular Applications
 
 ## Features
 
@@ -39,9 +39,11 @@
 
 ## Installation
 
+From your project folder, run:
+
 `ng add @ngneat/dialog`
 
-The command will import the `DialogModule.forRoot()` in your `AppModule`:
+This command will import the `DialogModule.forRoot()` in your `AppModule`:
 
 ```ts
 import { DialogModule } from '@ngneat/dialog';
@@ -58,7 +60,7 @@ export class AppModule {}
 
 ### Using a Component
 
-First, we need to create the modal component:
+First, create the component to be displayed in the modal:
 
 ```ts
 import { DialogService, DialogRef } from '@ngneat/dialog';
@@ -75,9 +77,9 @@ export class HelloWorldComponent {
 }
 ```
 
-Inside the component, you'll have access to a `DialogRef` provider. You can call its `close()` method to close the current modal. You can also pass `data` that'll be available for any `afterClosed$` subscribers.
+Inside the component, you'll have access to a `DialogRef` provider. You can call its `close()` method to close the current modal. You can also pass `data` that'll be available for any subscribers to `afterClosed$`.
 
-Now we can use the `DialogService` to open it:
+Now we can use the `DialogService` to open open the modal and display the component:
 
 ```ts
 import { DialogService } from '@ngneat/dialog';
@@ -100,7 +102,7 @@ export class AppComponent implements OnInit {
 
 The `DialogRef` instance exposes the following API:
 
-- `afterClosed$` - An observable that emits after the dialog closes:
+- `afterClosed$` - An observable that emits after the modal closes:
 
 ```ts
 const dialogRef = this.dialog.open(HelloWorldComponent);
@@ -109,7 +111,7 @@ dialogRef.afterClosed$.subscribe(result => {
 });
 ```
 
-- `backdropClick$` - An observable that emits when the user clicks on the backdrop:
+- `backdropClick$` - An observable that emits when the user clicks on the modal backdrop:
 
 ```ts
 const dialogRef = this.dialog.open(HelloWorldComponent);
@@ -118,14 +120,14 @@ dialogRef.backdropClick$.subscribe(() => {
 });
 ```
 
-- `beforeClose` - A guard that should returns a `boolean`, an `observable`, or a `promise` indicates wheter the modal can be closed:
+- `beforeClose` - A guard that should return a `boolean`, an `observable`, or a `promise` indicating whether the modal can be closed:
 
 ```ts
 dialogRef.beforeClose(result => dialogCanBeClosed);
 dialogRef.beforeClose(result => this.service.someMethod(result));
 ```
 
-- `ref.data` - A reference to the `data` that is passed by the opening component:
+- `ref.data` - A reference to the `data` that is passed by the component opened in the modal:
 
 ```ts
 import { DialogService, DialogRef } from '@ngneat/dialog';
@@ -142,7 +144,7 @@ export class HelloWorldComponent {
 }
 ```
 
-The library also provides the `dialogClose` directive helper that you can use to close the modal:
+The library also provides the `dialogClose` directive helper, that you can use to close the modal:
 
 ```ts
 import { DialogService, DialogRef } from '@ngneat/dialog';
@@ -159,7 +161,7 @@ export class HelloWorldComponent {}
 
 ### Using a TemplateRef
 
-Sometimes it can be overkill to create a component. In these cases, you can pass a reference to a `<ng-template>`:
+Sometimes it can be overkill to create a whole component. In these cases, you can pass a reference to an `<ng-template>`:
 
 ```ts
 import { DialogService } from '@ngneat/dialog';
@@ -185,11 +187,11 @@ export class AppComponent {
 }
 ```
 
-Note that in this case, you can access the `ref` object by using the context property `$implicit`.
+Note that in this case, you can access the `ref` object by using the `$implicit` context property.
 
-### Passing Data to Modal
+### Passing Data to the Modal Component
 
-Sometimes we need to pass data from the opening component to our modal component. In this cases, we can use the `data` property, and pass any data we need:
+Sometimes we need to pass data from the opening component to our modal component. In these cases, we can use the `data` property, and use it to pass any data we need:
 
 ```ts
 import { DialogService } from '@ngneat/dialog';
@@ -214,22 +216,22 @@ export class AppComponent implements OnInit {
 }
 ```
 
-Now we can access it inside our modal component or template, by using `ref.data` property.
+Now we can access it inside our modal component or template, by using the `ref.data` property.
 
 ### Modal Options
 
-- `id` - The modal unique id. (defaults to random id)
-- `enableClose` - Whether a click on the backdrop should close the modal
-- `backdrop` - Wheteher to show the backdrop element
-- `resizable` - Whether the modal show be resizeable
-- `draggable` - Whether the modal show be draggable
-- `size` - Set the modal size. The available options are `sm`, `md`, `lg` and `fullScreen`
-- `windowClass` - Add a custom class to the modal container
-- `width` - Set custom width
-- `height` - Set custom height
-- `container` - A custom element to which we append the modal
-- `vcr` - A custom `ViewContainerRef` to use
-- `data` - A `data` that will be passed to the modal template or component
+- `id` - The modal unique id (defaults to random id).
+- `enableClose` - Whether a click on the backdrop should close the modal (default is true).
+- `backdrop` - Whether to show the backdrop element (default is true).
+- `resizable` - Whether the modal show be resizeable (default is false).
+- `draggable` - Whether the modal show be draggable (default is false).
+- `size` - Set the modal size. The available options are `sm`, `md`, `lg` and `fullScreen` (default is `md`).
+- `windowClass` - Add a custom class to the modal container.
+- `width` - Set a custom width.
+- `height` - Set a custom height.
+- `container` - A custom element to which we append the modal (default is `body`).
+- `vcr` - A custom `ViewContainerRef` to use.
+- `data` - A `data` object that will be passed to the modal template or component.
 
 ```ts
 this.dialog.open(compOrTemplate, {
@@ -247,30 +249,30 @@ this.dialog.open(compOrTemplate, {
 
 ## Built-in Modals
 
-The library provides a built-in dialogs for common cases where we need to show a confirmation, a success, or an error dialog:
+The library provides built-in modals for common cases where we need to show a confirmation message, a success message, or an error message:
 
 ```ts
 this.dialog
   .confirm({
     title: 'Are you sure?',
-    body: 'The dialog body'
+    body: 'This action cannot be undone.'
   })
   .afterClosed$.subscribe(confirmed => console.log(confirmed));
 
 this.dialog.success({
   title: 'Hurray!',
-  body: 'The dialog body'
+  body: '<h1>You Made It!!!</h1>'
 });
 
 this.dialog.error({
   title: 'Oh no',
-  body: 'The dialog body'
+  body: tpl
 });
 ```
 
-The `content` type can be a `string`, `HTML`, or a `<ng-template>`.
+The `body` type can be a `string`, `HTML string`, or a `<ng-template>`.
 
-You can also change the default dialogs and use your own:
+You can also change the default dialogs, and use your own:
 
 ```ts
 import { DialogModule } from '@ngneat/dialog';
@@ -297,7 +299,7 @@ export class AppModule {}
 
 ## Custom Sizes
 
-You can define the modal sizes globally by using the `sizes` options:
+You can define the modal sizes globally by using the `sizes` option:
 
 ```ts
 import { DialogModule } from '@ngneat/dialog';
@@ -331,11 +333,9 @@ import { DialogModule } from '@ngneat/dialog';
 export class AppModule {}
 ```
 
-The default size is `md`.
-
 ## Styling
 
-You can customize the styles with this classes:
+You can customize the styles with these classes:
 
 ```scss
 ngneat-dialog {
@@ -367,12 +367,14 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
   <tr>
     <td align="center"><a href="https://github.com/tonivj5"><img src="https://avatars2.githubusercontent.com/u/7110786?v=4" width="100px;" alt=""/><br /><sub><b>Toni Villena</b></sub></a><br /><a href="https://github.com/@ngneat/dialog/commits?author=tonivj5" title="Code">💻</a> <a href="#infra-tonivj5" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a> <a href="https://github.com/@ngneat/dialog/commits?author=tonivj5" title="Tests">⚠️</a></td>
     <td align="center"><a href="https://www.netbasal.com/"><img src="https://avatars1.githubusercontent.com/u/6745730?v=4" width="100px;" alt=""/><br /><sub><b>Netanel Basal</b></sub></a><br /><a href="https://github.com/@ngneat/dialog/commits?author=NetanelBasal" title="Documentation">📖</a> <a href="#ideas-NetanelBasal" title="Ideas, Planning, & Feedback">🤔</a> <a href="https://github.com/@ngneat/dialog/commits?author=NetanelBasal" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/theblushingcrow"><img src="https://avatars3.githubusercontent.com/u/638818?v=4" width="100px;" alt=""/><br /><sub><b>Inbal Sinai</b></sub></a><br /><a href="https://github.com/@ngneat/dialog/commits?author=theblushingcrow" title="Documentation">📖</a></td>
   </tr>
 </table>
 
 <!-- markdownlint-enable -->
 <!-- prettier-ignore-end -->
-
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
+<br/>
+Logo made by <a href="https://www.flaticon.com/free-icon/business_1572571?term=dialog&page=2&position=44" title="itim2101">itim2101</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
