@@ -5,24 +5,23 @@
 
 > A simple to use, highly customizable, and powerful modal for Angular Applications
 
-
 [![MIT](https://img.shields.io/packagist/l/doctrine/orm.svg?style=flat-square)]()
 [![commitizen](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg?style=flat-square)]()
 [![PRs](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)]()
 [![styled with prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
-[![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-4-orange.svg?style=flat-square)](#contributors-)
 [![ngneat](https://img.shields.io/badge/@-ngneat-383636?style=flat-square&labelColor=8f68d4)](https://github.com/ngneat/)
 [![spectator](https://img.shields.io/badge/tested%20with-spectator-2196F3.svg?style=flat-square)]()
 
 ## Features
 
-✅  TemplateRef/Component Support <br>
-✅  Dialog Guards Support <br>
-✅  Resizable <br>
-✅  Draggable <br>
-✅  Multiple Dialogs Support <br>
-✅  Built-in Confirm/Success/Error Dialogs <br>
-✅  Customizable
+✅ TemplateRef/Component Support <br>
+✅ Dialog Guards Support <br>
+✅ Resizable <br>
+✅ Draggable <br>
+✅ Multiple Dialogs Support <br>
+✅ Built-in Confirm/Success/Error Dialogs <br>
+✅ Customizable
 
 ## Table of Contents
 
@@ -343,25 +342,22 @@ You can customize the styles with these classes:
 
 ```scss
 ngneat-dialog {
-.ngneat-dialog-backdrop {
-   // backdrop styles
-  .ngneat-dialog-content {
-    // dialog content, where your component/template is placed
-    .ngneat-drag-marker {
-      // draggable marker
+  .ngneat-dialog-backdrop {
+    // backdrop styles
+    .ngneat-dialog-content {
+      // dialog content, where your component/template is placed
+      .ngneat-drag-marker {
+        // draggable marker
+      }
+      .ngneat-close-dialog {
+        // 'X' icon for closing the dialog
+      }
+      .ngneat-dialog-primary-btn,
+      .ngneat-dialog-secondary-btn {
+        // the default dialogs action buttons
+      }
     }
-    .ngneat-close-dialog {
-      // 'X' icon for closing the dialog
-    }
-    .ngneat-dialog-primary-btn,
-    .ngneat-dialog-secondary-btn {
-      // the default dialogs action buttons
-    } 
   }
- }
-
-
-
 }
 ```
 
@@ -383,6 +379,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 
 <!-- markdownlint-enable -->
 <!-- prettier-ignore-end -->
+
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!

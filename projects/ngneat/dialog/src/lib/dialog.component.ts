@@ -69,7 +69,7 @@ export class DialogComponent implements OnInit, OnDestroy {
 
   constructor(
     @Inject(DOCUMENT)
-    private document: Document,
+    private document,
     { nativeElement: host }: ElementRef<HTMLElement>,
 
     public dialogRef: InternalDialogRef,
