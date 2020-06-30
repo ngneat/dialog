@@ -11,7 +11,6 @@
     "contributors:add": "all-contributors add",
     "hooks:pre-commit": "node hooks/pre-commit.js",
     "commit": "git-cz",
-    "release:first": "npm run release -- --first-release",
     "build:lib": "ng build @ngneat/dialog --prod && npm run schematics:build && npm run copy",
     "copy": "npm run schematics:copy && cp -r README.md dist/ngneat/dialog",
     "test:lib": "ng test @ngneat/dialog",
