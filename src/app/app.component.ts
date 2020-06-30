@@ -67,6 +67,7 @@ export class AppComponent {
     height: [''],
     width: [''],
     enableClose: [true],
+    closeButton: [true],
     backdrop: [true],
     resizable: [false],
     draggable: [false],

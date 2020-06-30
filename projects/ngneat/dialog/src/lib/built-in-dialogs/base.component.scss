@@ -1,7 +1,15 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
 .dialog {
   display: flex;
   align-items: center;
-  justify-content: center;
+  flex-direction: column;
+  justify-content: flex-start;
+  overflow: hidden;
 }
 
 .dialog-wrapper {
@@ -19,10 +27,12 @@
   align-items: center;
   width: 100%;
   margin: 0;
+  padding: 18px 40px 10px 30px;
 
   .dialog-icon ::ng-deep {
+    display: flex;
     .icon {
-      width: 30px;
+      width: 24px;
       margin-right: 10px;
     }
 
@@ -47,8 +57,11 @@
 }
 
 .dialog-content {
+  overflow: auto;
   position: relative;
   display: flex;
+  flex-direction: column;
+  padding: 0 30px 30px;
 
   p {
     font-size: 0.875rem;
@@ -65,6 +78,8 @@
   display: flex;
   width: 100%;
   justify-content: flex-end;
+  padding: 17px 30px 16px;
+  border-top: 1px solid #f1f2f5;
 
   .btn {
     margin-right: 10px;

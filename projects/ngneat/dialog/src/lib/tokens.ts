@@ -11,6 +11,7 @@ export const DIALOG_CONFIG = new InjectionToken<DialogConfig>('Dialog config tok
     id: undefined,
     container: inject(DOCUMENT).body,
     backdrop: true,
+    closeButton: true,
     enableClose: true,
     draggable: false,
     resizable: false,
@@ -34,8 +35,8 @@ export const DIALOG_CONFIG = new InjectionToken<DialogConfig>('Dialog config tok
         width: '300px'
       },
       fullScreen: {
-        height: '100vh',
-        width: '100vw'
+        height: '100%',
+        width: '100%'
       }
     },
     success: {

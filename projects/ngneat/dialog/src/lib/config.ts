@@ -18,6 +18,7 @@ export interface GlobalDialogConfig {
 export interface DialogConfig<Data = any> extends Required<GlobalDialogConfig> {
   id: string;
   backdrop: boolean;
+  closeButton: boolean;
   container: ElementRef<Element> | Element;
   windowClass: string;
   enableClose: boolean;

@@ -37,6 +37,8 @@ interface AttachOptions {
   config: DialogConfig;
 }
 
+const builtInDialogSize = { width: '400px', height: 'auto' };
+
 @Injectable({ providedIn: 'root' })
 export class DialogService {
   public dialogs: DialogRef[] = [];
@@ -57,7 +59,7 @@ export class DialogService {
     content: DialogContent | DialogTitleAndBody,
     config: Partial<DialogConfig<D>> = {}
   ): DialogRef<D, void, ComponentRef<any>> {
-    const configWithDefaults = this.mergeConfigWithContent(config, content);
+    const configWithDefaults = this.mergeConfigWithContent(this.applyDefaultSize<D>(config), content);
 
     return this.open(configWithDefaults.success.component, configWithDefaults);
   }
@@ -66,7 +68,7 @@ export class DialogService {
     content: DialogContent | DialogTitleAndBody,
     config: Partial<DialogConfig<D>> = {}
   ): DialogRef<D, boolean, ComponentRef<any>> {
-    const configWithDefaults = this.mergeConfigWithContent(config, content);
+    const configWithDefaults = this.mergeConfigWithContent(this.applyDefaultSize<D>(config), content);
 
     return this.open(configWithDefaults.confirm.component, configWithDefaults);
   }
@@ -75,7 +77,7 @@ export class DialogService {
     content: DialogContent | DialogTitleAndBody,
     config: Partial<DialogConfig<D>> = {}
   ): DialogRef<D, void, ComponentRef<any>> {
-    const configWithDefaults = this.mergeConfigWithContent(config, content);
+    const configWithDefaults = this.mergeConfigWithContent(this.applyDefaultSize<D>(config), content);
 
     return this.open(configWithDefaults.error.component, configWithDefaults);
   }
@@ -225,12 +227,7 @@ export class DialogService {
       ...this.defaultConfig,
       id: nanoid(),
       ...this.globalConfig,
-      ...Object.entries(config).reduce((cleanConfig, [key, value]) => {
-        if (value != null) {
-          cleanConfig[key] = value;
-        }
-        return cleanConfig;
-      }, {}),
+      ...this.cleanConfig(config),
       sizes: {
         ...this.defaultConfig.sizes,
         ...this.globalConfig?.sizes,
@@ -266,6 +263,15 @@ export class DialogService {
     };
   }
 
+  private cleanConfig(config: Partial<DialogConfig>) {
+    return Object.entries(config).reduce((cleanConfig, [key, value]) => {
+      if (value != null) {
+        cleanConfig[key] = value;
+      }
+      return cleanConfig;
+    }, {});
+  }
+
   private isTemplateOrString(content: DialogContent | DialogTitleAndBody): content is DialogContent {
     return content instanceof TemplateRef || typeof content === 'string';
   }
@@ -282,5 +288,13 @@ export class DialogService {
     if (this.dialogs.find(dialog => dialog.id === id)) {
       throw new Error(`Please, ID must be unique, but there is already a dialog created with this ID: ${id}`);
     }
+  }
+
+  private applyDefaultSize<D>(config: Partial<DialogConfig<D>>): Partial<DialogConfig<D>> {
+    return {
+      ...config,
+      width: config.width || builtInDialogSize.width,
+      height: config.height || builtInDialogSize.height
+    };
   }
 }

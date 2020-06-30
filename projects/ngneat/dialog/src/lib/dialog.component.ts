@@ -10,32 +10,36 @@ import { DIALOG_CONFIG, NODES_TO_INSERT } from './tokens';
 @Component({
   selector: 'ngneat-dialog',
   template: `
-    <div #backdrop [hidden]="!config.backdrop" [class.ngneat-dialog-backdrop]="config.backdrop"></div>
-
-    <div class="ngneat-dialog-container">
-      <div
-        #dialog
-        class="ngneat-dialog-content"
-        [ngClass]="{
-          'ngneat-dialog-resizable': config.resizable
-        }"
-        [ngStyle]="styles"
-      >
-        <svg
+    <div #backdrop class="ngneat-dialog-backdrop" [class.ngneat-dialog-backdrop-visible]="config.backdrop">
+      <div #dialog class="ngneat-dialog-content" [class.ngneat-dialog-resizable]="config.resizable" [ngStyle]="styles">
+        <div
           *ngIf="config.draggable"
           class="ngneat-drag-marker"
-          width="24px"
-          fill="currentColor"
-          viewBox="0 0 24 24"
           dialogDraggable
           [dialogDragEnabled]="true"
           [dialogDragTarget]="dialog"
-        >
-          <path
-            d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z"
-          ></path>
-          <path d="M0 0h24v24H0z" fill="none"></path>
-        </svg>
+        ></div>
+        <div class="ngneat-close-dialog" *ngIf="config.enableClose && config.closeButton" (click)="closeDialog()">
+          <svg
+            version="1.1"
+            id="Capa_1"
+            xmlns="http://www.w3.org/2000/svg"
+            xmlns:xlink="http://www.w3.org/1999/xlink"
+            x="0px"
+            y="0px"
+            viewBox="0 0 512.001 512.001"
+            xml:space="preserve"
+          >
+            <path
+              fill="currentColor"
+              d="M284.286,256.002L506.143,34.144c7.811-7.811,7.811-20.475,0-28.285c-7.811-7.81-20.475-7.811-28.285,0L256,227.717
+                L34.143,5.859c-7.811-7.811-20.475-7.811-28.285,0c-7.81,7.811-7.811,20.475,0,28.285l221.857,221.857L5.858,477.859
+                c-7.811,7.811-7.811,20.475,0,28.285c3.905,3.905,9.024,5.857,14.143,5.857c5.119,0,10.237-1.952,14.143-5.857L256,284.287
+                l221.857,221.857c3.905,3.905,9.024,5.857,14.143,5.857s10.237-1.952,14.143-5.857c7.811-7.811,7.811-20.475,0-28.285
+                L284.286,256.002z"
+            />
+          </svg>
+        </div>
       </div>
     </div>
   `,
@@ -44,8 +48,8 @@ import { DIALOG_CONFIG, NODES_TO_INSERT } from './tokens';
 })
 export class DialogComponent implements OnInit, OnDestroy {
   styles = {
-    width: this.config.width || this.config.sizes?.[this.config.size].width,
-    height: this.config.height || this.config.sizes?.[this.config.size].height
+    width: this.config.width || this.config.sizes?.[this.config.size]?.width,
+    height: this.config.height || this.config.sizes?.[this.config.size]?.height
   };
 
   @ViewChild('backdrop', { static: true })
@@ -84,22 +88,28 @@ export class DialogComponent implements OnInit, OnDestroy {
     const backdrop = this.config.backdrop ? this.backdrop.nativeElement : this.document.body;
     const dialogElement = this.dialogElement.nativeElement;
 
-    const backdropClick$ = fromEvent<MouseEvent>(backdrop, 'mouseup');
+    const backdropClick$ = fromEvent<MouseEvent>(backdrop, 'mouseup').pipe(
+      filter(({ target }) => !dialogElement.contains(target as Element))
+    );
 
     backdropClick$.pipe(takeUntil(this.destroy$)).subscribe(this.dialogRef.backdropClick$);
 
     if (this.config.enableClose) {
       merge(
         fromEvent<KeyboardEvent>(this.document.body, 'keyup').pipe(filter(({ key }) => key === 'Escape')),
-        backdropClick$.pipe(filter(({ target }) => !dialogElement.contains(target as Element)))
+        backdropClick$
       )
         .pipe(takeUntil(this.destroy$))
-        .subscribe({ next: () => this.dialogRef.close() });
+        .subscribe(() => this.closeDialog());
     }
 
     // `dialogElement` is resolvesd at this point
     // And here is where dialog finally will be placed
     dialogElement.append(...this.nodes);
+  }
+
+  closeDialog() {
+    this.dialogRef.close();
   }
 
   ngOnDestroy() {
