@@ -37,6 +37,8 @@ interface AttachOptions {
   config: DialogConfig;
 }
 
+const OVERFLOW_HIDDEN_CLASS = 'ngneat-dialog-hidden';
+
 @Injectable({ providedIn: 'root' })
 export class DialogService {
   public dialogs: DialogRef[] = [];
@@ -101,6 +103,7 @@ export class DialogService {
     this.throwIfIDAlreadyExists(configWithDefaults.id);
 
     this.dialogs.push(dialogRef);
+    document.body.classList.add(OVERFLOW_HIDDEN_CLASS);
 
     return componentOrTemplate instanceof TemplateRef
       ? this.openTemplate(componentOrTemplate, params)
@@ -178,6 +181,7 @@ export class DialogService {
 
       hooks.after.next(result);
       hooks.after.complete();
+      document.body.classList.remove(OVERFLOW_HIDDEN_CLASS);
     };
 
     dialogRef.mutate({
