@@ -11,7 +11,6 @@ import {
   ElementRef
 } from '@angular/core';
 import { Subject } from 'rxjs';
-import { nanoid } from 'nanoid';
 
 import { DialogRef, InternalDialogRef } from './dialog-ref';
 import { DialogComponent } from './dialog.component';
@@ -298,4 +297,10 @@ export class DialogService {
       size: config.size || 'sm'
     };
   }
+}
+
+function nanoid() {
+  return Math.random()
+    .toString(36)
+    .substring(7);
 }
