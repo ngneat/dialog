@@ -12,7 +12,7 @@ export interface GlobalDialogConfig {
   error: {
     component: Type<any>;
   };
-  sizes: Partial<Record<Sizes, { width: string; height: string }>>;
+  sizes: Partial<Record<Sizes, { width: string; height?: string; minHeight?: string }>>;
 }
 
 export interface DialogConfig<Data = any> extends Required<GlobalDialogConfig> {
@@ -25,6 +25,7 @@ export interface DialogConfig<Data = any> extends Required<GlobalDialogConfig> {
   size: Sizes;
   width: string;
   height: string;
+  minHeight: string;
   draggable: boolean;
   resizable: boolean;
   data: Data;

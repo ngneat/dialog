@@ -47,9 +47,11 @@ import { DIALOG_CONFIG, NODES_TO_INSERT } from './tokens';
   encapsulation: ViewEncapsulation.None
 })
 export class DialogComponent implements OnInit, OnDestroy {
+  private size = this.config.sizes?.[this.config.size];
   styles = {
-    width: this.config.width || this.config.sizes?.[this.config.size]?.width,
-    height: this.config.height || this.config.sizes?.[this.config.size]?.height
+    width: this.config.width || this.size?.width,
+    height: this.config.height || this.size?.height,
+    minHeight: this.config.minHeight || this.size?.minHeight
   };
 
   @ViewChild('backdrop', { static: true })

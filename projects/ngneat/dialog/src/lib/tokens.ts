@@ -19,20 +19,21 @@ export const DIALOG_CONFIG = new InjectionToken<DialogConfig>('Dialog config tok
     windowClass: undefined,
     width: undefined,
     height: undefined,
+    minHeight: undefined,
     data: undefined,
     vcr: undefined,
     sizes: {
       sm: {
-        height: '300px',
-        width: '300px'
+        minHeight: '200px',
+        width: '400px'
       },
       md: {
-        height: '300px',
-        width: '300px'
+        minHeight: '280px',
+        width: '560px'
       },
       lg: {
-        height: '300px',
-        width: '300px'
+        minHeight: '350px',
+        width: '800px'
       },
       fullScreen: {
         height: '100%',

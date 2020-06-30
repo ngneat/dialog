@@ -16,13 +16,13 @@
 
 ## Features
 
-✅ TemplateRef/Component Support <br>
-✅ Dialog Guards Support <br>
-✅ Resizable <br>
-✅ Draggable <br>
-✅ Multiple Dialogs Support <br>
-✅ Built-in Confirm/Success/Error Dialogs <br>
-✅ Customizable
+✅  TemplateRef/Component Support <br>
+✅  Dialog Guards Support <br>
+✅  Resizable <br>
+✅  Draggable <br>
+✅  Multiple Dialogs Support <br>
+✅  Built-in Confirm/Success/Error Dialogs <br>
+✅  Customizable
 
 ## Table of Contents
 
@@ -221,6 +221,7 @@ Now we can access it inside our modal component or template, by using the `ref.d
 ### Modal Options
 
 - `id` - The modal unique id (defaults to random id).
+- `closeButton` - Whether to display an 'X' for closing the modal (default is true).
 - `enableClose` - Whether a click on the backdrop should close the modal (default is true).
 - `backdrop` - Whether to show the backdrop element (default is true).
 - `resizable` - Whether the modal show be resizeable (default is false).
@@ -229,6 +230,7 @@ Now we can access it inside our modal component or template, by using the `ref.d
 - `windowClass` - Add a custom class to the modal container.
 - `width` - Set a custom width.
 - `height` - Set a custom height.
+- `minHeight` - Set a custom min-height.
 - `container` - A custom element to which we append the modal (default is `body`).
 - `vcr` - A custom `ViewContainerRef` to use.
 - `data` - A `data` object that will be passed to the modal template or component.
@@ -236,6 +238,7 @@ Now we can access it inside our modal component or template, by using the `ref.d
 ```ts
 this.dialog.open(compOrTemplate, {
   id: string,
+  closeButton: boolean,
   enableClose: boolean,
   backdrop: boolean,
   resizable: boolean,
@@ -243,7 +246,8 @@ this.dialog.open(compOrTemplate, {
   size: sm | md | lg | fullScreen,
   windowClass: string,
   width: string,
-  height: string
+  height: string,
+  minHeight: string
 });
 ```
 
@@ -311,7 +315,7 @@ import { DialogModule } from '@ngneat/dialog';
       sizes: {
         sm: {
           width: '300px',
-          height: '250px'
+          minHeight: '250px'
         },
         md: {
           width: '60vw',
@@ -339,20 +343,25 @@ You can customize the styles with these classes:
 
 ```scss
 ngneat-dialog {
-  .ngneat-dialog-container {
-    // dialog container
-    .ngneat-dialog-content {
-      // dialgo content, where your component/template is placed
+.ngneat-dialog-backdrop {
+   // backdrop styles
+  .ngneat-dialog-content {
+    // dialog content, where your component/template is placed
+    .ngneat-drag-marker {
+      // draggable marker
     }
+    .ngneat-close-dialog {
+      // 'X' icon for closing the dialog
+    }
+    .ngneat-dialog-primary-btn,
+    .ngneat-dialog-secondary-btn {
+      // the default dialogs action buttons
+    } 
   }
+ }
 
-  .ngneat-dialog-backdrop {
-    // backdrop styles
-  }
 
-  .ngneat-drag-marker {
-    // draggable marker
-  }
+
 }
 ```
 

@@ -17,7 +17,7 @@ import { BaseDialogComponent } from './base.component';
         </g>
       </svg>
 
-      <button class="btn btn-error" (click)="ref.close()">OK</button>
+      <button class="btn btn-error ngneat-dialog-primary-btn" (click)="ref.close()">OK</button>
     </ngneat-dialog-base>
   `,
   styleUrls: ['./host.dialog.scss'],

@@ -37,8 +37,6 @@ interface AttachOptions {
   config: DialogConfig;
 }
 
-const builtInDialogSize = { width: '400px', height: 'auto' };
-
 @Injectable({ providedIn: 'root' })
 export class DialogService {
   public dialogs: DialogRef[] = [];
@@ -293,8 +291,7 @@ export class DialogService {
   private applyDefaultSize<D>(config: Partial<DialogConfig<D>>): Partial<DialogConfig<D>> {
     return {
       ...config,
-      width: config.width || builtInDialogSize.width,
-      height: config.height || builtInDialogSize.height
+      size: config.size || 'sm'
     };
   }
 }
