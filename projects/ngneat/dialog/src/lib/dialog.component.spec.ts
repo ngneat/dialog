@@ -61,7 +61,7 @@ describe('DialogComponent', () => {
   });
 
   afterEach(() => {
-    const containerEls = document.querySelectorAll('.ngneat-dialog-container');
+    const containerEls = document.querySelectorAll('.ngneat-dialog-content');
     const backdropEls = document.querySelectorAll('.ngneat-dialog-backdrop');
 
     [...Array.from(containerEls), ...Array.from(backdropEls)].filter(Boolean).forEach(el => el.remove());
@@ -109,7 +109,7 @@ describe('DialogComponent', () => {
     beforeEach(() => (spectator = createComponent(withConfig({ backdrop: false }))));
 
     it('should create backdrop div, and set its class', () => {
-      expect(spectator.query('.ngneat-dialog-backdrop')).toBeFalsy();
+      expect(spectator.query('.ngneat-dialog-backdrop')).toBeHidden();
     });
 
     it('backdropClick$ should point to body', () => {
@@ -142,7 +142,7 @@ describe('DialogComponent', () => {
     it('on click backdrop', () => {
       const { close } = spectator.get(InternalDialogRef);
 
-      spectator.dispatchMouseEvent('.ngneat-dialog-container', 'mouseup');
+      spectator.dispatchMouseEvent('.ngneat-dialog-content', 'mouseup');
 
       expect(close).not.toHaveBeenCalled();
 
@@ -170,7 +170,7 @@ describe('DialogComponent', () => {
     it('on click backdrop', () => {
       const { close: close } = spectator.get(InternalDialogRef);
 
-      spectator.dispatchMouseEvent('.ngneat-dialog-container', 'mouseup');
+      spectator.dispatchMouseEvent('.ngneat-dialog-content', 'mouseup');
 
       expect(close).not.toHaveBeenCalled();
 

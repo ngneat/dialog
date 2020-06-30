@@ -10,7 +10,12 @@ import { DIALOG_CONFIG, NODES_TO_INSERT } from './tokens';
 @Component({
   selector: 'ngneat-dialog',
   template: `
-    <div #backdrop class="ngneat-dialog-backdrop" [class.ngneat-dialog-backdrop-visible]="config.backdrop">
+    <div
+      #backdrop
+      class="ngneat-dialog-backdrop"
+      [hidden]="!config.backdrop"
+      [class.ngneat-dialog-backdrop-visible]="config.backdrop"
+    >
       <div #dialog class="ngneat-dialog-content" [class.ngneat-dialog-resizable]="config.resizable" [ngStyle]="styles">
         <div
           *ngIf="config.draggable"

@@ -45,6 +45,7 @@
   width: 100vw;
   padding: 30px;
   z-index: 1050;
+  background: transparent;
 
   &.ngneat-dialog-backdrop-visible {
     background: rgba(55, 56, 58, 0.5);
