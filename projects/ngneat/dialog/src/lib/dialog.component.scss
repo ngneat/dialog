@@ -1,7 +1,7 @@
 .ngneat-dialog-content {
   display: flex;
   flex-direction: column;
-  overflow: auto;
+  overflow: hidden;
   position: relative;
   @keyframes dialog-open {
     0% {
