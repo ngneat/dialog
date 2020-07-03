@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.0.1](https://github.com/ngneat/dialog/compare/v1.0.0...v1.0.1) (2020-07-03)
+
+
+### Bug Fixes
+
+* 🐛 fix backdrop style ([78babff](https://github.com/ngneat/dialog/commit/78babfffc813fd58270b1b370b0ffa5a6c944014))
+
 ## 1.0.0 (2020-06-30)
 
 
