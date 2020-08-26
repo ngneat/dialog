@@ -5,6 +5,7 @@ import { tap, shareReplay } from 'rxjs/operators';
 import { DialogService, DialogConfig, DialogRef } from '@ngneat/dialog';
 
 import { TestDialogComponent } from './test-dialog.component';
+import { ConfirmationModalComponent } from './custom-confirm-dialog.component';
 
 @Component({
   selector: 'app-root',
@@ -121,6 +122,20 @@ export class AppComponent {
     (this.dialog[type](content, this.cleanConfig) as DialogRef).afterClosed$.subscribe({
       next: result => (this.result = result)
     });
+  }
+
+  openCustomConfirmDialog({ type, ...content }: { type: string; title: string; body: string }, config: DialogConfig) {
+    this.openBuiltIn(
+      { type: 'confirm', ...content },
+      {
+        ...config,
+        data: {
+          ...config.data,
+          hint: 'This is the body of my custom confirm...'
+        },
+        confirm: { component: ConfirmationModalComponent }
+      }
+    );
   }
 
   openDialogWithCustomContainer(
