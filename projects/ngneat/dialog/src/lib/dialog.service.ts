@@ -113,7 +113,8 @@ export class DialogService {
 
   private openTemplate(template: TemplateRef<any>, { config, dialogRef }: OpenParams) {
     const context = {
-      $implicit: dialogRef
+      $implicit: dialogRef,
+      config
     };
 
     const view = config.vcr?.createEmbeddedView(template, context) || template.createEmbeddedView(context);
@@ -135,6 +136,10 @@ export class DialogService {
           {
             provide: DialogRef,
             useValue: dialogRef
+          },
+          {
+            provide: DIALOG_CONFIG,
+            useValue: config
           }
         ],
         parent: config.vcr?.injector || this.injector

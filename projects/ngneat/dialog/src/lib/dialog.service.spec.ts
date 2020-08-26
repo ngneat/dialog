@@ -138,13 +138,15 @@ describe('DialogService', () => {
     it('should instanciate template', () => {
       const fakeTemplate = new FakeTemplateRef();
       const dialog = service.open(fakeTemplate, {
-        data: 'test'
+        data: 'test',
+        windowClass: 'custom-template'
       });
 
       expect(dialog.ref).toBe(fakeTemplate);
       expect(fakeTemplate.createEmbeddedView).toHaveBeenCalledTimes(1);
       expect(fakeTemplate.createEmbeddedView).toHaveBeenCalledWith({
-        $implicit: dialog
+        $implicit: dialog,
+        config: jasmine.objectContaining({ windowClass: 'custom-template' })
       });
     });
 
@@ -187,12 +189,14 @@ describe('DialogService', () => {
 
       const dialog = service.open(template, {
         vcr: otherVCR as any,
-        data: 'test'
+        data: 'test',
+        windowClass: 'custom-template'
       });
 
       expect(template.createEmbeddedView).not.toHaveBeenCalled();
       expect(otherVCR.createEmbeddedView).toHaveBeenCalledWith(template, {
-        $implicit: dialog
+        $implicit: dialog,
+        config: jasmine.objectContaining({ windowClass: 'custom-template' })
       });
     });
   });
@@ -201,6 +205,14 @@ describe('DialogService', () => {
     class FakeComponent {}
 
     it('should open it', () => expect(service.open(FakeComponent)).toBeTruthy());
+
+    it('should be able of get config', () => {
+      service.open(FakeComponent, { windowClass: 'custom-config' });
+
+      const [[fakeComponentInjector]]: readonly Injector[][] = fakeFactory.factory.create.calls.allArgs();
+
+      expect(fakeComponentInjector.get(DIALOG_CONFIG).windowClass).toBe('custom-config');
+    });
 
     it('should add dialog to dialogs', () => {
       const dialog = service.open(FakeComponent);

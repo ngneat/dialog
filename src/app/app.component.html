@@ -1,8 +1,9 @@
-<ng-template #template let-ref>
+<ng-template #template let-ref let-tplConfig="config">
   <div class="dialog">
     <h2>Test dialog using a custom template</h2>
     <p>This dialog has been opened with this custom config</p>
     <pre style="background-color: gainsboro">{{ cleanConfig | json }}</pre>
+    <small>NOTE: You can get the current config of the dialog using the <b>config</b> template variable</small>
 
     <button dialogClose>Click me to close the dialog 😉</button>
   </div>
@@ -83,6 +84,7 @@
       <label>Type</label>
       <select formControlName="type">
         <option value="confirm" default>Confirm</option>
+        <option value="custom" default>Custom bootstrap confirm</option>
         <option value="success" default>Success</option>
         <option value="error" default>Error</option>
       </select>
@@ -92,7 +94,15 @@
     <p *ngIf="result === false">You haven't confirmed 👎</p>
   </form>
 
-  <button (click)="openBuiltIn(builtIn.value, config.value)">Open the built-in dialog</button>
+  <button
+    (click)="
+      builtIn.value.type === 'custom'
+        ? openCustomConfirmDialog(builtIn.value, config.value)
+        : openBuiltIn(builtIn.value, config.value)
+    "
+  >
+    Open the built-in dialog
+  </button>
 </div>
 
 <div class="block note">
