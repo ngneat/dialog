@@ -13,6 +13,8 @@ export interface GlobalDialogConfig {
     component: Type<any>;
   };
   sizes: Partial<Record<Sizes, { width: string; height?: string; minHeight?: string }>>;
+  container: ElementRef<Element> | Element;
+  windowClass: string;
 }
 
 export interface DialogConfig<Data = any> extends Required<GlobalDialogConfig> {

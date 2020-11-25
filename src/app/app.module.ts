@@ -9,7 +9,13 @@ import { ConfirmationModalComponent } from './custom-confirm-dialog.component';
 
 @NgModule({
   declarations: [AppComponent, TestDialogComponent, ConfirmationModalComponent],
-  imports: [BrowserModule, ReactiveFormsModule, DialogModule.forRoot()],
+  imports: [
+    BrowserModule,
+    ReactiveFormsModule,
+    DialogModule.forRoot({
+      container: window.parent.document.body
+    })
+  ],
   providers: [],
   bootstrap: [AppComponent]
 })

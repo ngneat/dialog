@@ -15,7 +15,7 @@ import { Subject } from 'rxjs';
 import { DialogRef, InternalDialogRef } from './dialog-ref';
 import { DialogComponent } from './dialog.component';
 import { DialogConfig, GlobalDialogConfig } from './config';
-import { DIALOG_CONFIG, NODES_TO_INSERT, GLOBAL_DIALOG_CONFIG } from './tokens';
+import { DIALOG_CONFIG, NODES_TO_INSERT, GLOBAL_DIALOG_CONFIG, DIALOG_DOCUMENT_REF } from './tokens';
 import {
   DialogContent,
   DialogContentSymbol,
@@ -48,6 +48,7 @@ export class DialogService {
     private appRef: ApplicationRef,
     private componentFactoryResolver: ComponentFactoryResolver,
     private injector: Injector,
+    @Inject(DIALOG_DOCUMENT_REF) private document,
     @Inject(DIALOG_CONFIG)
     private defaultConfig: DialogConfig,
     @Inject(GLOBAL_DIALOG_CONFIG)
@@ -102,7 +103,7 @@ export class DialogService {
     this.throwIfIDAlreadyExists(configWithDefaults.id);
 
     this.dialogs.push(dialogRef);
-    document.body.classList.add(OVERFLOW_HIDDEN_CLASS);
+    this.document.body.classList.add(OVERFLOW_HIDDEN_CLASS);
 
     return componentOrTemplate instanceof TemplateRef
       ? this.openTemplate(componentOrTemplate, params)
@@ -185,7 +186,7 @@ export class DialogService {
 
       hooks.after.next(result);
       hooks.after.complete();
-      document.body.classList.remove(OVERFLOW_HIDDEN_CLASS);
+      this.document.body.classList.remove(OVERFLOW_HIDDEN_CLASS);
     };
 
     dialogRef.mutate({

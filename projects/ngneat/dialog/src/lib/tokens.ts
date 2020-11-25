@@ -4,12 +4,23 @@ import { DOCUMENT } from '@angular/common';
 import { DialogConfig, GlobalDialogConfig } from './config';
 import { SuccessDialogComponent, ConfirmDialogComponent, ErrorDialogComponent } from './built-in-dialogs';
 
+export const DIALOG_DOCUMENT_REF = new InjectionToken(
+  'A reference to the document. Useful for iframes that want appends to parent window',
+  {
+    providedIn: 'root',
+    factory() {
+      return inject(DOCUMENT);
+    }
+  }
+);
+
 export const GLOBAL_DIALOG_CONFIG = new InjectionToken<Partial<GlobalDialogConfig>>('Global dialog config token');
+
 export const DIALOG_CONFIG = new InjectionToken<DialogConfig>('Dialog config token', {
   providedIn: 'root',
   factory: () => ({
     id: undefined,
-    container: inject(DOCUMENT).body,
+    container: inject(DIALOG_DOCUMENT_REF).body,
     backdrop: true,
     closeButton: true,
     enableClose: true,

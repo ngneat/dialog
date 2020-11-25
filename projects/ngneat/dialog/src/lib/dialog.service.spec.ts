@@ -6,7 +6,7 @@ import { timer } from 'rxjs';
 import { mapTo } from 'rxjs/operators';
 
 import { DialogService } from './dialog.service';
-import { NODES_TO_INSERT, GLOBAL_DIALOG_CONFIG, DIALOG_CONFIG } from './tokens';
+import { NODES_TO_INSERT, GLOBAL_DIALOG_CONFIG, DIALOG_CONFIG, DIALOG_DOCUMENT_REF } from './tokens';
 import { DialogConfig } from './config';
 import { InternalDialogRef, DialogRef } from './dialog-ref';
 import { DialogComponent } from './dialog.component';
@@ -79,11 +79,15 @@ describe('DialogService', () => {
         useClass: FakeFactoryResolver
       },
       {
-        provide: DOCUMENT,
+        provide: DIALOG_DOCUMENT_REF,
         useFactory: () => ({
           body: {
             appendChild: jasmine.createSpy(),
-            removeChild: jasmine.createSpy()
+            removeChild: jasmine.createSpy(),
+            classList: {
+              add: jasmine.createSpy(),
+              remove: jasmine.createSpy()
+            }
           }
         })
       }
@@ -95,7 +99,7 @@ describe('DialogService', () => {
     service = spectator.service;
     fakeAppRef = spectator.get(ApplicationRef);
     fakeFactory = spectator.get<FakeFactoryResolver>(ComponentFactoryResolver);
-    fakeDocument = spectator.get<any>(DOCUMENT);
+    fakeDocument = spectator.get<any>(DIALOG_DOCUMENT_REF);
   });
 
   it('should create it', () => {
