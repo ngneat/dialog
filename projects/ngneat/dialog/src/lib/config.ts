@@ -15,6 +15,8 @@ export interface GlobalDialogConfig {
   sizes: Partial<Record<Sizes, { width: string; height?: string; minHeight?: string }>>;
   container: ElementRef<Element> | Element;
   windowClass: string;
+  onOpen: () => void | undefined;
+  onClose: () => void | undefined;
 }
 
 export interface DialogConfig<Data = any> extends Required<GlobalDialogConfig> {

@@ -13,7 +13,12 @@ import { ConfirmationModalComponent } from './custom-confirm-dialog.component';
     BrowserModule,
     ReactiveFormsModule,
     DialogModule.forRoot({
-      container: window.parent.document.body
+      onOpen() {
+        console.log('open');
+      },
+      onClose() {
+        console.log('close');
+      }
     })
   ],
   providers: [],

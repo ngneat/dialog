@@ -90,6 +90,7 @@ export class DialogService {
   open<D, R = any>(template: Type<any> | TemplateRef<any>, config?: Partial<DialogConfig<D>>): DialogRef<D, R>;
   open(componentOrTemplate: Type<any> | TemplateRef<any>, config: Partial<DialogConfig> = {}): DialogRef {
     const configWithDefaults = this.mergeConfig(config);
+    configWithDefaults.onOpen?.();
     const dialogRef = new InternalDialogRef({
       id: configWithDefaults.id,
       data: configWithDefaults.data,
@@ -187,6 +188,7 @@ export class DialogService {
       hooks.after.next(result);
       hooks.after.complete();
       this.document.body.classList.remove(OVERFLOW_HIDDEN_CLASS);
+      this.globalConfig.onClose?.();
     };
 
     dialogRef.mutate({

@@ -59,7 +59,9 @@ export const DIALOG_CONFIG = new InjectionToken<DialogConfig>('Dialog config tok
     },
     error: {
       component: ErrorDialogComponent
-    }
+    },
+    onClose: undefined,
+    onOpen: undefined
   })
 });
 export const NODES_TO_INSERT = new InjectionToken<ViewRef>('Nodes inserted into the dialog');
