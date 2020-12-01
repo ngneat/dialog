@@ -166,6 +166,7 @@ export class DialogService {
     };
 
     const onClose = (result: unknown) => {
+      this.globalConfig.onClose?.();
       this.dialogs = this.dialogs.filter(({ id }) => dialogRef.id !== id);
 
       container.removeChild(dialog.location.nativeElement);
@@ -188,7 +189,6 @@ export class DialogService {
       hooks.after.next(result);
       hooks.after.complete();
       this.document.body.classList.remove(OVERFLOW_HIDDEN_CLASS);
-      this.globalConfig.onClose?.();
     };
 
     dialogRef.mutate({
