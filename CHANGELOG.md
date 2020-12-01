@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.2.1](https://github.com/ngneat/dialog/compare/v1.2.0...v1.2.1) (2020-12-01)
+
+
+### Bug Fixes
+
+* 🐛 fix position ([88442d7](https://github.com/ngneat/dialog/commit/88442d756aeb784b29ed29df0a5977c0fe012eb9))
+
 ## [1.1.0](https://github.com/ngneat/dialog/compare/v1.1.1...v1.1.0) (2020-12-01)
 
 
