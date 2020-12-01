@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.1.0](https://github.com/ngneat/dialog/compare/v1.1.1...v1.1.0) (2020-12-01)
+
+
+### Features
+
+* 🎸 add onopen and onclose to global config ([cfc68ba](https://github.com/ngneat/dialog/commit/cfc68ba18285a49c1771174f33dc3f2a507b645b))
+
+
+### Bug Fixes
+
+* 🐛 change modal animation ([65c6d85](https://github.com/ngneat/dialog/commit/65c6d85f9a61f72fddede5b2c93c188738617277))
+
 ### [1.0.3](https://github.com/ngneat/dialog/compare/v1.0.2...v1.0.3) (2020-11-05)
 
 
