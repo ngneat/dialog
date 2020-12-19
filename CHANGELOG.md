@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.0.4](https://github.com/ngneat/dialog/compare/v1.1.1...v1.0.4) (2020-12-19)
+
+
+### Bug Fixes
+
+* provide default value in forRoot() method ([4ccc22d](https://github.com/ngneat/dialog/commit/4ccc22d025dc6060272af7556f29dd84b7aac005))
+
 ### [1.0.3](https://github.com/ngneat/dialog/compare/v1.0.2...v1.0.3) (2020-11-05)
 
 
