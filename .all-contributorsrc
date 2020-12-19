@@ -50,6 +50,15 @@
         "code",
         "doc"
       ]
+    },
+    {
+      "login": "beeman",
+      "name": "beeman",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/36491?v=4",
+      "profile": "https://github.com/beeman",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7
