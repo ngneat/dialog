@@ -1,5 +1,4 @@
 import { ApplicationRef, ComponentFactoryResolver, TemplateRef, Injector, InjectionToken } from '@angular/core';
-import { DOCUMENT } from '@angular/common';
 import { fakeAsync, tick } from '@angular/core/testing';
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator';
 import { timer } from 'rxjs';
@@ -16,7 +15,7 @@ class FakeFactoryResolver extends ComponentFactoryResolver {
     destroy: jasmine.createSpy(),
     hostView: {
       destroy: jasmine.createSpy(),
-      rootNodes: 'nodes 1'
+      rootNodes: [document.createTextNode('nodes 1')]
     },
     location: {
       nativeElement: 'fake 1'
@@ -27,7 +26,7 @@ class FakeFactoryResolver extends ComponentFactoryResolver {
     destroy: jasmine.createSpy(),
     hostView: {
       destroy: jasmine.createSpy(),
-      rootNodes: 'nodes 2'
+      rootNodes: [document.createTextNode('nodes 2')]
     },
     location: {
       nativeElement: 'fake 2'
@@ -45,7 +44,7 @@ class FakeTemplateRef extends TemplateRef<any> {
   elementRef = null;
 
   view = {
-    rootNodes: 'template nodes',
+    rootNodes: [document.createTextNode('template'), document.createTextNode(' nodes')],
     destroy: jasmine.createSpy()
   };
 
