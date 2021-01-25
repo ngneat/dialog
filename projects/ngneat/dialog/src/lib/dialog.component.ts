@@ -84,7 +84,7 @@ export class DialogComponent implements OnInit, OnDestroy {
     // something from the dialog component
     // for example, if `[dialogClose]` is used into a directive,
     // DialogRef will be getted from DialogService instead of DI
-    host.append(...this.nodes);
+    this.nodes.forEach(node => host.appendChild(node));
 
     if (config.windowClass) {
       host.classList.add(config.windowClass);
@@ -112,7 +112,7 @@ export class DialogComponent implements OnInit, OnDestroy {
 
     // `dialogElement` is resolvesd at this point
     // And here is where dialog finally will be placed
-    dialogElement.append(...this.nodes);
+    this.nodes.forEach(node => dialogElement.appendChild(node));
   }
 
   closeDialog() {

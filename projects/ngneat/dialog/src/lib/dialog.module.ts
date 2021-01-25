@@ -22,7 +22,7 @@ const BuiltIns = [BaseDialogComponent, SuccessDialogComponent, ConfirmDialogComp
   exports: [DialogComponent, DialogCloseDirective]
 })
 export class DialogModule {
-  static forRoot(config?: Partial<GlobalDialogConfig>): ModuleWithProviders<DialogModule> {
+  static forRoot(config: Partial<GlobalDialogConfig> = {}): ModuleWithProviders<DialogModule> {
     return {
       ngModule: DialogModule,
       providers: [
