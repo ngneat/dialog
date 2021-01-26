@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.4.0](https://github.com/ngneat/dialog/compare/v1.3.0...v1.4.0) (2021-01-26)
+
+
+### Features
+
+* 🎸 support custom sizes ([66e90ad](https://github.com/ngneat/dialog/commit/66e90ad9a35247615b99489a2022ab18719b423d))
+
+
+### Bug Fixes
+
+* 🐛 set deafult modal size to md ([fc9c79a](https://github.com/ngneat/dialog/commit/fc9c79ac8e8b1113750dee5676727f017356678d))
+
 ## [1.3.0](https://github.com/ngneat/dialog/compare/v1.0.4...v1.3.0) (2021-01-26)
 
 
