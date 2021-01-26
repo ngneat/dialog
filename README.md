@@ -15,13 +15,13 @@
 
 ## Features
 
-✅ TemplateRef/Component Support <br>
-✅ Dialog Guards Support <br>
-✅ Resizable <br>
-✅ Draggable <br>
-✅ Multiple Dialogs Support <br>
-✅ Built-in Confirm/Success/Error Dialogs <br>
-✅ Customizable
+✅ &nbsp;TemplateRef/Component Support  
+✅ &nbsp;Dialog Guards Support  
+✅ &nbsp;Resizable  
+✅ &nbsp;Draggable  
+✅ &nbsp;Multiple Dialogs Support  
+✅ &nbsp;Built-in Confirm/Success/Error Dialogs  
+✅ &nbsp;Customizable
 
 ## Table of Contents
 
@@ -225,11 +225,12 @@ Now we can access it inside our modal component or template, by using the `ref.d
 - `backdrop` - Whether to show the backdrop element (default is true).
 - `resizable` - Whether the modal show be resizeable (default is false).
 - `draggable` - Whether the modal show be draggable (default is false).
-- `size` - Set the modal size. The available options are `sm`, `md`, `lg` and `fullScreen` (default is `md`).
+- `size` - Set the modal size according to your global [custom sizes](#custom-sizes) (default is `md`).
 - `windowClass` - Add a custom class to the modal container.
-- `width` - Set a custom width.
-- `height` - Set a custom height.
-- `minHeight` - Set a custom min-height.
+- `width` - Set a custom width (default unit is `px`).
+- `height` - Set a custom height (default unit is `px`).
+- `minHeight` - Set a custom min-height (default unit is `px`).
+- `maxHeight` - Set a custom max-height (default unit is `px`).
 - `container` - A custom element to which we append the modal (default is `body`).
 - `vcr` - A custom `ViewContainerRef` to use.
 - `data` - A `data` object that will be passed to the modal template or component.
@@ -242,11 +243,12 @@ this.dialog.open(compOrTemplate, {
   backdrop: boolean,
   resizable: boolean,
   draggable: boolean,
-  size: sm | md | lg | fullScreen,
+  size: sm | md | lg | fullScreen | string,
   windowClass: string,
-  width: string,
-  height: string,
-  minHeight: string
+  width: string | number,
+  height: string | number,
+  minHeight: string | number,
+  maxHeight: string | number
 });
 ```
 
@@ -313,8 +315,8 @@ import { DialogModule } from '@ngneat/dialog';
     DialogModule.forRoot({
       sizes: {
         sm: {
-          width: '300px',
-          minHeight: '250px'
+          width: 300, // 300px
+          minHeight: 250 // 250px
         },
         md: {
           width: '60vw',
@@ -327,6 +329,10 @@ import { DialogModule } from '@ngneat/dialog';
         fullScreen: {
           width: '100vw',
           height: '100vh'
+        },
+        stretch: {
+          minHeight: 500,
+          maxHeight: '85%'
         }
       }
     })
