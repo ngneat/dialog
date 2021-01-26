@@ -2,6 +2,37 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.3.0](https://github.com/ngneat/dialog/compare/v1.0.4...v1.3.0) (2021-01-26)
+
+
+### Features
+
+* 🎸 add max height to config ([d2f57ea](https://github.com/ngneat/dialog/commit/d2f57eabf6e6844c727b0ce81e2008c0cf93dd6b))
+
+
+### Bug Fixes
+
+* **dialog-component:** use appendChild instead of append (IE) ([e4e56e2](https://github.com/ngneat/dialog/commit/e4e56e2b56b71b7656eb81d2b0e050cb762a24a7))
+
+### [1.2.1](https://github.com/ngneat/dialog/compare/v1.2.0...v1.2.1) (2020-12-01)
+
+
+### Bug Fixes
+
+* 🐛 fix position ([88442d7](https://github.com/ngneat/dialog/commit/88442d756aeb784b29ed29df0a5977c0fe012eb9))
+
+## [1.2.0](https://github.com/ngneat/dialog/compare/v1.1.0...v1.2.0) (2020-12-01)
+
+
+### Features
+
+* 🎸 add onopen and onclose to global config ([cfc68ba](https://github.com/ngneat/dialog/commit/cfc68ba18285a49c1771174f33dc3f2a507b645b))
+
+
+### Bug Fixes
+
+* 🐛 change modal animation ([65c6d85](https://github.com/ngneat/dialog/commit/65c6d85f9a61f72fddede5b2c93c188738617277))
+
 ### [1.0.4](https://github.com/ngneat/dialog/compare/v1.1.1...v1.0.4) (2020-12-19)
 
 ### Bug Fixes
