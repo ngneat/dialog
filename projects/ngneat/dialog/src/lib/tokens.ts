@@ -31,6 +31,7 @@ export const DIALOG_CONFIG = new InjectionToken<DialogConfig>('Dialog config tok
     width: undefined,
     height: undefined,
     minHeight: undefined,
+    maxHeight: undefined,
     data: undefined,
     vcr: undefined,
     sizes: {
