@@ -6,6 +6,7 @@ import { filter, takeUntil } from 'rxjs/operators';
 import { InternalDialogRef } from './dialog-ref';
 import { DialogConfig } from './config';
 import { DIALOG_CONFIG, NODES_TO_INSERT } from './tokens';
+import { coerceCssPixelValue } from './dialog.utils';
 
 @Component({
   selector: 'ngneat-dialog',
@@ -54,9 +55,10 @@ import { DIALOG_CONFIG, NODES_TO_INSERT } from './tokens';
 export class DialogComponent implements OnInit, OnDestroy {
   private size = this.config.sizes?.[this.config.size];
   styles = {
-    width: this.config.width || this.size?.width,
-    height: this.config.height || this.size?.height,
-    minHeight: this.config.minHeight || this.size?.minHeight
+    width: coerceCssPixelValue(this.config.width || this.size?.width),
+    height: coerceCssPixelValue(this.config.height || this.size?.height),
+    minHeight: coerceCssPixelValue(this.config.minHeight || this.size?.minHeight),
+    maxHeight: coerceCssPixelValue(this.config.maxHeight || this.size?.maxHeight)
   };
 
   @ViewChild('backdrop', { static: true })
