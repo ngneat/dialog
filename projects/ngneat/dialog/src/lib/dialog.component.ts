@@ -53,7 +53,7 @@ import { coerceCssPixelValue } from './dialog.utils';
   encapsulation: ViewEncapsulation.None
 })
 export class DialogComponent implements OnInit, OnDestroy {
-  private size = this.config.sizes?.[this.config.size];
+  private size = this.config.sizes?.[this.config.size || 'md'];
   styles = {
     width: coerceCssPixelValue(this.config.width || this.size?.width),
     height: coerceCssPixelValue(this.config.height || this.size?.height),
