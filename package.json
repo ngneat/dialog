@@ -17,7 +17,7 @@
     "release": "cd projects/ngneat/dialog && standard-version --infile ../../../CHANGELOG.md",
     "test:lib:headless": "cross-env CI=true npm run test:lib",
     "schematics:build": "tsc -p tsconfig.schematics.json && npm run schematics:copy",
-    "schematics:copy": "cp schematics/src/collection.json dist/ngneat/dialog/schematics/src && cp schematics/src/ng-add/schema.json dist/ngneat/dialog/schematics/src/ng-add",
+    "schematics:copy": "cp schematics/src/collection.json dist/ngneat/dialog/schematics/ && cp schematics/src/ng-add/schema.json dist/ngneat/dialog/schematics/ng-add",
     "test:schematics": "TS_NODE_PROJECT='tsconfig.schematics.spec.json' node -r ts-node/register node_modules/.bin/jasmine ./schematics/**/*.spec.ts"
   },
   "private": true,
