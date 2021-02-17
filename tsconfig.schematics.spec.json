@@ -2,6 +2,6 @@
   "extends": "./tsconfig.spec.json",
   "compilerOptions": {
     "module": "commonjs",
-    "rootDir": "./schematics"
+    "rootDir": "./schematics/src"
   }
 }

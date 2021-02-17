@@ -4,7 +4,7 @@
     "module": "commonjs",
     "outDir": "./dist/ngneat/dialog/schematics",
     "declaration": true,
-    "rootDir": "./schematics",
+    "rootDir": "./schematics/src",
     "types": [],
     "skipLibCheck": true
   },
