@@ -1,12 +1,11 @@
 import { Provider } from '@angular/core';
-import { Spectator, createComponentFactory, byText } from '@ngneat/spectator';
+import { byText, createComponentFactory, Spectator } from '@ngneat/spectator';
 import { Subject } from 'rxjs';
-
-import { DialogComponent } from './dialog.component';
-import { NODES_TO_INSERT, DIALOG_CONFIG } from './tokens';
-import { InternalDialogRef } from './dialog-ref';
-import { DialogDraggableDirective } from './draggable.directive';
 import { DialogConfig } from './config';
+import { InternalDialogRef } from './dialog-ref';
+import { DialogComponent } from './dialog.component';
+import { DialogDraggableDirective } from './draggable.directive';
+import { DIALOG_CONFIG, NODES_TO_INSERT } from './tokens';
 
 describe('DialogComponent', () => {
   const defaultConfig: Partial<DialogConfig> = {
@@ -99,7 +98,7 @@ describe('DialogComponent', () => {
         next: () => (backdropClicked = true)
       });
 
-      spectator.dispatchMouseEvent('.ngneat-dialog-backdrop', 'mouseup');
+      spectator.dispatchMouseEvent('.ngneat-dialog-backdrop', 'click');
 
       expect(backdropClicked).toBeTrue();
     });
@@ -118,7 +117,7 @@ describe('DialogComponent', () => {
         next: () => (backdropClicked = true)
       });
 
-      spectator.dispatchMouseEvent(document.body, 'mouseup');
+      spectator.dispatchMouseEvent(document.body, 'click');
 
       expect(backdropClicked).toBeTrue();
     });
@@ -142,15 +141,15 @@ describe('DialogComponent', () => {
     it('on click backdrop', () => {
       const { close } = spectator.get(InternalDialogRef);
 
-      spectator.dispatchMouseEvent('.ngneat-dialog-content', 'mouseup');
+      spectator.dispatchMouseEvent('.ngneat-dialog-content', 'click');
 
       expect(close).not.toHaveBeenCalled();
 
-      spectator.dispatchMouseEvent(document.body, 'mouseup');
+      spectator.dispatchMouseEvent(document.body, 'click');
 
       expect(close).not.toHaveBeenCalled();
 
-      spectator.dispatchMouseEvent('.ngneat-dialog-backdrop', 'mouseup');
+      spectator.dispatchMouseEvent('.ngneat-dialog-backdrop', 'click');
 
       expect(close).toHaveBeenCalled();
     });
@@ -170,15 +169,15 @@ describe('DialogComponent', () => {
     it('on click backdrop', () => {
       const { close: close } = spectator.get(InternalDialogRef);
 
-      spectator.dispatchMouseEvent('.ngneat-dialog-content', 'mouseup');
+      spectator.dispatchMouseEvent('.ngneat-dialog-content', 'click');
 
       expect(close).not.toHaveBeenCalled();
 
-      spectator.dispatchMouseEvent(document.body, 'mouseup');
+      spectator.dispatchMouseEvent(document.body, 'click');
 
       expect(close).not.toHaveBeenCalled();
 
-      spectator.dispatchMouseEvent('.ngneat-dialog-backdrop', 'mouseup');
+      spectator.dispatchMouseEvent('.ngneat-dialog-backdrop', 'click');
 
       expect(close).not.toHaveBeenCalled();
     });
