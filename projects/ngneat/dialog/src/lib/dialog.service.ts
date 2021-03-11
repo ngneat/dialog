@@ -1,26 +1,25 @@
 import {
-  Injectable,
-  Type,
-  TemplateRef,
-  Inject,
-  ComponentFactoryResolver,
-  Injector,
   ApplicationRef,
+  ComponentFactoryResolver,
   ComponentRef,
+  ElementRef,
   EmbeddedViewRef,
-  ElementRef
+  Inject,
+  Injectable,
+  Injector,
+  TemplateRef,
+  Type
 } from '@angular/core';
 import { Subject } from 'rxjs';
-
+import { DialogConfig, GlobalDialogConfig } from './config';
 import { DialogRef, InternalDialogRef } from './dialog-ref';
 import { DialogComponent } from './dialog.component';
-import { DialogConfig, GlobalDialogConfig } from './config';
-import { DIALOG_CONFIG, NODES_TO_INSERT, GLOBAL_DIALOG_CONFIG, DIALOG_DOCUMENT_REF } from './tokens';
+import { DIALOG_CONFIG, DIALOG_DOCUMENT_REF, GLOBAL_DIALOG_CONFIG, NODES_TO_INSERT } from './tokens';
 import {
   DialogContent,
   DialogContentSymbol,
-  DialogTitleAndBody,
-  DialogContentTypes as DialogContentType
+  DialogContentTypes as DialogContentType,
+  DialogTitleAndBody
 } from './types';
 
 interface OpenParams {
@@ -54,6 +53,10 @@ export class DialogService {
     @Inject(GLOBAL_DIALOG_CONFIG)
     private globalConfig: GlobalDialogConfig
   ) {}
+
+  closeAll() {
+    this.dialogs.forEach(dialog => dialog.close());
+  }
 
   success<D>(
     content: DialogContent | DialogTitleAndBody,
