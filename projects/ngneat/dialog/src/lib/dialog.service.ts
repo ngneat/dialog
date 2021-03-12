@@ -107,7 +107,9 @@ export class DialogService {
     this.throwIfIDAlreadyExists(configWithDefaults.id);
 
     this.dialogs.push(dialogRef);
-    this.document.body.classList.add(OVERFLOW_HIDDEN_CLASS);
+    if (this.dialogs.length === 1) {
+      this.document.body.classList.add(OVERFLOW_HIDDEN_CLASS);
+    }
 
     return componentOrTemplate instanceof TemplateRef
       ? this.openTemplate(componentOrTemplate, params)
@@ -191,7 +193,9 @@ export class DialogService {
 
       hooks.after.next(result);
       hooks.after.complete();
-      this.document.body.classList.remove(OVERFLOW_HIDDEN_CLASS);
+      if (this.dialogs.length === 0) {
+        this.document.body.classList.remove(OVERFLOW_HIDDEN_CLASS);
+      }
     };
 
     dialogRef.mutate({
