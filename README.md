@@ -381,6 +381,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="https://github.com/theblushingcrow"><img src="https://avatars3.githubusercontent.com/u/638818?v=4" width="100px;" alt=""/><br /><sub><b>Inbal Sinai</b></sub></a><br /><a href="https://github.com/@ngneat/dialog/commits?author=theblushingcrow" title="Documentation">📖</a></td>
     <td align="center"><a href="https://github.com/shaharkazaz"><img src="https://avatars2.githubusercontent.com/u/17194830?v=4" width="100px;" alt=""/><br /><sub><b>Shahar Kazaz</b></sub></a><br /><a href="https://github.com/@ngneat/dialog/commits?author=shaharkazaz" title="Code">💻</a> <a href="https://github.com/@ngneat/dialog/commits?author=shaharkazaz" title="Documentation">📖</a></td>
     <td align="center"><a href="https://github.com/beeman"><img src="https://avatars3.githubusercontent.com/u/36491?v=4" width="100px;" alt=""/><br /><sub><b>beeman</b></sub></a><br /><a href="https://github.com/@ngneat/dialog/commits?author=beeman" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/rhutchison"><img src="https://avatars.githubusercontent.com/u/1460261?v=4" width="100px;" alt=""/><br /><sub><b>Ryan Hutchison</b></sub></a><br /><a href="https://github.com/@ngneat/dialog/commits?author=rhutchison" title="Code">💻</a> <a href="#ideas-rhutchison" title="Ideas, Planning, & Feedback">🤔</a></td>
   </tr>
 </table>
 
