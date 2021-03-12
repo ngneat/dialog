@@ -1,13 +1,13 @@
-import { ApplicationRef, ComponentFactoryResolver, InjectionToken, Injector, TemplateRef } from '@angular/core';
-import { fakeAsync, tick } from '@angular/core/testing';
-import { createServiceFactory, SpectatorService } from '@ngneat/spectator';
-import { timer } from 'rxjs';
-import { mapTo } from 'rxjs/operators';
-import { DialogConfig } from './config';
-import { DialogRef, InternalDialogRef } from './dialog-ref';
-import { DialogComponent } from './dialog.component';
-import { DialogService } from './dialog.service';
-import { DIALOG_CONFIG, DIALOG_DOCUMENT_REF, GLOBAL_DIALOG_CONFIG, NODES_TO_INSERT } from './tokens';
+import {ApplicationRef, ComponentFactoryResolver, InjectionToken, Injector, TemplateRef} from '@angular/core';
+import {fakeAsync, tick} from '@angular/core/testing';
+import {createServiceFactory, SpectatorService} from '@ngneat/spectator';
+import {timer} from 'rxjs';
+import {mapTo} from 'rxjs/operators';
+import {DialogConfig} from './config';
+import {DialogRef, InternalDialogRef} from './dialog-ref';
+import {DialogComponent} from './dialog.component';
+import {DialogService} from './dialog.service';
+import {DIALOG_CONFIG, DIALOG_DOCUMENT_REF, GLOBAL_DIALOG_CONFIG, NODES_TO_INSERT} from './tokens';
 
 class FakeFactoryResolver extends ComponentFactoryResolver {
   componentOne = {
@@ -55,7 +55,13 @@ describe('DialogService', () => {
   let service: DialogService;
   let fakeAppRef: ApplicationRef;
   let fakeFactory: FakeFactoryResolver;
-  let fakeDocument: { body: { appendChild: jasmine.Spy; removeChild: jasmine.Spy } };
+  let fakeDocument: {
+    body: {
+      appendChild: jasmine.Spy;
+      removeChild: jasmine.Spy;
+      classList: { add: jasmine.Spy; remove: jasmine.Spy }
+    }
+  };
 
   const createService = createServiceFactory({
     service: DialogService,
@@ -120,9 +126,9 @@ describe('DialogService', () => {
   });
 
   it('should throw if two dialogs has the same id', () => {
-    service.open(new FakeTemplateRef(), { id: 'same' });
+    service.open(new FakeTemplateRef(), {id: 'same'});
 
-    expect(() => service.open(new FakeTemplateRef(), { id: 'same' })).toThrowError(
+    expect(() => service.open(new FakeTemplateRef(), {id: 'same'})).toThrowError(
       'Please, ID must be unique, but there is already a dialog created with this ID: same'
     );
   });
@@ -148,7 +154,7 @@ describe('DialogService', () => {
       expect(fakeTemplate.createEmbeddedView).toHaveBeenCalledTimes(1);
       expect(fakeTemplate.createEmbeddedView).toHaveBeenCalledWith({
         $implicit: dialog,
-        config: jasmine.objectContaining({ windowClass: 'custom-template' })
+        config: jasmine.objectContaining({windowClass: 'custom-template'})
       });
     });
 
@@ -198,8 +204,48 @@ describe('DialogService', () => {
       expect(template.createEmbeddedView).not.toHaveBeenCalled();
       expect(otherVCR.createEmbeddedView).toHaveBeenCalledWith(template, {
         $implicit: dialog,
-        config: jasmine.objectContaining({ windowClass: 'custom-template' })
+        config: jasmine.objectContaining({windowClass: 'custom-template'})
       });
+    });
+  });
+
+  describe('when nested', () => {
+    it('should open both', () => {
+      expect(service.open(new FakeTemplateRef())).toBeTruthy();
+      expect(service.open(new FakeTemplateRef())).toBeTruthy();
+    });
+
+    it('should add both dialogs to dialogs', () => {
+      const dialog1 = service.open(new FakeTemplateRef());
+      const dialog2 = service.open(new FakeTemplateRef());
+
+      expect(service.dialogs.length).toBe(2);
+      expect(service.dialogs).toContain(dialog1);
+      expect(service.dialogs).toContain(dialog2);
+    });
+
+    it('should add OVERFLOW_HIDDEN_CLASS to body only once', () => {
+      service.open(new FakeTemplateRef());
+      service.open(new FakeTemplateRef());
+
+      expect(fakeDocument.body.classList.add).toHaveBeenCalledTimes(1);
+    });
+
+    it('should not remove OVERFLOW_HIDDEN_CLASS from when close one', () => {
+      const dialog1 = service.open(new FakeTemplateRef());
+      service.open(new FakeTemplateRef());
+
+      dialog1.close();
+      expect(fakeDocument.body.classList.remove).toHaveBeenCalledTimes(0);
+    });
+
+    it('should remove OVERFLOW_HIDDEN_CLASS from when close all', () => {
+      const dialog1 = service.open(new FakeTemplateRef());
+      const dialog2 = service.open(new FakeTemplateRef());
+
+      dialog1.close();
+      dialog2.close();
+      expect(fakeDocument.body.classList.remove).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -209,7 +255,7 @@ describe('DialogService', () => {
     it('should open it', () => expect(service.open(FakeComponent)).toBeTruthy());
 
     it('should be able of get config', () => {
-      service.open(FakeComponent, { windowClass: 'custom-config' });
+      service.open(FakeComponent, {windowClass: 'custom-config'});
 
       const [[fakeComponentInjector]]: readonly Injector[][] = fakeFactory.factory.create.calls.allArgs();
 
@@ -262,7 +308,7 @@ describe('DialogService', () => {
     it('should attach view to ApplicationRef', () => {
       service.open(FakeComponent);
 
-      const { componentOne: fakeComponentInjectedIntoDialog, componentTwo: fakeDialogView } = fakeFactory;
+      const {componentOne: fakeComponentInjectedIntoDialog, componentTwo: fakeDialogView} = fakeFactory;
 
       const attachSpyCalls = (fakeAppRef.attachView as jasmine.Spy).calls.allArgs();
 
@@ -274,7 +320,7 @@ describe('DialogService', () => {
       const FROM_PARENT = new InjectionToken<string>('FROM_PARENT');
 
       service.open(FakeComponent, {
-        vcr: { injector: Injector.create({ providers: [{ provide: FROM_PARENT, useValue: 'test' }] }) } as any
+        vcr: {injector: Injector.create({providers: [{provide: FROM_PARENT, useValue: 'test'}]})} as any
       });
 
       const [[fakeComponentInjector]]: readonly Injector[][] = fakeFactory.factory.create.calls.allArgs();
@@ -297,7 +343,7 @@ describe('DialogService', () => {
 
       beforeEach(() => {
         dialogHasBeenClosed = false;
-        dialog.afterClosed$.subscribe({ next: () => (dialogHasBeenClosed = true) });
+        dialog.afterClosed$.subscribe({next: () => (dialogHasBeenClosed = true)});
       });
 
       it('should close if there are no guards', () => {
@@ -418,7 +464,7 @@ describe('DialogService', () => {
 
       beforeEach(() => {
         dialogHasBeenClosed = false;
-        dialog.afterClosed$.subscribe({ next: () => (dialogHasBeenClosed = true) });
+        dialog.afterClosed$.subscribe({next: () => (dialogHasBeenClosed = true)});
       });
 
       it('should close if there are no guards', () => {
@@ -561,7 +607,7 @@ describe('DialogService', () => {
     it('should emit afterClosed$ and complete it', () => {
       let hasNext = false;
       let hasCompleted = false;
-      dialog.afterClosed$.subscribe({ next: () => (hasNext = true), complete: () => (hasCompleted = true) });
+      dialog.afterClosed$.subscribe({next: () => (hasNext = true), complete: () => (hasCompleted = true)});
 
       dialog.close();
 
@@ -570,7 +616,7 @@ describe('DialogService', () => {
     });
 
     it('should send result in afterClosed$', () => {
-      dialog.afterClosed$.subscribe({ next: result => expect(result).toBe('test') });
+      dialog.afterClosed$.subscribe({next: result => expect(result).toBe('test')});
 
       dialog.close('test');
     });

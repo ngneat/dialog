@@ -10,11 +10,11 @@ import {
   TemplateRef,
   Type
 } from '@angular/core';
-import { Subject } from 'rxjs';
-import { DialogConfig, GlobalDialogConfig } from './config';
-import { DialogRef, InternalDialogRef } from './dialog-ref';
-import { DialogComponent } from './dialog.component';
-import { DIALOG_CONFIG, DIALOG_DOCUMENT_REF, GLOBAL_DIALOG_CONFIG, NODES_TO_INSERT } from './tokens';
+import {Subject} from 'rxjs';
+import {DialogConfig, GlobalDialogConfig} from './config';
+import {DialogRef, InternalDialogRef} from './dialog-ref';
+import {DialogComponent} from './dialog.component';
+import {DIALOG_CONFIG, DIALOG_DOCUMENT_REF, GLOBAL_DIALOG_CONFIG, NODES_TO_INSERT} from './tokens';
 import {
   DialogContent,
   DialogContentSymbol,
@@ -37,7 +37,7 @@ interface AttachOptions {
 
 const OVERFLOW_HIDDEN_CLASS = 'ngneat-dialog-hidden';
 
-@Injectable({ providedIn: 'root' })
+@Injectable({providedIn: 'root'})
 export class DialogService {
   public dialogs: DialogRef[] = [];
 
@@ -107,16 +107,18 @@ export class DialogService {
     this.throwIfIDAlreadyExists(configWithDefaults.id);
 
     this.dialogs.push(dialogRef);
-    this.document.body.classList.add(OVERFLOW_HIDDEN_CLASS);
+    if (this.dialogs.length === 1) {
+      this.document.body.classList.add(OVERFLOW_HIDDEN_CLASS);
+    }
 
     return componentOrTemplate instanceof TemplateRef
       ? this.openTemplate(componentOrTemplate, params)
       : typeof componentOrTemplate === 'function'
-      ? this.openComponent(componentOrTemplate, params)
-      : this.throwMustBeAComponentOrATemplateRef(componentOrTemplate);
+        ? this.openComponent(componentOrTemplate, params)
+        : this.throwMustBeAComponentOrATemplateRef(componentOrTemplate);
   }
 
-  private openTemplate(template: TemplateRef<any>, { config, dialogRef }: OpenParams) {
+  private openTemplate(template: TemplateRef<any>, {config, dialogRef}: OpenParams) {
     const context = {
       $implicit: dialogRef,
       config
@@ -133,7 +135,7 @@ export class DialogService {
     });
   }
 
-  private openComponent(component: Type<any>, { config, dialogRef }: OpenParams) {
+  private openComponent(component: Type<any>, {config, dialogRef}: OpenParams) {
     const factory = this.componentFactoryResolver.resolveComponentFactory(component);
     const componentRef = factory.create(
       Injector.create({
@@ -160,7 +162,7 @@ export class DialogService {
     });
   }
 
-  private attach({ dialogRef, config, ref, view, attachToApp }: AttachOptions): DialogRef<any, any, any> {
+  private attach({dialogRef, config, ref, view, attachToApp}: AttachOptions): DialogRef<any, any, any> {
     const dialog = this.createDialog(config, dialogRef, view);
     const container = config.container instanceof ElementRef ? config.container.nativeElement : config.container;
 
@@ -170,7 +172,7 @@ export class DialogService {
 
     const onClose = (result: unknown) => {
       this.globalConfig.onClose?.();
-      this.dialogs = this.dialogs.filter(({ id }) => dialogRef.id !== id);
+      this.dialogs = this.dialogs.filter(({id}) => dialogRef.id !== id);
 
       container.removeChild(dialog.location.nativeElement);
       this.appRef.detachView(dialog.hostView);
@@ -191,7 +193,9 @@ export class DialogService {
 
       hooks.after.next(result);
       hooks.after.complete();
-      this.document.body.classList.remove(OVERFLOW_HIDDEN_CLASS);
+      if (this.dialogs.length === 0) {
+        this.document.body.classList.remove(OVERFLOW_HIDDEN_CLASS);
+      }
     };
 
     dialogRef.mutate({
@@ -249,7 +253,7 @@ export class DialogService {
   }
 
   private mergeConfigWithContent(config: Partial<DialogConfig>, content: DialogContent | DialogTitleAndBody) {
-    const { data, ...configWithDefaults } = this.mergeConfig(config);
+    const {data, ...configWithDefaults} = this.mergeConfig(config);
 
     return {
       ...configWithDefaults,
@@ -257,20 +261,20 @@ export class DialogService {
         ...data,
         [DialogContentSymbol]: this.isTemplateOrString(content)
           ? {
-              title: null,
-              body: {
-                type: this.getTypeOfContent(content),
-                content
-              }
+            title: null,
+            body: {
+              type: this.getTypeOfContent(content),
+              content
             }
+          }
           : Object.entries(content).reduce((acc, [key, value]) => {
-              acc[key] = {
-                type: this.getTypeOfContent(value),
-                content: value
-              };
+            acc[key] = {
+              type: this.getTypeOfContent(value),
+              content: value
+            };
 
-              return acc;
-            }, {})
+            return acc;
+          }, {})
       }
     };
   }
