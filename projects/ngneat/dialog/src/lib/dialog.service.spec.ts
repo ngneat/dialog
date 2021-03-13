@@ -55,7 +55,13 @@ describe('DialogService', () => {
   let service: DialogService;
   let fakeAppRef: ApplicationRef;
   let fakeFactory: FakeFactoryResolver;
-  let fakeDocument: { body: { appendChild: jasmine.Spy; removeChild: jasmine.Spy } };
+  let fakeDocument: {
+    body: {
+      appendChild: jasmine.Spy;
+      removeChild: jasmine.Spy;
+      classList: { add: jasmine.Spy; remove: jasmine.Spy }
+    }
+  };
 
   const createService = createServiceFactory({
     service: DialogService,
@@ -200,6 +206,46 @@ describe('DialogService', () => {
         $implicit: dialog,
         config: jasmine.objectContaining({ windowClass: 'custom-template' })
       });
+    });
+  });
+
+  describe('when nested', () => {
+    it('should open both', () => {
+      expect(service.open(new FakeTemplateRef())).toBeTruthy();
+      expect(service.open(new FakeTemplateRef())).toBeTruthy();
+    });
+
+    it('should add both dialogs to dialogs', () => {
+      const dialog1 = service.open(new FakeTemplateRef());
+      const dialog2 = service.open(new FakeTemplateRef());
+
+      expect(service.dialogs.length).toBe(2);
+      expect(service.dialogs).toContain(dialog1);
+      expect(service.dialogs).toContain(dialog2);
+    });
+
+    it('should add OVERFLOW_HIDDEN_CLASS to body only once', () => {
+      service.open(new FakeTemplateRef());
+      service.open(new FakeTemplateRef());
+
+      expect(fakeDocument.body.classList.add).toHaveBeenCalledTimes(1);
+    });
+
+    it('should not remove OVERFLOW_HIDDEN_CLASS from when close one', () => {
+      const dialog1 = service.open(new FakeTemplateRef());
+      service.open(new FakeTemplateRef());
+
+      dialog1.close();
+      expect(fakeDocument.body.classList.remove).toHaveBeenCalledTimes(0);
+    });
+
+    it('should remove OVERFLOW_HIDDEN_CLASS from when close all', () => {
+      const dialog1 = service.open(new FakeTemplateRef());
+      const dialog2 = service.open(new FakeTemplateRef());
+
+      dialog1.close();
+      dialog2.close();
+      expect(fakeDocument.body.classList.remove).toHaveBeenCalledTimes(1);
     });
   });
 
