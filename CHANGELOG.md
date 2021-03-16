@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.5.0](https://github.com/ngneat/dialog/compare/v1.4.1...v1.5.0) (2021-03-16)
+
+
+### Features
+
+* add closeAll to dialog service ([fa8cb92](https://github.com/ngneat/dialog/commit/fa8cb9272ce0a3ec00209b1d2b085a991e18c261)), closes [#23](https://github.com/ngneat/dialog/issues/23)
+
+
+### Bug Fixes
+
+* **dialog-service:** Remove 'ngneat-dialog-hidden' from body only after last dialog is closed ([83477dd](https://github.com/ngneat/dialog/commit/83477dd0d697d989eda2930214b265bd190b46e8)), closes [ngneat/dialog#26](https://github.com/ngneat/dialog/issues/26)
+* close dialog on backdrop click ([efbdb11](https://github.com/ngneat/dialog/commit/efbdb112b613240d8a97cf7be0aa6a4ca6700efb))
+* **schematics:** use correct folder ([6e52e31](https://github.com/ngneat/dialog/commit/6e52e312f2130be8f87003766c7d77aff6044b79))
+
 ### [1.4.1](https://github.com/ngneat/dialog/compare/v1.4.0...v1.4.1) (2021-02-02)
 
 
