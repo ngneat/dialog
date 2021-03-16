@@ -1,12 +1,11 @@
-import { Component, ViewChild, ElementRef, Inject, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
-import { fromEvent, Subject, merge } from 'rxjs';
+import { Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { fromEvent, merge, Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
-
-import { InternalDialogRef } from './dialog-ref';
 import { DialogConfig } from './config';
-import { DIALOG_CONFIG, NODES_TO_INSERT } from './tokens';
+import { InternalDialogRef } from './dialog-ref';
 import { coerceCssPixelValue } from './dialog.utils';
+import { DIALOG_CONFIG, NODES_TO_INSERT } from './tokens';
 
 @Component({
   selector: 'ngneat-dialog',
@@ -83,7 +82,7 @@ export class DialogComponent implements OnInit, OnDestroy {
     const backdrop = this.config.backdrop ? this.backdrop.nativeElement : this.document.body;
     const dialogElement = this.dialogElement.nativeElement;
 
-    const backdropClick$ = fromEvent<MouseEvent>(backdrop, 'mouseup').pipe(
+    const backdropClick$ = fromEvent<MouseEvent>(backdrop, 'click').pipe(
       filter(({ target }) => !dialogElement.contains(target as Element))
     );
 
