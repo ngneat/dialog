@@ -215,4 +215,13 @@ describe('DialogComponent', () => {
     expect(host).toBeTruthy();
     expect(host).toBe(spectator.fixture.nativeElement);
   });
+
+  it('should set multiple classes from windowClass at host element', () => {
+    spectator = createComponent(withConfig({ windowClass: ' test-class-1 test-class-2 ' }));
+
+    const host = spectator.query('.test-class-1.test-class-2', { root: true });
+
+    expect(host).toBeTruthy();
+    expect(host).toBe(spectator.fixture.nativeElement);
+  });
 });
