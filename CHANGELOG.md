@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.6.0](https://github.com/ngneat/dialog/compare/v1.5.0...v1.6.0) (2021-03-21)
+
+
+### Features
+
+* allow multiple classes to be set from windowClass ([5ac3297](https://github.com/ngneat/dialog/commit/5ac3297fb664c4cd104b00648ebe21f09df55e72))
+* allow multiple classes to be set from windowClass ([d60ee41](https://github.com/ngneat/dialog/commit/d60ee4142436137e2d0c6ce2f75848796e8b717b))
+
 ## [1.5.0](https://github.com/ngneat/dialog/compare/v1.4.1...v1.5.0) (2021-03-16)
 
 
