@@ -74,7 +74,8 @@ export class DialogComponent implements OnInit, OnDestroy {
     this.nodes.forEach(node => host.appendChild(node));
 
     if (config.windowClass) {
-      host.classList.add(...config.windowClass.split(/\s/).filter(x => x));
+      const classNames = config.windowClass.split(/\s/).filter(x => x);
+      classNames.forEach(name => host.classList.add(name));
     }
   }
 
