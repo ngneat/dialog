@@ -24,7 +24,7 @@ import { DIALOG_CONFIG, NODES_TO_INSERT } from './tokens';
           [dialogDragEnabled]="true"
           [dialogDragTarget]="dialog"
         ></div>
-        <div class="ngneat-close-dialog" *ngIf="config.enableClose && config.closeButton" (click)="closeDialog()">
+        <div class="ngneat-close-dialog" *ngIf="config.closeButton" (click)="closeDialog()">
           <svg viewBox="0 0 329.26933 329" xmlns="http://www.w3.org/2000/svg">
             <path
               fill="currentColor"
