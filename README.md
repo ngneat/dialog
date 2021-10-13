@@ -119,6 +119,13 @@ dialogRef.backdropClick$.subscribe(() => {
 });
 ```
 
+- `resetOffset` - A method that can be called to reset the offset of a dragged modal to reposition it in the middle of the screen. An offset can be given as the first parameter to position it different from the center:
+
+```ts
+dialogRef.resetOffset();
+dialogRef.resetOffset({ x: 100, y: 0 });
+```
+
 - `beforeClose` - A guard that should return a `boolean`, an `observable`, or a `promise` indicating whether the modal can be closed:
 
 ```ts
@@ -225,6 +232,7 @@ Now we can access it inside our modal component or template, by using the `ref.d
 - `backdrop` - Whether to show the backdrop element (default is true).
 - `resizable` - Whether the modal show be resizeable (default is false).
 - `draggable` - Whether the modal show be draggable (default is false).
+- `draggableConstraint` - When draggable true, whether the modal should be constraint to the window. Use `none` for no constraint, `bounce` to have the modal bounce after it is released and `constrain` to constrain while dragging (default is `none`).
 - `size` - Set the modal size according to your global [custom sizes](#custom-sizes) (default is `md`).
 - `windowClass` - Add a custom class to the modal container.
 - `width` - Set a custom width (default unit is `px`).
@@ -243,6 +251,7 @@ this.dialog.open(compOrTemplate, {
   backdrop: boolean,
   resizable: boolean,
   draggable: boolean,
+  draggableConstraint: none | bounce | constrain,
   size: sm | md | lg | fullScreen | string,
   windowClass: string,
   width: string | number,
@@ -387,6 +396,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 
 <!-- markdownlint-enable -->
 <!-- prettier-ignore-end -->
+
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!

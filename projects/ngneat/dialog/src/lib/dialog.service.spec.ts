@@ -59,8 +59,8 @@ describe('DialogService', () => {
     body: {
       appendChild: jasmine.Spy;
       removeChild: jasmine.Spy;
-      classList: { add: jasmine.Spy; remove: jasmine.Spy }
-    }
+      classList: { add: jasmine.Spy; remove: jasmine.Spy };
+    };
   };
 
   const createService = createServiceFactory({

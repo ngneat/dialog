@@ -188,7 +188,8 @@ export class DialogService {
         onClose: null,
         afterClosed$: null,
         backdropClick$: null,
-        beforeCloseGuards: null
+        beforeCloseGuards: null,
+        onReset: null
       });
 
       hooks.after.next(result);
@@ -198,12 +199,17 @@ export class DialogService {
       }
     };
 
+    const onReset = () => {
+      dialog.instance.reset();
+    };
+
     dialogRef.mutate({
       id: config.id,
       data: config.data,
       ref,
       onClose,
-      afterClosed$: hooks.after.asObservable()
+      afterClosed$: hooks.after.asObservable(),
+      onReset
     });
 
     container.appendChild(dialog.location.nativeElement);

@@ -33,6 +33,14 @@
       <input placeholder="sm, md, lg or fullScreen. Default is md" formControlName="size" />
     </div>
     <div>
+      <label>Constraint</label>
+      <select formControlName="dragConstraint">
+        <option value="none">None</option>
+        <option value="bounce">Bounce</option>
+        <option value="constrain">Constrain</option>
+      </select>
+    </div>
+    <div>
       <label>Backdrop</label>
       <input type="checkbox" formControlName="backdrop" />
     </div>

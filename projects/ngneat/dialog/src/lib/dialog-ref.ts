@@ -1,8 +1,9 @@
 import { ComponentRef, TemplateRef } from '@angular/core';
-import { Observable, of, from, merge, Subject } from 'rxjs';
-import { filter, first, defaultIfEmpty } from 'rxjs/operators';
+import { from, merge, Observable, of, Subject } from 'rxjs';
+import { defaultIfEmpty, filter, first } from 'rxjs/operators';
 
 import { JustProps } from './types';
+import { DragOffset } from './draggable.directive';
 
 type GuardFN<R> = (result?: R) => Observable<boolean> | Promise<boolean> | boolean;
 
@@ -20,6 +21,7 @@ export abstract class DialogRef<
 
   abstract close(result?: Result): void;
   abstract beforeClose(guard: GuardFN<Result>): void;
+  abstract resetDrag(offset?: DragOffset): void;
 }
 
 export class InternalDialogRef extends DialogRef {
@@ -33,6 +35,7 @@ export class InternalDialogRef extends DialogRef {
   }
 
   onClose: (result?: unknown) => void;
+  onReset: () => void;
 
   close(result?: unknown): void {
     this.canClose(result)
@@ -42,6 +45,10 @@ export class InternalDialogRef extends DialogRef {
 
   beforeClose(guard: GuardFN<unknown>) {
     this.beforeCloseGuards.push(guard);
+  }
+
+  resetDrag(offset?: DragOffset) {
+    this.onReset();
   }
 
   canClose(result: unknown): Observable<boolean> {

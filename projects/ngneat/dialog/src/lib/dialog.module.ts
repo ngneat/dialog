@@ -1,4 +1,4 @@
-import { NgModule, ModuleWithProviders } from '@angular/core';
+import { ModuleWithProviders, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { DialogComponent } from './dialog.component';
@@ -8,8 +8,8 @@ import { GLOBAL_DIALOG_CONFIG } from './tokens';
 import { DialogDraggableDirective } from './draggable.directive';
 import {
   BaseDialogComponent,
-  SuccessDialogComponent,
   ConfirmDialogComponent,
+  SuccessDialogComponent,
   ErrorDialogComponent
 } from './built-in-dialogs';
 

@@ -1,6 +1,7 @@
 import { ViewContainerRef, ElementRef, Type } from '@angular/core';
 
 type Sizes = 'sm' | 'md' | 'lg' | 'fullScreen' | string;
+export type DragConstraint = 'none' | 'bounce' | 'constrain';
 
 export interface GlobalDialogConfig {
   success: {
@@ -37,6 +38,7 @@ export interface DialogConfig<Data = any> extends Required<GlobalDialogConfig> {
   minHeight: string | number;
   maxHeight: string | number;
   draggable: boolean;
+  dragConstraint: DragConstraint;
   resizable: boolean;
   data: Data;
   vcr: ViewContainerRef;

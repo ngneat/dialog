@@ -1,22 +1,7 @@
-import {
-  Directive,
-  AfterViewInit,
-  OnDestroy,
-  Input,
-  Output,
-  ElementRef,
-  NgZone,
-  EventEmitter,
-  Renderer2,
-  OnChanges
-} from '@angular/core';
+import { Directive, AfterViewInit, OnDestroy, Input, ElementRef, NgZone, Renderer2, OnChanges } from '@angular/core';
 import { Subject, fromEvent } from 'rxjs';
 import { filter, switchMap, map, takeUntil } from 'rxjs/operators';
-
-export type DraggedEvent = {
-  x: number;
-  y: number;
-};
+import { DragConstraint } from '@ngneat/dialog';
 
 export type DragOffset = {
   x?: number;
@@ -37,8 +22,8 @@ export class DialogDraggableDirective implements AfterViewInit, OnChanges, OnDes
   set dialogDragOffset(offset: DragOffset) {
     this.reset(offset);
   }
-  @Output()
-  dragged = new EventEmitter<DraggedEvent>();
+  @Input()
+  dragConstraint: DragConstraint;
 
   /** Element to be dragged */
   private target: HTMLElement;
@@ -82,7 +67,7 @@ export class DialogDraggableDirective implements AfterViewInit, OnChanges, OnDes
     this.destroy$.next();
   }
 
-  reset(offset?: DragOffset) {
+  public reset(offset?: DragOffset): void {
     const defaultValues = { x: 0, y: 0 };
     this.offset = { ...defaultValues, ...offset };
     this.delta = { ...defaultValues };
@@ -109,6 +94,9 @@ export class DialogDraggableDirective implements AfterViewInit, OnChanges, OnDes
                 x: event.clientX - startX,
                 y: event.clientY - startY
               };
+              if (this.dragConstraint === 'constrain') {
+                this.checkConstraint();
+              }
             }),
             takeUntil(mouseup$)
           )
@@ -132,9 +120,12 @@ export class DialogDraggableDirective implements AfterViewInit, OnChanges, OnDes
           takeUntil(this.destroy$)
         )
         .subscribe(() => {
+          if (this.dragConstraint === 'bounce') {
+            this.checkConstraint();
+            this.translate();
+          }
           this.offset.x += this.delta.x;
           this.offset.y += this.delta.y;
-          this.dragged.emit(this.offset);
           this.delta = { x: 0, y: 0 };
         });
     });
@@ -144,11 +135,19 @@ export class DialogDraggableDirective implements AfterViewInit, OnChanges, OnDes
     if (this.target) {
       this.zone.runOutsideAngular(() => {
         requestAnimationFrame(() => {
-          const transform = `translate(${this.offset.x + this.delta.x}px, ${this.offset.y + this.delta.y}px)`;
+          const transform = `translate(${this.translateX}px, ${this.translateY}px)`;
           this.renderer.setStyle(this.target, 'transform', transform);
         });
       });
     }
+  }
+
+  private get translateX(): number {
+    return this.offset.x + this.delta.x;
+  }
+
+  private get translateY(): number {
+    return this.offset.y + this.delta.y;
   }
 
   /**
@@ -179,5 +178,29 @@ export class DialogDraggableDirective implements AfterViewInit, OnChanges, OnDes
     this.setupEvents();
 
     this.translate();
+  }
+
+  private checkConstraint(): void {
+    const { top, width, height, left } = this.target.getBoundingClientRect();
+    const { innerWidth, innerHeight } = window;
+
+    const verticalDistance = this.translateY > 0 ? this.translateY + height / 2 : this.translateY - height / 2;
+    const maxVerticalDistance = innerHeight / 2;
+    const horizontalDistance = this.translateX > 0 ? this.translateX + width / 2 : this.translateX - width / 2;
+    const maxHorizontalDistance = innerWidth / 2;
+
+    // Check if modal crosses the top, bottom, left and right window border respectively
+    if (-maxVerticalDistance > verticalDistance) {
+      this.delta.y = -maxVerticalDistance + height / 2 - this.offset.y;
+    }
+    if (maxVerticalDistance < verticalDistance) {
+      this.delta.y = maxVerticalDistance - height / 2 - this.offset.y;
+    }
+    if (-maxHorizontalDistance > horizontalDistance) {
+      this.delta.x = -maxHorizontalDistance + width / 2 - this.offset.x;
+    }
+    if (maxHorizontalDistance < horizontalDistance) {
+      this.delta.x = maxHorizontalDistance - width / 2 - this.offset.x;
+    }
   }
 }
