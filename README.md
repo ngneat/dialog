@@ -31,7 +31,9 @@
   - [DialogRef API](#DialogRef-API)
   - [Using a TemplateRef](#using-a-TemplateRef)
   - [Passing Data to Modal](#Passing-Data-to-Modal)
-- [Modal Options](#modal-options)
+- [Modal Options](#dialog-options)
+  - [Global Options](#global-options)
+  - [Instance Options](#instance-options)
 - [Built-in Confirm/Success/Error Modals](#Built-in-modals)
 - [Custom Sizes](#Custom-Sizes)
 - [Styling](#styling)
@@ -224,9 +226,12 @@ export class AppComponent implements OnInit {
 
 Now we can access it inside our modal component or template, by using the `ref.data` property.
 
-### Modal Options
+## Dialog Options
 
-- `id` - The modal unique id (defaults to random id).
+### Global Options
+
+In the `forRoot` method when importing the dialog module in the app module you can specify the following options that will be globally applied to all dialog instances.
+
 - `closeButton` - Whether to display an 'X' for closing the modal (default is true).
 - `enableClose` - Whether a click on the backdrop should close the modal (default is true).
 - `backdrop` - Whether to show the backdrop element (default is true).
@@ -240,24 +245,46 @@ Now we can access it inside our modal component or template, by using the `ref.d
 - `minHeight` - Set a custom min-height (default unit is `px`).
 - `maxHeight` - Set a custom max-height (default unit is `px`).
 - `container` - A custom element to which we append the modal (default is `body`).
+
+```ts
+import { DialogModule } from '@ngneat/dialog';
+
+@NgModule({
+  declarations: [AppComponent],
+  imports: [DialogModule.forRoot({
+    closeButton: boolean,
+    enableClose: boolean,
+    backdrop: boolean,
+    resizable: boolean,
+    draggable: boolean,
+    draggableConstraint: none | bounce | constrain,
+    size: sm | md | lg | fullScreen | string,
+    windowClass: string,
+    width: string | number,
+    height: string | number,
+    minHeight: string | number,
+    maxHeight: string | number
+  })],
+  bootstrap: [AppComponent]
+})
+export class AppModule {}
+```
+
+### Instance Options
+For each dialog instance you open you can specify all the global options and also the following 3 options.
+
+- `id` - The modal unique id (defaults to random id).
 - `vcr` - A custom `ViewContainerRef` to use.
 - `data` - A `data` object that will be passed to the modal template or component.
 
 ```ts
 this.dialog.open(compOrTemplate, {
+  //...
+  // all global options
+  //...
   id: string,
-  closeButton: boolean,
-  enableClose: boolean,
-  backdrop: boolean,
-  resizable: boolean,
-  draggable: boolean,
-  draggableConstraint: none | bounce | constrain,
-  size: sm | md | lg | fullScreen | string,
-  windowClass: string,
-  width: string | number,
-  height: string | number,
-  minHeight: string | number,
-  maxHeight: string | number
+  vcr: ViewContainerRef,
+  data: {}
 });
 ```
 
