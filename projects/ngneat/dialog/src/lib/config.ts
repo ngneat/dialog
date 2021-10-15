@@ -19,7 +19,18 @@ export interface GlobalDialogConfig {
       { width?: string | number; height?: string | number; minHeight?: string | number; maxHeight?: string | number }
     >
   >;
+  backdrop: boolean;
   container: ElementRef<Element> | Element;
+  closeButton: boolean;
+  draggable: boolean;
+  dragConstraint: DragConstraint;
+  enableClose: boolean;
+  resizable: boolean;
+  width: string | number;
+  height: string | number;
+  minHeight: string | number;
+  maxHeight: string | number;
+  size: Sizes;
   windowClass: string;
   onOpen: () => void | undefined;
   onClose: () => void | undefined;
@@ -27,19 +38,6 @@ export interface GlobalDialogConfig {
 
 export interface DialogConfig<Data = any> extends Required<GlobalDialogConfig> {
   id: string;
-  backdrop: boolean;
-  closeButton: boolean;
-  container: ElementRef<Element> | Element;
-  windowClass: string;
-  enableClose: boolean;
-  size: Sizes;
-  width: string | number;
-  height: string | number;
-  minHeight: string | number;
-  maxHeight: string | number;
-  draggable: boolean;
-  dragConstraint: DragConstraint;
-  resizable: boolean;
   data: Data;
   vcr: ViewContainerRef;
 }
