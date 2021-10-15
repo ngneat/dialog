@@ -1,11 +1,21 @@
 import { DOCUMENT } from '@angular/common';
-import { Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  Inject,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+  ViewEncapsulation
+} from '@angular/core';
 import { fromEvent, merge, Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 import { DialogConfig } from './config';
 import { InternalDialogRef } from './dialog-ref';
 import { coerceCssPixelValue } from './dialog.utils';
 import { DIALOG_CONFIG, NODES_TO_INSERT } from './tokens';
+import { DialogDraggableDirective, DragOffset } from './draggable.directive';
 
 @Component({
   selector: 'ngneat-dialog',
@@ -23,6 +33,7 @@ import { DIALOG_CONFIG, NODES_TO_INSERT } from './tokens';
           dialogDraggable
           [dialogDragEnabled]="true"
           [dialogDragTarget]="dialog"
+          [dragConstraint]="config.dragConstraint"
         ></div>
         <div class="ngneat-close-dialog" *ngIf="config.closeButton" (click)="closeDialog()">
           <svg viewBox="0 0 329.26933 329" xmlns="http://www.w3.org/2000/svg">
@@ -52,6 +63,9 @@ export class DialogComponent implements OnInit, OnDestroy {
 
   @ViewChild('dialog', { static: true })
   private dialogElement: ElementRef<HTMLElement>;
+
+  @ViewChild(DialogDraggableDirective, { static: false })
+  private draggable: DialogDraggableDirective;
 
   private destroy$ = new Subject<void>();
 
@@ -98,9 +112,15 @@ export class DialogComponent implements OnInit, OnDestroy {
         .subscribe(() => this.closeDialog());
     }
 
-    // `dialogElement` is resolvesd at this point
+    // `dialogElement` is resolved at this point
     // And here is where dialog finally will be placed
     this.nodes.forEach(node => dialogElement.appendChild(node));
+  }
+
+  reset(offset?: DragOffset): void {
+    if (this.config.draggable) {
+      this.draggable.reset(offset);
+    }
   }
 
   closeDialog() {

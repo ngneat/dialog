@@ -119,6 +119,13 @@ dialogRef.backdropClick$.subscribe(() => {
 });
 ```
 
+- `resetOffset` - A method that can be called to reset the offset of a dragged modal to reposition it in the middle of the screen. An offset can be given as the first parameter to position it different from the center:
+
+```ts
+dialogRef.resetOffset();
+dialogRef.resetOffset({ x: 100, y: 0 });
+```
+
 - `beforeClose` - A guard that should return a `boolean`, an `observable`, or a `promise` indicating whether the modal can be closed:
 
 ```ts
@@ -225,6 +232,7 @@ Now we can access it inside our modal component or template, by using the `ref.d
 - `backdrop` - Whether to show the backdrop element (default is true).
 - `resizable` - Whether the modal show be resizeable (default is false).
 - `draggable` - Whether the modal show be draggable (default is false).
+- `draggableConstraint` - When draggable true, whether the modal should be constraint to the window. Use `none` for no constraint, `bounce` to have the modal bounce after it is released and `constrain` to constrain while dragging (default is `none`).
 - `size` - Set the modal size according to your global [custom sizes](#custom-sizes) (default is `md`).
 - `windowClass` - Add a custom class to the modal container.
 - `width` - Set a custom width (default unit is `px`).
@@ -243,6 +251,7 @@ this.dialog.open(compOrTemplate, {
   backdrop: boolean,
   resizable: boolean,
   draggable: boolean,
+  draggableConstraint: none | bounce | constrain,
   size: sm | md | lg | fullScreen | string,
   windowClass: string,
   width: string | number,
@@ -376,17 +385,19 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <!-- markdownlint-disable -->
 <table>
   <tr>
-    <td align="center"><a href="https://github.com/tonivj5"><img src="https://avatars2.githubusercontent.com/u/7110786?v=4" width="100px;" alt=""/><br /><sub><b>Toni Villena</b></sub></a><br /><a href="https://github.com/@ngneat/dialog/commits?author=tonivj5" title="Code">💻</a> <a href="#infra-tonivj5" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a> <a href="https://github.com/@ngneat/dialog/commits?author=tonivj5" title="Tests">⚠️</a></td>
-    <td align="center"><a href="https://www.netbasal.com/"><img src="https://avatars1.githubusercontent.com/u/6745730?v=4" width="100px;" alt=""/><br /><sub><b>Netanel Basal</b></sub></a><br /><a href="https://github.com/@ngneat/dialog/commits?author=NetanelBasal" title="Documentation">📖</a> <a href="#ideas-NetanelBasal" title="Ideas, Planning, & Feedback">🤔</a> <a href="https://github.com/@ngneat/dialog/commits?author=NetanelBasal" title="Code">💻</a></td>
-    <td align="center"><a href="https://github.com/theblushingcrow"><img src="https://avatars3.githubusercontent.com/u/638818?v=4" width="100px;" alt=""/><br /><sub><b>Inbal Sinai</b></sub></a><br /><a href="https://github.com/@ngneat/dialog/commits?author=theblushingcrow" title="Documentation">📖</a></td>
-    <td align="center"><a href="https://github.com/shaharkazaz"><img src="https://avatars2.githubusercontent.com/u/17194830?v=4" width="100px;" alt=""/><br /><sub><b>Shahar Kazaz</b></sub></a><br /><a href="https://github.com/@ngneat/dialog/commits?author=shaharkazaz" title="Code">💻</a> <a href="https://github.com/@ngneat/dialog/commits?author=shaharkazaz" title="Documentation">📖</a></td>
-    <td align="center"><a href="https://github.com/beeman"><img src="https://avatars3.githubusercontent.com/u/36491?v=4" width="100px;" alt=""/><br /><sub><b>beeman</b></sub></a><br /><a href="https://github.com/@ngneat/dialog/commits?author=beeman" title="Code">💻</a></td>
-    <td align="center"><a href="https://github.com/rhutchison"><img src="https://avatars.githubusercontent.com/u/1460261?v=4" width="100px;" alt=""/><br /><sub><b>Ryan Hutchison</b></sub></a><br /><a href="https://github.com/@ngneat/dialog/commits?author=rhutchison" title="Code">💻</a> <a href="#ideas-rhutchison" title="Ideas, Planning, & Feedback">🤔</a></td>
+    <td align="center"><a href="https://github.com/tonivj5"><img src="https://avatars2.githubusercontent.com/u/7110786?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Toni Villena</b></sub></a><br /><a href="https://github.com/@ngneat/dialog/commits?author=tonivj5" title="Code">💻</a> <a href="#infra-tonivj5" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a> <a href="https://github.com/@ngneat/dialog/commits?author=tonivj5" title="Tests">⚠️</a></td>
+    <td align="center"><a href="https://www.netbasal.com/"><img src="https://avatars1.githubusercontent.com/u/6745730?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Netanel Basal</b></sub></a><br /><a href="https://github.com/@ngneat/dialog/commits?author=NetanelBasal" title="Documentation">📖</a> <a href="#ideas-NetanelBasal" title="Ideas, Planning, & Feedback">🤔</a> <a href="https://github.com/@ngneat/dialog/commits?author=NetanelBasal" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/theblushingcrow"><img src="https://avatars3.githubusercontent.com/u/638818?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Inbal Sinai</b></sub></a><br /><a href="https://github.com/@ngneat/dialog/commits?author=theblushingcrow" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://github.com/shaharkazaz"><img src="https://avatars2.githubusercontent.com/u/17194830?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Shahar Kazaz</b></sub></a><br /><a href="https://github.com/@ngneat/dialog/commits?author=shaharkazaz" title="Code">💻</a> <a href="https://github.com/@ngneat/dialog/commits?author=shaharkazaz" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://github.com/beeman"><img src="https://avatars3.githubusercontent.com/u/36491?v=4?s=100" width="100px;" alt=""/><br /><sub><b>beeman</b></sub></a><br /><a href="https://github.com/@ngneat/dialog/commits?author=beeman" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/rhutchison"><img src="https://avatars.githubusercontent.com/u/1460261?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Ryan Hutchison</b></sub></a><br /><a href="https://github.com/@ngneat/dialog/commits?author=rhutchison" title="Code">💻</a> <a href="#ideas-rhutchison" title="Ideas, Planning, & Feedback">🤔</a></td>
+    <td align="center"><a href="https://riskchallenger.nl/"><img src="https://avatars.githubusercontent.com/u/1962982?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Wybren Kortstra</b></sub></a><br /><a href="https://github.com/@ngneat/dialog/commits?author=Langstra" title="Code">💻</a></td>
   </tr>
 </table>
 
-<!-- markdownlint-enable -->
+<!-- markdownlint-restore -->
 <!-- prettier-ignore-end -->
+
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!

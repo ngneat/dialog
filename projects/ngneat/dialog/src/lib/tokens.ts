@@ -25,6 +25,7 @@ export const DIALOG_CONFIG = new InjectionToken<DialogConfig>('Dialog config tok
     closeButton: true,
     enableClose: true,
     draggable: false,
+    dragConstraint: 'none',
     resizable: false,
     size: 'md',
     windowClass: undefined,

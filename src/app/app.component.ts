@@ -1,8 +1,8 @@
-import { Component, ViewChild, TemplateRef, Type, ViewContainerRef } from '@angular/core';
+import { Component, TemplateRef, Type, ViewChild, ViewContainerRef } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { interval } from 'rxjs';
-import { tap, shareReplay } from 'rxjs/operators';
-import { DialogService, DialogConfig, DialogRef } from '@ngneat/dialog';
+import { shareReplay, tap } from 'rxjs/operators';
+import { DialogConfig, DialogRef, DialogService } from '@ngneat/dialog';
 
 import { TestDialogComponent } from './test-dialog.component';
 import { ConfirmationModalComponent } from './custom-confirm-dialog.component';
@@ -38,7 +38,7 @@ import { ConfirmationModalComponent } from './custom-confirm-dialog.component';
       }
 
       form {
-        max-height: 220px;
+        max-height: 260px;
         display: flex;
         flex-direction: column;
         flex-wrap: wrap;
@@ -72,6 +72,7 @@ export class AppComponent {
     backdrop: [true],
     resizable: [false],
     draggable: [false],
+    dragConstraint: ['none'],
     size: [''],
     windowClass: ['']
   } as Partial<Record<keyof DialogConfig, any>>);
