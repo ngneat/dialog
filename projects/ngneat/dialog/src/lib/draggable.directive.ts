@@ -1,7 +1,7 @@
 import { Directive, AfterViewInit, OnDestroy, Input, ElementRef, NgZone, Renderer2, OnChanges } from '@angular/core';
 import { Subject, fromEvent } from 'rxjs';
 import { filter, switchMap, map, takeUntil } from 'rxjs/operators';
-import { DragConstraint } from '@ngneat/dialog';
+import { DragConstraint } from './config';
 
 export type DragOffset = {
   x?: number;
