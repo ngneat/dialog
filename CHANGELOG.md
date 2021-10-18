@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.7.0](https://github.com/ngneat/dialog/compare/v1.6.0...v1.7.0) (2021-10-18)
+
+
+### Features
+
+* add drag constraint and reset methods ([feb39c4](https://github.com/ngneat/dialog/commit/feb39c4a4231834dd91bfbc9eb9fd16f33ee2a34)), closes [#36](https://github.com/ngneat/dialog/issues/36)
+* closeButton without backdrop click close ([94e52e8](https://github.com/ngneat/dialog/commit/94e52e8401e7b28c39b28e955bb378ec73ed150b))
+* move options to the global config ([0a0c5c6](https://github.com/ngneat/dialog/commit/0a0c5c68fddac185419d6b062f0a9cfa34944a58)), closes [#37](https://github.com/ngneat/dialog/issues/37)
+
 ## [1.6.0](https://github.com/ngneat/dialog/compare/v1.5.0...v1.6.0) (2021-03-21)
 
 

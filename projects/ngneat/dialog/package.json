@@ -1,6 +1,6 @@
 {
   "name": "@ngneat/dialog",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "schematics": "./schematics/collection.json",
   "description": "Simple to use, highly customizable, and powerful modal for Angular Apps",
   "dependencies": {
