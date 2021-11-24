@@ -94,7 +94,7 @@ describe('DialogComponent', () => {
 
     it('backdropClick$ should point to element', () => {
       let backdropClicked = false;
-      spectator.get(InternalDialogRef).backdropClick$.subscribe({
+      spectator.inject(InternalDialogRef).backdropClick$.subscribe({
         next: () => (backdropClicked = true)
       });
 
@@ -113,7 +113,7 @@ describe('DialogComponent', () => {
 
     it('backdropClick$ should point to body', () => {
       let backdropClicked = false;
-      spectator.get(InternalDialogRef).backdropClick$.subscribe({
+      spectator.inject(InternalDialogRef).backdropClick$.subscribe({
         next: () => (backdropClicked = true)
       });
 
@@ -127,7 +127,7 @@ describe('DialogComponent', () => {
     beforeEach(() => (spectator = createComponent(withConfig({ enableClose: true }))));
 
     it('on escape', () => {
-      const { close } = spectator.get(InternalDialogRef);
+      const { close } = spectator.inject(InternalDialogRef);
 
       spectator.dispatchKeyboardEvent(document.body, 'keyup', 'Enter');
 
@@ -139,7 +139,7 @@ describe('DialogComponent', () => {
     });
 
     it('on click backdrop', () => {
-      const { close } = spectator.get(InternalDialogRef);
+      const { close } = spectator.inject(InternalDialogRef);
 
       spectator.dispatchMouseEvent('.ngneat-dialog-content', 'click');
 
@@ -159,7 +159,7 @@ describe('DialogComponent', () => {
     beforeEach(() => (spectator = createComponent(withConfig({ enableClose: false }))));
 
     it('on escape', () => {
-      const { close } = spectator.get(InternalDialogRef);
+      const { close } = spectator.inject(InternalDialogRef);
 
       spectator.dispatchKeyboardEvent(document.body, 'keyup', 'Escape');
 
@@ -167,7 +167,7 @@ describe('DialogComponent', () => {
     });
 
     it('on click backdrop', () => {
-      const { close: close } = spectator.get(InternalDialogRef);
+      const { close: close } = spectator.inject(InternalDialogRef);
 
       spectator.dispatchMouseEvent('.ngneat-dialog-content', 'click');
 

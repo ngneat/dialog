@@ -360,8 +360,4 @@ describe('Dialog', () => {
       expect(value).toBeTrue();
     });
   });
-
-  it('should run change detection');
-  it('using a component should use ViewContainerRef injector as parent injector');
-  it('using a template should detect changes of ViewContainerRef');
 });

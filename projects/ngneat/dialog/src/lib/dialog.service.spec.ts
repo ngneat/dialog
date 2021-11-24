@@ -101,9 +101,9 @@ describe('DialogService', () => {
   beforeEach(() => {
     spectator = createService();
     service = spectator.service;
-    fakeAppRef = spectator.get(ApplicationRef);
-    fakeFactory = spectator.get<FakeFactoryResolver>(ComponentFactoryResolver);
-    fakeDocument = spectator.get<any>(DIALOG_DOCUMENT_REF);
+    fakeAppRef = spectator.inject(ApplicationRef);
+    fakeFactory = spectator.inject<FakeFactoryResolver>(ComponentFactoryResolver as any);
+    fakeDocument = spectator.inject<any>(DIALOG_DOCUMENT_REF);
   });
 
   it('should create it', () => {

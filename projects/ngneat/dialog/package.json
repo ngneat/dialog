@@ -1,10 +1,12 @@
 {
   "name": "@ngneat/dialog",
   "version": "1.7.0",
-  "schematics": "./schematics/collection.json",
   "description": "Simple to use, highly customizable, and powerful modal for Angular Apps",
   "dependencies": {
-    "tslib": "^2.0.0"
+    "tslib": "2.3.1"
+  },
+  "peerDependencies": {
+    "@angular/core": ">=13.0.0"
   },
   "keywords": [
     "angular",
