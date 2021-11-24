@@ -4,7 +4,7 @@
   "schematics": "./schematics/collection.json",
   "description": "Simple to use, highly customizable, and powerful modal for Angular Apps",
   "dependencies": {
-    "tslib": "^1.10.0"
+    "tslib": "^2.0.0"
   },
   "keywords": [
     "angular",
