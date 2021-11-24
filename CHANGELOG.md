@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.0.0](https://github.com/ngneat/dialog/compare/v1.7.0...v2.0.0) (2021-11-24)
+
+
+### ⚠ BREAKING CHANGES
+
+* Peer dep of v13
+
+### Features
+
+* 🎸 angular v13 ([b810c16](https://github.com/ngneat/dialog/commit/b810c16ff234a52be67a0165ec5b1d415a17ce6f))
+
 ## [1.7.0](https://github.com/ngneat/dialog/compare/v1.6.0...v1.7.0) (2021-10-18)
 
 
