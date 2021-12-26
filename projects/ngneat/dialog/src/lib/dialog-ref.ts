@@ -38,9 +38,11 @@ export class InternalDialogRef extends DialogRef {
   onReset: () => void;
 
   close(result?: unknown): void {
-    this.canClose(result)
-      .pipe(filter<boolean>(Boolean))
-      .subscribe({ next: () => this.onClose(result) });
+    if (this.ref) {
+      this.canClose(result)
+        .pipe(filter<boolean>(Boolean))
+        .subscribe({ next: () => this.onClose(result) });
+    }
   }
 
   beforeClose(guard: GuardFN<unknown>) {
