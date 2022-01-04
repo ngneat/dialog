@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.7.1](https://github.com/ngneat/dialog/compare/v1.7.0...v1.7.1) (2022-01-04)
+
+
+### Bug Fixes
+
+* 🐛 clicking on element with ngIf closes the dialog ([1bb3a4c](https://github.com/ngneat/dialog/commit/1bb3a4ccefc20402edeb12cc28e1b47d3caf7218))
+
 ## [1.7.0](https://github.com/ngneat/dialog/compare/v1.6.0...v1.7.0) (2021-10-18)
 
 
