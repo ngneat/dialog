@@ -97,7 +97,7 @@ export class DialogComponent implements OnInit, OnDestroy {
     const backdrop = this.config.backdrop ? this.backdrop.nativeElement : this.document.body;
     const dialogElement = this.dialogElement.nativeElement;
 
-    const backdropClick$ = fromEvent<MouseEvent>(backdrop, 'click').pipe(
+    const backdropClick$ = fromEvent<MouseEvent>(backdrop, 'click', { capture: true }).pipe(
       filter(({ target }) => !dialogElement.contains(target as Element))
     );
 
