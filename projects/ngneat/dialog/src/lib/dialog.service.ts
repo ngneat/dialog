@@ -16,10 +16,14 @@ import { DialogRef, InternalDialogRef } from './dialog-ref';
 import { DialogComponent } from './dialog.component';
 import { DIALOG_CONFIG, DIALOG_DOCUMENT_REF, GLOBAL_DIALOG_CONFIG, NODES_TO_INSERT } from './tokens';
 import {
+  ComputedDialogRefType,
   DialogContent,
   DialogContentSymbol,
   DialogContentTypes as DialogContentType,
-  DialogTitleAndBody
+  DialogTitleAndBody,
+  ExtractDialogRefData,
+  ExtractDialogRefResult,
+  ExtractDialogResolvedRef
 } from './types';
 
 interface OpenParams {
@@ -85,13 +89,15 @@ export class DialogService {
     return this.open(configWithDefaults.error.component, configWithDefaults);
   }
 
-  open<D, R = any, T = any>(
-    template: TemplateRef<T>,
-    config?: Partial<DialogConfig<D>>
-  ): DialogRef<D, R, TemplateRef<T>>;
-  open<D, R = any, T = any>(component: Type<T>, config?: Partial<DialogConfig<D>>): DialogRef<D, R, ComponentRef<T>>;
-  open<D, R = any>(template: Type<any> | TemplateRef<any>, config?: Partial<DialogConfig<D>>): DialogRef<D, R>;
-  open(componentOrTemplate: Type<any> | TemplateRef<any>, config: Partial<DialogConfig> = {}): DialogRef {
+  open<
+    TData extends ExtractDialogRefData<TReference>,
+    TResult extends ExtractDialogRefResult<TReference>,
+    T extends Type<unknown> | TemplateRef<unknown> = Type<unknown> | TemplateRef<unknown>,
+    TReference extends ComputedDialogRefType<T> = ComputedDialogRefType<T>
+  >(
+    componentOrTemplate: T,
+    config?: Partial<DialogConfig<TData>>
+  ): DialogRef<TData, TResult, ExtractDialogResolvedRef<T>> {
     const configWithDefaults = this.mergeConfig(config);
     configWithDefaults.onOpen?.();
     const dialogRef = new InternalDialogRef({
