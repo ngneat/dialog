@@ -90,12 +90,11 @@ export class DialogService {
   }
 
   open<
-    TData extends ExtractDialogRefData<TReference>,
-    TResult extends ExtractDialogRefResult<TReference>,
-    T extends Type<unknown> | TemplateRef<unknown> = Type<unknown> | TemplateRef<unknown>,
-    TReference extends ComputedDialogRefType<T> = ComputedDialogRefType<T>,
-    TDialogRef extends DialogRef<TData, TResult, TReference> = DialogRef<TData, TResult, TReference>
-  >(componentOrTemplate: T, config?: Partial<DialogConfig<TData>>): TDialogRef {
+    TData extends ExtractDialogRefData<ComputedDialogRefType<T>>,
+    TResult extends ExtractDialogRefResult<ComputedDialogRefType<T>>,
+    T extends Type<any> | TemplateRef<any> = Type<any> | TemplateRef<any>,
+    TDialogRef extends DialogRef<any, any, any> = DialogRef<TData, TResult, ComputedDialogRefType<T>>
+  >(componentOrTemplate: T, config: Partial<DialogConfig<TData>> = {}): TDialogRef {
     const configWithDefaults = this.mergeConfig(config);
     configWithDefaults.onOpen?.();
     const dialogRef = new InternalDialogRef({
