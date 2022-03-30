@@ -66,19 +66,32 @@ First, create the component to be displayed in the modal:
 ```ts
 import { DialogService, DialogRef } from '@ngneat/dialog';
 
+interface Data {
+ title: string
+}
+
 @Component({
   template: `
-    <h1>Hello World</h1>
-    <button (click)="ref.close()">Close</button>
+    <h1>{{title}}</h1>
+    <button (click)="ref.close(true)">Close</button>
   `
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HelloWorldComponent {
-  constructor(public ref: DialogRef) {}
+  get title() {
+    if (!this.ref.data) return 'Hello world';
+    return this.ref.data.title;
+  }
+
+  constructor(public ref: DialogRef<Data, boolean>) {}
 }
 ```
 
 Inside the component, you'll have access to a `DialogRef` provider. You can call its `close()` method to close the current modal. You can also pass `data` that'll be available for any subscribers to `afterClosed$`.
+
+> 💡 Tip
+> 
+> If you define the types for your DialogRef provider, the `afterClosed$` and `close(params)` will be typed automatically.
 
 Now we can use the `DialogService` to open open the modal and display the component:
 
