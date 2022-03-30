@@ -93,11 +93,9 @@ export class DialogService {
     TData extends ExtractDialogRefData<TReference>,
     TResult extends ExtractDialogRefResult<TReference>,
     T extends Type<unknown> | TemplateRef<unknown> = Type<unknown> | TemplateRef<unknown>,
-    TReference extends ComputedDialogRefType<T> = ComputedDialogRefType<T>
-  >(
-    componentOrTemplate: T,
-    config?: Partial<DialogConfig<TData>>
-  ): DialogRef<TData, TResult, ExtractDialogResolvedRef<T>> {
+    TReference extends ComputedDialogRefType<T> = ComputedDialogRefType<T>,
+    TDialogRef extends DialogRef<TData, TResult, TReference> = DialogRef<TData, TResult, TReference>
+  >(componentOrTemplate: T, config?: Partial<DialogConfig<TData>>): TDialogRef {
     const configWithDefaults = this.mergeConfig(config);
     configWithDefaults.onOpen?.();
     const dialogRef = new InternalDialogRef({
@@ -118,9 +116,9 @@ export class DialogService {
     }
 
     return componentOrTemplate instanceof TemplateRef
-      ? this.openTemplate(componentOrTemplate, params)
+      ? (this.openTemplate(componentOrTemplate, params) as TDialogRef)
       : typeof componentOrTemplate === 'function'
-      ? this.openComponent(componentOrTemplate, params)
+      ? (this.openComponent(componentOrTemplate, params) as TDialogRef)
       : this.throwMustBeAComponentOrATemplateRef(componentOrTemplate);
   }
 

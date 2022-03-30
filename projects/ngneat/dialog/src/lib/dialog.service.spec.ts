@@ -160,7 +160,7 @@ describe('DialogService', () => {
 
     it('should fill dialog injector', () => {
       const fakeTemplate = new FakeTemplateRef();
-      const dialog = service.open(fakeTemplate) as unknown as InternalDialogRef;
+      const dialog = service.open(fakeTemplate) as InternalDialogRef;
 
       const fakeTemplateView = fakeTemplate.view;
 
@@ -335,7 +335,7 @@ describe('DialogService', () => {
 
     beforeEach(() => {
       fakeTemplate = new FakeTemplateRef();
-      dialog = service.open(fakeTemplate) as unknown as InternalDialogRef;
+      dialog = service.open(fakeTemplate) as InternalDialogRef;
     });
 
     describe('using beforeClose', () => {
