@@ -16,10 +16,14 @@ import { DialogRef, InternalDialogRef } from './dialog-ref';
 import { DialogComponent } from './dialog.component';
 import { DIALOG_CONFIG, DIALOG_DOCUMENT_REF, GLOBAL_DIALOG_CONFIG, NODES_TO_INSERT } from './tokens';
 import {
+  ComputedDialogRefType,
   DialogContent,
   DialogContentSymbol,
   DialogContentTypes as DialogContentType,
-  DialogTitleAndBody
+  DialogTitleAndBody,
+  ExtractDialogRefData,
+  ExtractDialogRefResult,
+  ExtractDialogResolvedRef
 } from './types';
 
 interface OpenParams {
@@ -85,13 +89,12 @@ export class DialogService {
     return this.open(configWithDefaults.error.component, configWithDefaults);
   }
 
-  open<D, R = any, T = any>(
-    template: TemplateRef<T>,
-    config?: Partial<DialogConfig<D>>
-  ): DialogRef<D, R, TemplateRef<T>>;
-  open<D, R = any, T = any>(component: Type<T>, config?: Partial<DialogConfig<D>>): DialogRef<D, R, ComponentRef<T>>;
-  open<D, R = any>(template: Type<any> | TemplateRef<any>, config?: Partial<DialogConfig<D>>): DialogRef<D, R>;
-  open(componentOrTemplate: Type<any> | TemplateRef<any>, config: Partial<DialogConfig> = {}): DialogRef {
+  open<
+    TData extends ExtractDialogRefData<ComputedDialogRefType<T>>,
+    TResult extends ExtractDialogRefResult<ComputedDialogRefType<T>>,
+    T extends Type<any> | TemplateRef<any> = Type<any> | TemplateRef<any>,
+    TDialogRef extends DialogRef<any, any, any> = DialogRef<TData, TResult, ComputedDialogRefType<T>>
+  >(componentOrTemplate: T, config: Partial<DialogConfig<TData>> = {}): TDialogRef {
     const configWithDefaults = this.mergeConfig(config);
     configWithDefaults.onOpen?.();
     const dialogRef = new InternalDialogRef({
@@ -112,9 +115,9 @@ export class DialogService {
     }
 
     return componentOrTemplate instanceof TemplateRef
-      ? this.openTemplate(componentOrTemplate, params)
+      ? (this.openTemplate(componentOrTemplate, params) as TDialogRef)
       : typeof componentOrTemplate === 'function'
-      ? this.openComponent(componentOrTemplate, params)
+      ? (this.openComponent(componentOrTemplate, params) as TDialogRef)
       : this.throwMustBeAComponentOrATemplateRef(componentOrTemplate);
   }
 
