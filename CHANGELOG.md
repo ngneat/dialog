@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.1.0](https://github.com/ngneat/dialog/compare/v2.0.1...v2.1.0) (2022-03-31)
+
+
+### Features
+
+* add dialog strict typings [#54](https://github.com/ngneat/dialog/issues/54) ([b011c9f](https://github.com/ngneat/dialog/commit/b011c9f986d7310a55efe256bc481ea67292f80f))
+
+
+### Bug Fixes
+
+* fix dialog open config param default parameter ([207cdf2](https://github.com/ngneat/dialog/commit/207cdf2496cc6c8f16da52047165c58edef84337))
+* fix dialog service open return typings ([2e7b93f](https://github.com/ngneat/dialog/commit/2e7b93fe195b57933af0599266d77e28cadf5626))
+
+
+### Tests
+
+* fix dialog.service.spec.ts type error ([3f9791c](https://github.com/ngneat/dialog/commit/3f9791c0fb874d267ad4f66c81c3c1201dab5692))
+
 ### [2.0.1](https://github.com/ngneat/dialog/compare/v2.0.0...v2.0.1) (2022-01-04)
 
 
