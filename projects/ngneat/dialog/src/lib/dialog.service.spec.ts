@@ -125,6 +125,13 @@ describe('DialogService', () => {
     );
   });
 
+  it('should generate valid dialog id', () => {
+    const dialog = service.open(new FakeTemplateRef());
+    const idValidityRegex = /^[A-Za-z]+[\w-:.]*$/;
+
+    expect(idValidityRegex.test(dialog.id)).toBe(true);
+  });
+
   it('should throw if two dialogs has the same id', () => {
     service.open(new FakeTemplateRef(), { id: 'same' });
 

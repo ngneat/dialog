@@ -324,7 +324,7 @@ export class DialogService {
 }
 
 function nanoid() {
-  return Math.random()
+  return `dialog-${Math.random()
     .toString(36)
-    .substring(7);
+    .substring(7)}`;
 }
