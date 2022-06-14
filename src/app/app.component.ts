@@ -6,6 +6,7 @@ import { DialogConfig, DialogRef, DialogService } from '@ngneat/dialog';
 
 import { TestDialogComponent } from './test-dialog.component';
 import { ConfirmationModalComponent } from './custom-confirm-dialog.component';
+import { ResetLocationDialogComponent } from './reset-location-dialog.component';
 
 @Component({
   selector: 'app-root',
@@ -189,6 +190,10 @@ export class AppComponent {
         })
         .afterClosed$.pipe(tap(close => (this.closeOnce = !close)))
     );
+  }
+
+  openResetLocationDialog(config: DialogConfig) {
+    this.openDialog(ResetLocationDialogComponent, { ...config, draggable: true });
   }
 
   openDialogWithCustomData(compOrTemplate: Type<any> | TemplateRef<any>, data: object, config: DialogConfig) {

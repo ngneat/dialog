@@ -196,6 +196,14 @@
 </div>
 
 <div class="block">
+  <h2>Reset location of a modal</h2>
+
+  <button (click)="openResetLocationDialog(config.value)">
+    Open a dialog that you reset the location of
+  </button>
+</div>
+
+<div class="block">
   <h2>Pass data to the dialog and get a result</h2>
   <p>You can pass any data to your dialog:</p>
   <form [formGroup]="data">

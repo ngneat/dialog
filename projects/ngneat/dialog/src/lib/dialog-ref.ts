@@ -35,7 +35,7 @@ export class InternalDialogRef extends DialogRef {
   }
 
   onClose: (result?: unknown) => void;
-  onReset: () => void;
+  onReset: (offset?: DragOffset) => void;
 
   close(result?: unknown): void {
     this.canClose(result)
@@ -48,7 +48,7 @@ export class InternalDialogRef extends DialogRef {
   }
 
   resetDrag(offset?: DragOffset) {
-    this.onReset();
+    this.onReset(offset);
   }
 
   canClose(result: unknown): Observable<boolean> {

@@ -6,9 +6,10 @@ import { DialogModule } from '@ngneat/dialog';
 import { AppComponent } from './app.component';
 import { TestDialogComponent } from './test-dialog.component';
 import { ConfirmationModalComponent } from './custom-confirm-dialog.component';
+import { ResetLocationDialogComponent } from './reset-location-dialog.component';
 
 @NgModule({
-  declarations: [AppComponent, TestDialogComponent, ConfirmationModalComponent],
+  declarations: [AppComponent, TestDialogComponent, ResetLocationDialogComponent, ConfirmationModalComponent],
   imports: [
     BrowserModule,
     ReactiveFormsModule,
