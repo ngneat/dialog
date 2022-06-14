@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.1.1](https://github.com/ngneat/dialog/compare/v2.1.0...v2.1.1) (2022-06-14)
+
+
+### Bug Fixes
+
+* pass through offset parameters to resetDrag method ([2fde3d1](https://github.com/ngneat/dialog/commit/2fde3d14ebc30461254e85d91a485ee3f8ca8e23))
+* **dialog-service:** dialog invalid id ([2722393](https://github.com/ngneat/dialog/commit/2722393228016eb412e8638eaf731fe22e16d64c)), closes [#63](https://github.com/ngneat/dialog/issues/63)
+
 ## [2.1.0](https://github.com/ngneat/dialog/compare/v2.0.1...v2.1.0) (2022-03-31)
 
 
