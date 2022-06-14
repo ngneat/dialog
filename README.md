@@ -134,11 +134,11 @@ dialogRef.backdropClick$.subscribe(() => {
 });
 ```
 
-- `resetOffset` - A method that can be called to reset the offset of a dragged modal to reposition it in the middle of the screen. An offset can be given as the first parameter to position it different from the center:
+- `resetDrag` - A method that can be called to reset the dragged modal to the middle of the screen. An offset can be given as the first parameter to position it different from the center:
 
 ```ts
-dialogRef.resetOffset();
-dialogRef.resetOffset({ x: 100, y: 0 });
+dialogRef.resetDrag();
+dialogRef.resetDrag({ x: 100, y: 0 });
 ```
 
 - `beforeClose` - A guard that should return a `boolean`, an `observable`, or a `promise` indicating whether the modal can be closed:

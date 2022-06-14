@@ -25,6 +25,7 @@ import {
   ExtractDialogRefResult,
   ExtractDialogResolvedRef
 } from './types';
+import { DragOffset } from './draggable.directive';
 
 interface OpenParams {
   config: DialogConfig;
@@ -202,8 +203,8 @@ export class DialogService {
       }
     };
 
-    const onReset = () => {
-      dialog.instance.reset();
+    const onReset = (offset?: DragOffset) => {
+      dialog.instance.reset(offset);
     };
 
     dialogRef.mutate({
