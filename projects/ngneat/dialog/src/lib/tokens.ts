@@ -54,13 +54,17 @@ export const DIALOG_CONFIG = new InjectionToken<DialogConfig>('Dialog config tok
       }
     },
     success: {
-      component: SuccessDialogComponent
+      component: SuccessDialogComponent,
+      confirmText: 'OK'
     },
     confirm: {
-      component: ConfirmDialogComponent
+      component: ConfirmDialogComponent,
+      confirmText: 'OK',
+      cancelText: 'Cancel'
     },
     error: {
-      component: ErrorDialogComponent
+      component: ErrorDialogComponent,
+      confirmText: 'OK'
     },
     onClose: undefined,
     onOpen: undefined

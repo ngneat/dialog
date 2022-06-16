@@ -1,6 +1,7 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 
 import { BaseDialogComponent } from './base.component';
+import { isObservable, Observable, of } from 'rxjs';
 
 @Component({
   selector: 'ngneat-dialog-confirm',
@@ -18,11 +19,22 @@ import { BaseDialogComponent } from './base.component';
         </g>
       </svg>
 
-      <button class="btn btn-cancel ngneat-dialog-secondary-btn" (click)="ref.close(false)">Cancel</button>
-      <button class="btn btn-success ngneat-dialog-primary-btn" (click)="ref.close(true)">OK</button>
+      <button class="btn btn-cancel ngneat-dialog-secondary-btn" (click)="ref.close(false)">
+        {{ cancelText | async }}
+      </button>
+      <button class="btn btn-success ngneat-dialog-primary-btn" (click)="ref.close(true)">
+        {{ confirmText | async }}
+      </button>
     </ngneat-dialog-base>
   `,
   styleUrls: ['./host.dialog.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ConfirmDialogComponent extends BaseDialogComponent {}
+export class ConfirmDialogComponent extends BaseDialogComponent {
+  confirmText: Observable<string> = isObservable(this.config.confirm.confirmText)
+    ? (this.config.confirm.confirmText as Observable<string>)
+    : (of(this.config.confirm.confirmText) as Observable<string>);
+  cancelText: Observable<string> = isObservable(this.config.confirm.cancelText)
+    ? (this.config.confirm.cancelText as Observable<string>)
+    : (of(this.config.confirm.cancelText) as Observable<string>);
+}

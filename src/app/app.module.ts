@@ -19,6 +19,9 @@ import { ResetLocationDialogComponent } from './reset-location-dialog.component'
       },
       onClose() {
         console.log('close');
+      },
+      confirm: {
+        confirmText: 'Oh yeah!'
       }
     })
   ],

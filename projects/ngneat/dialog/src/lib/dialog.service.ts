@@ -258,6 +258,21 @@ export class DialogService {
         ...this.defaultConfig.sizes,
         ...this.globalConfig?.sizes,
         ...config?.sizes
+      },
+      confirm: {
+        ...this.defaultConfig.confirm,
+        ...this.globalConfig.confirm,
+        ...config.confirm
+      },
+      success: {
+        ...this.defaultConfig.success,
+        ...this.globalConfig.success,
+        ...config.success
+      },
+      error: {
+        ...this.defaultConfig.error,
+        ...this.globalConfig.error,
+        ...config.error
       }
     };
   }
