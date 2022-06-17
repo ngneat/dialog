@@ -1,6 +1,7 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 
 import { BaseDialogComponent } from './base.component';
+import { isObservable, Observable, of } from 'rxjs';
 
 @Component({
   selector: 'ngneat-dialog-error',
@@ -17,10 +18,14 @@ import { BaseDialogComponent } from './base.component';
         </g>
       </svg>
 
-      <button class="btn btn-error ngneat-dialog-primary-btn" (click)="ref.close()">OK</button>
+      <button class="btn btn-error ngneat-dialog-primary-btn" (click)="ref.close()">{{ confirmText | async }}</button>
     </ngneat-dialog-base>
   `,
   styleUrls: ['./host.dialog.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ErrorDialogComponent extends BaseDialogComponent {}
+export class ErrorDialogComponent extends BaseDialogComponent {
+  confirmText: Observable<string> = isObservable(this.config.error.confirmText)
+    ? (this.config.error.confirmText as Observable<string>)
+    : (of(this.config.error.confirmText) as Observable<string>);
+}

@@ -1,17 +1,22 @@
 import { ViewContainerRef, ElementRef, Type } from '@angular/core';
+import { Observable } from 'rxjs';
 
 type Sizes = 'sm' | 'md' | 'lg' | 'fullScreen' | string;
 export type DragConstraint = 'none' | 'bounce' | 'constrain';
 
 export interface GlobalDialogConfig {
   success: {
-    component: Type<any>;
+    component?: Type<any>;
+    confirmText?: string | Observable<string>;
   };
   confirm: {
-    component: Type<any>;
+    component?: Type<any>;
+    confirmText?: string | Observable<string>;
+    cancelText?: string | Observable<string>;
   };
   error: {
-    component: Type<any>;
+    component?: Type<any>;
+    confirmText?: string | Observable<string>;
   };
   sizes: Partial<
     Record<

@@ -326,8 +326,10 @@ this.dialog.error({
 
 The `body` type can be a `string`, `HTML string`, or a `<ng-template>`.
 
-You can also change the default dialogs, and use your own:
+### Customization
+You can customize the built-in dialogs in two ways. You can specify your own component and you can customize the text of the buttons in the default dialogs.
 
+The confirm and cancel texts can either be of type `string` or `Observable<string>`. The last is useful in case you want a string that changes based on your language with something like [Transloco](https://ngneat.github.io/transloco/).
 ```ts
 import { DialogModule } from '@ngneat/dialog';
 
@@ -336,13 +338,17 @@ import { DialogModule } from '@ngneat/dialog';
   imports: [
     DialogModule.forRoot({
       success: {
-        component: AppSuccessDialog
+        component: AppSuccessDialog,
+        confirmText: 'OK'
       },
       confirm: {
-        component: AppConfirmDialog
+        component: AppConfirmDialog,
+        confirmText: 'OK',
+        cancelText: 'Cancel'
       },
       error: {
-        component: AppErrorDialog
+        component: AppErrorDialog,
+        confirmText: 'OK'
       }
     })
   ],

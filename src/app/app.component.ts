@@ -1,6 +1,6 @@
 import { Component, TemplateRef, Type, ViewChild, ViewContainerRef } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { interval } from 'rxjs';
+import { interval, Observable } from 'rxjs';
 import { shareReplay, tap } from 'rxjs/operators';
 import { DialogConfig, DialogRef, DialogService } from '@ngneat/dialog';
 
@@ -120,8 +120,18 @@ export class AppComponent {
 
   openBuiltIn({ type, ...content }: { type: string; title: string; body: string }, config: DialogConfig) {
     this.cleanConfig = this.clearConfig(config);
+    const cancelObs$ = new Observable<string>(obs => {
+      obs.next('Meh');
+      setInterval(() => {
+        const noArray = ['Cancel', 'No', 'Rather not', 'Maybe later', 'Some other time', 'Not now'];
+        obs.next(noArray[Math.floor(Math.random() * noArray.length)]);
+      }, 1000);
+    });
 
-    (this.dialog[type](content, this.cleanConfig) as DialogRef).afterClosed$.subscribe({
+    (this.dialog[type](content, {
+      ...this.cleanConfig,
+      confirm: { cancelText: cancelObs$ }
+    }) as DialogRef).afterClosed$.subscribe({
       next: result => (this.result = result)
     });
   }

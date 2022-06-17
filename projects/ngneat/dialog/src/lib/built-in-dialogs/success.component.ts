@@ -1,6 +1,7 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 
 import { BaseDialogComponent } from './base.component';
+import { isObservable, Observable, of } from 'rxjs';
 
 @Component({
   selector: 'ngneat-dialog-success',
@@ -17,10 +18,14 @@ import { BaseDialogComponent } from './base.component';
         </g>
       </svg>
 
-      <button class="btn btn-success ngneat-dialog-primary-btn" (click)="ref.close()">OK</button>
+      <button class="btn btn-success ngneat-dialog-primary-btn" (click)="ref.close()">{{ confirmText | async }}</button>
     </ngneat-dialog-base>
   `,
   styleUrls: ['./host.dialog.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SuccessDialogComponent extends BaseDialogComponent {}
+export class SuccessDialogComponent extends BaseDialogComponent {
+  confirmText: Observable<string> = isObservable(this.config.success.confirmText)
+    ? (this.config.success.confirmText as Observable<string>)
+    : (of(this.config.success.confirmText) as Observable<string>);
+}

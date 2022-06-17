@@ -1,7 +1,8 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Inject } from '@angular/core';
 
 import { DialogContentSymbol, DialogContentData } from '../types';
 import { DialogRef } from '../dialog-ref';
+import { DIALOG_CONFIG, DialogConfig } from '@ngneat/dialog';
 
 @Component({
   selector: 'ngneat-dialog-base',
@@ -42,5 +43,9 @@ export class BaseDialogComponent {
     data: this.ref.data
   };
 
-  constructor(public ref: DialogRef<DialogContentData>) {}
+  constructor(
+    public ref: DialogRef<DialogContentData>,
+    @Inject(DIALOG_CONFIG)
+    protected config: DialogConfig
+  ) {}
 }
