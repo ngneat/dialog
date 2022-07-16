@@ -1,8 +1,9 @@
-import { Component, ChangeDetectionStrategy, Inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
 
-import { DialogContentSymbol, DialogContentData } from '../types';
+import { DialogConfig } from '../config';
 import { DialogRef } from '../dialog-ref';
-import { DIALOG_CONFIG, DialogConfig } from '@ngneat/dialog';
+import { DIALOG_CONFIG } from '../tokens';
+import { DialogContentData, DialogContentSymbol } from '../types';
 
 @Component({
   selector: 'ngneat-dialog-base',

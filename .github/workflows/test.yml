@@ -28,3 +28,4 @@ jobs:
             ${{ runner.os }}-node-
       - run: npm i
       - run: npm run test:lib:headless
+      - run: npm run build:lib
