@@ -4,6 +4,7 @@ import { createServiceFactory, SpectatorService } from '@ngneat/spectator';
 import { timer } from 'rxjs';
 import { mapTo } from 'rxjs/operators';
 import { DialogConfig } from './config';
+import { defaultConfig } from './default-config.factory';
 import { DialogRef, InternalDialogRef } from './dialog-ref';
 import { DialogComponent } from './dialog.component';
 import { DialogService } from './dialog.service';
@@ -77,6 +78,10 @@ describe('DialogService', () => {
             fullScreen: 'other fullScreen'
           }
         }
+      },
+      {
+        provide: DIALOG_CONFIG,
+        useFactory: defaultConfig
       },
       {
         provide: ComponentFactoryResolver,
