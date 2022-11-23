@@ -19,7 +19,6 @@ const BuiltIns = [BaseDialogComponent, SuccessDialogComponent, ConfirmDialogComp
 @NgModule({
   declarations: [DialogComponent, DialogCloseDirective, DialogDraggableDirective, BuiltIns],
   imports: [CommonModule],
-  entryComponents: [DialogComponent],
   exports: [DialogComponent, DialogCloseDirective]
 })
 export class DialogModule {

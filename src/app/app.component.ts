@@ -1,5 +1,5 @@
 import { Component, TemplateRef, Type, ViewChild, ViewContainerRef } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { UntypedFormBuilder } from '@angular/forms';
 import { interval, Observable } from 'rxjs';
 import { shareReplay, tap } from 'rxjs/operators';
 import { DialogConfig, DialogRef, DialogService } from '@ngneat/dialog';
@@ -103,7 +103,7 @@ export class AppComponent {
 
   backDropClicked = false;
 
-  constructor(private fb: FormBuilder, public dialog: DialogService) {}
+  constructor(private fb: UntypedFormBuilder, public dialog: DialogService) {}
 
   openDialog(compOrTemplate: Type<any> | TemplateRef<any>, config: DialogConfig) {
     this.backDropClicked = false;

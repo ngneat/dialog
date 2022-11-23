@@ -2,7 +2,7 @@ import { Component, ChangeDetectionStrategy, Inject } from '@angular/core';
 import { interval } from 'rxjs';
 
 import { DialogRef } from '@ngneat/dialog';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 
 interface DialogData {
   title: string;
@@ -50,8 +50,8 @@ interface DialogData {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ResetLocationDialogComponent {
-  offsetX = new FormControl(0);
-  offsetY = new FormControl(0);
+  offsetX = new UntypedFormControl(0);
+  offsetY = new UntypedFormControl(0);
 
   constructor(public ref: DialogRef<DialogData>) {}
 

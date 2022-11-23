@@ -2,7 +2,7 @@ import { Component, ChangeDetectionStrategy, Inject } from '@angular/core';
 import { interval } from 'rxjs';
 
 import { DialogRef } from '@ngneat/dialog';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 
 interface DialogData {
   title: string;
@@ -59,7 +59,7 @@ interface DialogData {
 export class TestDialogComponent {
   timer$ = interval(1000);
 
-  message = new FormControl('This dialog looks pretty cool 😎');
+  message = new UntypedFormControl('This dialog looks pretty cool 😎');
 
   constructor(public ref: DialogRef<DialogData>) {}
 }
