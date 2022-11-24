@@ -39,7 +39,7 @@
     "@ngneat/spectator": "12.2.0",
     "@types/jasmine": "4.3.0",
     "@types/node": "^12.11.1",
-    "angular-cli-ghpages": "^0.6.2",
+    "angular-cli-ghpages": "1.0.5",
     "cross-env": "^5.2.0",
     "git-cz": "^3.2.1",
     "husky": "^3.0.1",
