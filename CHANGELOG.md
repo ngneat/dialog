@@ -2,130 +2,133 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-### [2.1.1](https://github.com/ngneat/dialog/compare/v2.1.0...v2.1.1) (2022-06-14)
-
-
-### Bug Fixes
-
-* pass through offset parameters to resetDrag method ([2fde3d1](https://github.com/ngneat/dialog/commit/2fde3d14ebc30461254e85d91a485ee3f8ca8e23))
-* **dialog-service:** dialog invalid id ([2722393](https://github.com/ngneat/dialog/commit/2722393228016eb412e8638eaf731fe22e16d64c)), closes [#63](https://github.com/ngneat/dialog/issues/63)
-
-## [2.1.0](https://github.com/ngneat/dialog/compare/v2.0.1...v2.1.0) (2022-03-31)
-
-
-### Features
-
-* add dialog strict typings [#54](https://github.com/ngneat/dialog/issues/54) ([b011c9f](https://github.com/ngneat/dialog/commit/b011c9f986d7310a55efe256bc481ea67292f80f))
-
-
-### Bug Fixes
-
-* fix dialog open config param default parameter ([207cdf2](https://github.com/ngneat/dialog/commit/207cdf2496cc6c8f16da52047165c58edef84337))
-* fix dialog service open return typings ([2e7b93f](https://github.com/ngneat/dialog/commit/2e7b93fe195b57933af0599266d77e28cadf5626))
-
-
-### Tests
-
-* fix dialog.service.spec.ts type error ([3f9791c](https://github.com/ngneat/dialog/commit/3f9791c0fb874d267ad4f66c81c3c1201dab5692))
-
-### [2.0.1](https://github.com/ngneat/dialog/compare/v2.0.0...v2.0.1) (2022-01-04)
-
-
-### Bug Fixes
-
-* 🐛 clicking on element with ngIf closes the dialog ([490ab3d](https://github.com/ngneat/dialog/commit/490ab3dce0a7a0b0c6df0b17101b017588d887b6))
-
-## [2.0.0](https://github.com/ngneat/dialog/compare/v1.7.0...v2.0.0) (2021-11-24)
-
+## [3.0.0](https://github.com/ngneat/dialog/compare/v2.1.1...v3.0.0) (2022-11-24)
 
 ### ⚠ BREAKING CHANGES
 
-* Peer dep of v13
+- upgrade to standalone components
+
+* Remove `DialogModule`
+* Remove built-in dialogs
+* Sizes default `height` is now `auto`
+* Expose `provideDialogConfig` function
+* `dialogClose` should be imported when used
+* The `data` property type now infered based on the public ref property in the component (see docs)
+
+### Bug Fixes
+
+- add reset location dialog component for demo ([266a9eb](https://github.com/ngneat/dialog/commit/266a9ebd30de438a3888fe3f558baa69768007b3))
+
+### Build System
+
+- fix the build script and add build test to ci ([3f1f280](https://github.com/ngneat/dialog/commit/3f1f280e1610ce4da4fdc1b7b9a8c8a1c4122ddb))
+
+### [2.1.1](https://github.com/ngneat/dialog/compare/v2.1.0...v2.1.1) (2022-06-14)
+
+### Bug Fixes
+
+- pass through offset parameters to resetDrag method ([2fde3d1](https://github.com/ngneat/dialog/commit/2fde3d14ebc30461254e85d91a485ee3f8ca8e23))
+- **dialog-service:** dialog invalid id ([2722393](https://github.com/ngneat/dialog/commit/2722393228016eb412e8638eaf731fe22e16d64c)), closes [#63](https://github.com/ngneat/dialog/issues/63)
+
+## [2.1.0](https://github.com/ngneat/dialog/compare/v2.0.1...v2.1.0) (2022-03-31)
 
 ### Features
 
-* 🎸 angular v13 ([b810c16](https://github.com/ngneat/dialog/commit/b810c16ff234a52be67a0165ec5b1d415a17ce6f))
+- add dialog strict typings [#54](https://github.com/ngneat/dialog/issues/54) ([b011c9f](https://github.com/ngneat/dialog/commit/b011c9f986d7310a55efe256bc481ea67292f80f))
+
+### Bug Fixes
+
+- fix dialog open config param default parameter ([207cdf2](https://github.com/ngneat/dialog/commit/207cdf2496cc6c8f16da52047165c58edef84337))
+- fix dialog service open return typings ([2e7b93f](https://github.com/ngneat/dialog/commit/2e7b93fe195b57933af0599266d77e28cadf5626))
+
+### Tests
+
+- fix dialog.service.spec.ts type error ([3f9791c](https://github.com/ngneat/dialog/commit/3f9791c0fb874d267ad4f66c81c3c1201dab5692))
+
+### [2.0.1](https://github.com/ngneat/dialog/compare/v2.0.0...v2.0.1) (2022-01-04)
+
+### Bug Fixes
+
+- 🐛 clicking on element with ngIf closes the dialog ([490ab3d](https://github.com/ngneat/dialog/commit/490ab3dce0a7a0b0c6df0b17101b017588d887b6))
+
+## [2.0.0](https://github.com/ngneat/dialog/compare/v1.7.0...v2.0.0) (2021-11-24)
+
+### ⚠ BREAKING CHANGES
+
+- Peer dep of v13
+
+### Features
+
+- 🎸 angular v13 ([b810c16](https://github.com/ngneat/dialog/commit/b810c16ff234a52be67a0165ec5b1d415a17ce6f))
 
 ## [1.7.0](https://github.com/ngneat/dialog/compare/v1.6.0...v1.7.0) (2021-10-18)
 
-
 ### Features
 
-* add drag constraint and reset methods ([feb39c4](https://github.com/ngneat/dialog/commit/feb39c4a4231834dd91bfbc9eb9fd16f33ee2a34)), closes [#36](https://github.com/ngneat/dialog/issues/36)
-* closeButton without backdrop click close ([94e52e8](https://github.com/ngneat/dialog/commit/94e52e8401e7b28c39b28e955bb378ec73ed150b))
-* move options to the global config ([0a0c5c6](https://github.com/ngneat/dialog/commit/0a0c5c68fddac185419d6b062f0a9cfa34944a58)), closes [#37](https://github.com/ngneat/dialog/issues/37)
+- add drag constraint and reset methods ([feb39c4](https://github.com/ngneat/dialog/commit/feb39c4a4231834dd91bfbc9eb9fd16f33ee2a34)), closes [#36](https://github.com/ngneat/dialog/issues/36)
+- closeButton without backdrop click close ([94e52e8](https://github.com/ngneat/dialog/commit/94e52e8401e7b28c39b28e955bb378ec73ed150b))
+- move options to the global config ([0a0c5c6](https://github.com/ngneat/dialog/commit/0a0c5c68fddac185419d6b062f0a9cfa34944a58)), closes [#37](https://github.com/ngneat/dialog/issues/37)
 
 ## [1.6.0](https://github.com/ngneat/dialog/compare/v1.5.0...v1.6.0) (2021-03-21)
 
-
 ### Features
 
-* allow multiple classes to be set from windowClass ([5ac3297](https://github.com/ngneat/dialog/commit/5ac3297fb664c4cd104b00648ebe21f09df55e72))
-* allow multiple classes to be set from windowClass ([d60ee41](https://github.com/ngneat/dialog/commit/d60ee4142436137e2d0c6ce2f75848796e8b717b))
+- allow multiple classes to be set from windowClass ([5ac3297](https://github.com/ngneat/dialog/commit/5ac3297fb664c4cd104b00648ebe21f09df55e72))
+- allow multiple classes to be set from windowClass ([d60ee41](https://github.com/ngneat/dialog/commit/d60ee4142436137e2d0c6ce2f75848796e8b717b))
 
 ## [1.5.0](https://github.com/ngneat/dialog/compare/v1.4.1...v1.5.0) (2021-03-16)
 
-
 ### Features
 
-* add closeAll to dialog service ([fa8cb92](https://github.com/ngneat/dialog/commit/fa8cb9272ce0a3ec00209b1d2b085a991e18c261)), closes [#23](https://github.com/ngneat/dialog/issues/23)
-
+- add closeAll to dialog service ([fa8cb92](https://github.com/ngneat/dialog/commit/fa8cb9272ce0a3ec00209b1d2b085a991e18c261)), closes [#23](https://github.com/ngneat/dialog/issues/23)
 
 ### Bug Fixes
 
-* **dialog-service:** Remove 'ngneat-dialog-hidden' from body only after last dialog is closed ([83477dd](https://github.com/ngneat/dialog/commit/83477dd0d697d989eda2930214b265bd190b46e8)), closes [ngneat/dialog#26](https://github.com/ngneat/dialog/issues/26)
-* close dialog on backdrop click ([efbdb11](https://github.com/ngneat/dialog/commit/efbdb112b613240d8a97cf7be0aa6a4ca6700efb))
-* **schematics:** use correct folder ([6e52e31](https://github.com/ngneat/dialog/commit/6e52e312f2130be8f87003766c7d77aff6044b79))
+- **dialog-service:** Remove 'ngneat-dialog-hidden' from body only after last dialog is closed ([83477dd](https://github.com/ngneat/dialog/commit/83477dd0d697d989eda2930214b265bd190b46e8)), closes [ngneat/dialog#26](https://github.com/ngneat/dialog/issues/26)
+- close dialog on backdrop click ([efbdb11](https://github.com/ngneat/dialog/commit/efbdb112b613240d8a97cf7be0aa6a4ca6700efb))
+- **schematics:** use correct folder ([6e52e31](https://github.com/ngneat/dialog/commit/6e52e312f2130be8f87003766c7d77aff6044b79))
 
 ### [1.4.1](https://github.com/ngneat/dialog/compare/v1.4.0...v1.4.1) (2021-02-02)
 
-
 ### Bug Fixes
 
-* 🐛 replace close icon ([b747695](https://github.com/ngneat/dialog/commit/b7476951280c4b0620557d5cbb8e0809fa271453))
+- 🐛 replace close icon ([b747695](https://github.com/ngneat/dialog/commit/b7476951280c4b0620557d5cbb8e0809fa271453))
 
 ## [1.4.0](https://github.com/ngneat/dialog/compare/v1.3.0...v1.4.0) (2021-01-26)
 
-
 ### Features
 
-* 🎸 support custom sizes ([66e90ad](https://github.com/ngneat/dialog/commit/66e90ad9a35247615b99489a2022ab18719b423d))
-
+- 🎸 support custom sizes ([66e90ad](https://github.com/ngneat/dialog/commit/66e90ad9a35247615b99489a2022ab18719b423d))
 
 ### Bug Fixes
 
-* 🐛 set deafult modal size to md ([fc9c79a](https://github.com/ngneat/dialog/commit/fc9c79ac8e8b1113750dee5676727f017356678d))
+- 🐛 set deafult modal size to md ([fc9c79a](https://github.com/ngneat/dialog/commit/fc9c79ac8e8b1113750dee5676727f017356678d))
 
 ## [1.3.0](https://github.com/ngneat/dialog/compare/v1.0.4...v1.3.0) (2021-01-26)
 
-
 ### Features
 
-* 🎸 add max height to config ([d2f57ea](https://github.com/ngneat/dialog/commit/d2f57eabf6e6844c727b0ce81e2008c0cf93dd6b))
-
+- 🎸 add max height to config ([d2f57ea](https://github.com/ngneat/dialog/commit/d2f57eabf6e6844c727b0ce81e2008c0cf93dd6b))
 
 ### Bug Fixes
 
-* **dialog-component:** use appendChild instead of append (IE) ([e4e56e2](https://github.com/ngneat/dialog/commit/e4e56e2b56b71b7656eb81d2b0e050cb762a24a7))
+- **dialog-component:** use appendChild instead of append (IE) ([e4e56e2](https://github.com/ngneat/dialog/commit/e4e56e2b56b71b7656eb81d2b0e050cb762a24a7))
 
 ### [1.2.1](https://github.com/ngneat/dialog/compare/v1.2.0...v1.2.1) (2020-12-01)
 
-
 ### Bug Fixes
 
-* 🐛 fix position ([88442d7](https://github.com/ngneat/dialog/commit/88442d756aeb784b29ed29df0a5977c0fe012eb9))
+- 🐛 fix position ([88442d7](https://github.com/ngneat/dialog/commit/88442d756aeb784b29ed29df0a5977c0fe012eb9))
 
 ## [1.2.0](https://github.com/ngneat/dialog/compare/v1.1.0...v1.2.0) (2020-12-01)
 
-
 ### Features
 
-* 🎸 add onopen and onclose to global config ([cfc68ba](https://github.com/ngneat/dialog/commit/cfc68ba18285a49c1771174f33dc3f2a507b645b))
-
+- 🎸 add onopen and onclose to global config ([cfc68ba](https://github.com/ngneat/dialog/commit/cfc68ba18285a49c1771174f33dc3f2a507b645b))
 
 ### Bug Fixes
 
-* 🐛 change modal animation ([65c6d85](https://github.com/ngneat/dialog/commit/65c6d85f9a61f72fddede5b2c93c188738617277))
+- 🐛 change modal animation ([65c6d85](https://github.com/ngneat/dialog/commit/65c6d85f9a61f72fddede5b2c93c188738617277))
 
 ### [1.0.4](https://github.com/ngneat/dialog/compare/v1.1.1...v1.0.4) (2020-12-19)
 
