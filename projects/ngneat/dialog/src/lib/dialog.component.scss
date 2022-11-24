@@ -3,7 +3,6 @@
   flex-direction: column;
   overflow: hidden;
   position: relative;
-
   @keyframes dialog-open {
     0% {
       transform: translateX(50px);
@@ -47,7 +46,11 @@
   width: 100%;
   padding: 30px;
   z-index: 1050;
-  background: rgba(0, 0, 0, 0.32);
+  background-color: transparent;
+
+  &.ngneat-dialog-backdrop-visible {
+    background: rgba(0, 0, 0, 0.32);
+  }
 
   animation: dialog-open-backdrop 0.3s;
 
@@ -55,6 +58,7 @@
     0% {
       opacity: 0;
     }
+
     100% {
       opacity: 1;
     }
@@ -84,10 +88,12 @@
   color: #5f6368;
   transition: color 0.2s ease-in-out;
   z-index: 1051;
+
   svg {
     width: 12px;
     height: 12px;
   }
+
   &:hover {
     color: #5d9ff1;
   }

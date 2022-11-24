@@ -1,24 +1,16 @@
-import { DOCUMENT } from '@angular/common';
-import {
-  AfterViewInit,
-  Component,
-  ElementRef,
-  Inject,
-  OnDestroy,
-  OnInit,
-  ViewChild,
-  ViewEncapsulation
-} from '@angular/core';
+import { CommonModule, DOCUMENT } from '@angular/common';
+import { Component, ElementRef, inject, Inject, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { fromEvent, merge, Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
-import { DialogConfig } from './config';
 import { InternalDialogRef } from './dialog-ref';
 import { coerceCssPixelValue } from './dialog.utils';
-import { DIALOG_CONFIG, NODES_TO_INSERT } from './tokens';
 import { DialogDraggableDirective, DragOffset } from './draggable.directive';
+import { DIALOG_CONFIG, NODES_TO_INSERT } from './providers';
 
 @Component({
   selector: 'ngneat-dialog',
+  standalone: true,
+  imports: [DialogDraggableDirective, CommonModule],
   template: `
     <div
       #backdrop
@@ -47,15 +39,18 @@ import { DialogDraggableDirective, DragOffset } from './draggable.directive';
     </div>
   `,
   styleUrls: [`./dialog.component.scss`],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
 })
 export class DialogComponent implements OnInit, OnDestroy {
+  config = inject(DIALOG_CONFIG);
+  dialogRef = inject(InternalDialogRef);
+
   private size = this.config.sizes?.[this.config.size || 'md'];
   styles = {
     width: coerceCssPixelValue(this.config.width || this.size?.width),
     height: coerceCssPixelValue(this.config.height || this.size?.height),
     minHeight: coerceCssPixelValue(this.config.minHeight || this.size?.minHeight),
-    maxHeight: coerceCssPixelValue(this.config.maxHeight || this.size?.maxHeight)
+    maxHeight: coerceCssPixelValue(this.config.maxHeight || this.size?.maxHeight),
   };
 
   @ViewChild('backdrop', { static: true })
@@ -69,27 +64,23 @@ export class DialogComponent implements OnInit, OnDestroy {
 
   private destroy$ = new Subject<void>();
 
-  constructor(
-    @Inject(DOCUMENT)
-    private document,
-    { nativeElement: host }: ElementRef<HTMLElement>,
-    public dialogRef: InternalDialogRef,
-    @Inject(DIALOG_CONFIG)
-    public config: DialogConfig,
-    @Inject(NODES_TO_INSERT)
-    private nodes: Element[]
-  ) {
-    host.id = this.config.id;
+  private nodes = inject(NODES_TO_INSERT);
+
+  private document = inject(DOCUMENT);
+  private host: HTMLElement = inject(ElementRef).nativeElement;
+
+  constructor() {
+    this.host.id = this.config.id;
 
     // Append nodes to dialog component, template or component could need
     // something from the dialog component
     // for example, if `[dialogClose]` is used into a directive,
     // DialogRef will be getted from DialogService instead of DI
-    this.nodes.forEach(node => host.appendChild(node));
+    this.nodes.forEach((node) => this.host.appendChild(node));
 
-    if (config.windowClass) {
-      const classNames = config.windowClass.split(/\s/).filter(x => x);
-      classNames.forEach(name => host.classList.add(name));
+    if (this.config.windowClass) {
+      const classNames = this.config.windowClass.split(/\s/).filter((x) => x);
+      classNames.forEach((name) => this.host.classList.add(name));
     }
   }
 
@@ -114,7 +105,7 @@ export class DialogComponent implements OnInit, OnDestroy {
 
     // `dialogElement` is resolved at this point
     // And here is where dialog finally will be placed
-    this.nodes.forEach(node => dialogElement.appendChild(node));
+    this.nodes.forEach((node) => dialogElement.appendChild(node));
   }
 
   reset(offset?: DragOffset): void {

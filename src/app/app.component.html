@@ -63,9 +63,7 @@
     </div>
   </form>
 
-  <p *ngIf="backDropClicked">
-    You've clicked the backdrop 👏
-  </p>
+  <p *ngIf="backDropClicked">You've clicked the backdrop 👏</p>
 </div>
 
 <div class="block">
@@ -73,71 +71,11 @@
   <button (click)="openDialog(component, config.value)">Open dialog using a component!</button>
 </div>
 
-<div class="block note">
-  📢 This configuration is used in all the dialogs you open ☝️
-</div>
-
-<div class="block">
-  <h2>Built-ins dialog</h2>
-  <form [formGroup]="builtIn">
-    <div>
-      <label>Title</label>
-      <input placeholder="Title of the dialog" formControlName="title" />
-    </div>
-    <div>
-      <label>Body</label>
-      <textarea cols="40" placeholder="Body of the dialog" formControlName="body"></textarea>
-    </div>
-    <div>
-      <label>Type</label>
-      <select formControlName="type">
-        <option value="confirm" default>Confirm</option>
-        <option value="custom" default>Custom bootstrap confirm</option>
-        <option value="success" default>Success</option>
-        <option value="error" default>Error</option>
-      </select>
-    </div>
-
-    <p *ngIf="result === true">You have confirmed 👍</p>
-    <p *ngIf="result === false">You haven't confirmed 👎</p>
-  </form>
-
-  <button
-    (click)="
-      builtIn.value.type === 'custom'
-        ? openCustomConfirmDialog(builtIn.value, config.value)
-        : openBuiltIn(builtIn.value, config.value)
-    "
-  >
-    Open the built-in dialog
-  </button>
-</div>
+<div class="block note">📢 This configuration is used in all the dialogs you open ☝️</div>
 
 <div class="block note">
   <p>📢 The body or title can be a string or a TemplateRef (ng-template)</p>
   <p>📢 You can override the built-in dialogs with your own</p>
-</div>
-
-<div class="block">
-  <h2>Use a custom container</h2>
-
-  <div #container>
-    Open the dialog into this div 👇
-  </div>
-
-  <ng-template #dialogIntoCustomContainer>
-    <div class="dialog">
-      <p>
-        Inspect the dialog to see where it's placed 👀
-      </p>
-
-      <button dialogClose>Close</button>
-    </div>
-  </ng-template>
-
-  <button (click)="openDialogWithCustomContainer(dialogIntoCustomContainer, container, config.value)">
-    Open the dialog with a custom container
-  </button>
 </div>
 
 <div class="block">
@@ -151,13 +89,9 @@
 
   <ng-template #dialogVCR>
     <div class="dialog">
-      <p>
-        This dialog isn't attached to the ApplicationRef. It's attached to a custom ViewContainerRef.
-      </p>
+      <p>This dialog isn't attached to the ApplicationRef. It's attached to a custom ViewContainerRef.</p>
 
-      <p>
-        You can take control of this view (this dialog) and, for example, dettach it from the change detection.
-      </p>
+      <p>You can take control of this view (this dialog) and, for example, dettach it from the change detection.</p>
 
       <p>
         When you click Toggle button, this timer (same timer of main page) will stop:
@@ -166,9 +100,7 @@
       <p>Click on Detect changes to run a change detection or click again to reattach it</p>
 
       <button (click)="toggleDialogFromVCR()">Toggle</button>
-      <button (click)="detectChangesIntoDialog()">
-        Detect changes into template
-      </button>
+      <button (click)="detectChangesIntoDialog()">Detect changes into template</button>
       <button dialogClose>Close</button>
     </div>
   </ng-template>
@@ -179,28 +111,9 @@
 </div>
 
 <div class="block">
-  <h2>Use guards to prevent closing</h2>
-
-  <ng-template #dialogWithGuard>
-    <div class="dialog">
-      <p *ngIf="closeOnce">
-        This is embarrassing but..., why you didn't close me?
-      </p>
-
-      <button dialogClose>Try to close me 😜</button>
-    </div>
-  </ng-template>
-  <button (click)="openDialogWithGuard(dialogWithGuard, config.value)">
-    Open a dialog with double check
-  </button>
-</div>
-
-<div class="block">
   <h2>Reset location of a modal</h2>
 
-  <button (click)="openResetLocationDialog(config.value)">
-    Open a dialog that you reset the location of
-  </button>
+  <button (click)="openResetLocationDialog(config.value)">Open a dialog that you reset the location of</button>
 </div>
 
 <div class="block">
@@ -221,7 +134,5 @@
     Your last result from the dialog was: <b>{{ messageFromDialog || 'nothing 😢' }}</b>
   </p>
 
-  <button (click)="openDialogWithCustomData(component, data.value, config.value)">
-    Open
-  </button>
+  <button (click)="openDialogWithCustomData(component, data.value, config.value)">Open</button>
 </div>

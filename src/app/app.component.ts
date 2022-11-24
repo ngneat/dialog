@@ -1,59 +1,19 @@
 import { Component, TemplateRef, Type, ViewChild, ViewContainerRef } from '@angular/core';
-import { UntypedFormBuilder } from '@angular/forms';
-import { interval, Observable } from 'rxjs';
-import { shareReplay, tap } from 'rxjs/operators';
-import { DialogConfig, DialogRef, DialogService } from '@ngneat/dialog';
+import { ReactiveFormsModule, UntypedFormBuilder } from '@angular/forms';
+import { DialogCloseDirective, DialogService, DialogConfig } from '@ngneat/dialog';
+import { interval } from 'rxjs';
+import { shareReplay } from 'rxjs/operators';
 
-import { TestDialogComponent } from './test-dialog.component';
-import { ConfirmationModalComponent } from './custom-confirm-dialog.component';
+import { CommonModule } from '@angular/common';
 import { ResetLocationDialogComponent } from './reset-location-dialog.component';
+import { TestDialogComponent } from './test-dialog.component';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styles: [
-    `
-      .note {
-        background-color: #ffffcc;
-        padding: 16px 32px;
-      }
-
-      .dialog {
-        padding: 18px;
-      }
-
-      label {
-        padding: 0em 0.75em;
-        width: 200px;
-        display: inline-block;
-      }
-
-      input,
-      select {
-        padding: 0.5em 0.75em;
-        width: 200px;
-      }
-
-      button {
-        margin-right: 10px;
-      }
-
-      form {
-        max-height: 260px;
-        display: flex;
-        flex-direction: column;
-        flex-wrap: wrap;
-        align-content: flex-start;
-      }
-
-      form > div {
-        display: flex;
-        align-items: center;
-        margin-bottom: 10px;
-        height: 32px;
-      }
-    `
-  ]
+  imports: [ReactiveFormsModule, CommonModule, DialogCloseDirective],
+  standalone: true,
+  styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
   @ViewChild('template', { static: true })
@@ -75,18 +35,18 @@ export class AppComponent {
     draggable: [false],
     dragConstraint: ['none'],
     size: [''],
-    windowClass: ['']
+    windowClass: [''],
   } as Partial<Record<keyof DialogConfig, any>>);
 
   builtIn = this.fb.group({
     type: ['confirm'],
     title: ['Test dialog 🔨'],
-    body: ['This is the body for my dialog and it can contain <b>HTML</b>!']
+    body: ['This is the body for my dialog and it can contain <b>HTML</b>!'],
   });
 
   data = this.fb.group({
     title: ['My awesone custom title! :-D'],
-    withResult: [true]
+    withResult: [true],
   });
 
   cleanConfig: Partial<DialogConfig>;
@@ -107,66 +67,23 @@ export class AppComponent {
 
   openDialog(compOrTemplate: Type<any> | TemplateRef<any>, config: DialogConfig) {
     this.backDropClicked = false;
-    this.cleanConfig = this.clearConfig(config);
+    this.cleanConfig = this.normalizeConfig(config);
 
     const ref = this.dialog.open(compOrTemplate, this.cleanConfig);
 
     ref.backdropClick$.subscribe({
-      next: () => (this.backDropClicked = true)
+      next: () => (this.backDropClicked = true),
     });
 
     return ref;
-  }
-
-  openBuiltIn({ type, ...content }: { type: string; title: string; body: string }, config: DialogConfig) {
-    this.cleanConfig = this.clearConfig(config);
-    const cancelObs$ = new Observable<string>(obs => {
-      obs.next('Meh');
-      setInterval(() => {
-        const noArray = ['Cancel', 'No', 'Rather not', 'Maybe later', 'Some other time', 'Not now'];
-        obs.next(noArray[Math.floor(Math.random() * noArray.length)]);
-      }, 1000);
-    });
-
-    (this.dialog[type](content, {
-      ...this.cleanConfig,
-      confirm: { cancelText: cancelObs$ }
-    }) as DialogRef).afterClosed$.subscribe({
-      next: result => (this.result = result)
-    });
-  }
-
-  openCustomConfirmDialog({ type, ...content }: { type: string; title: string; body: string }, config: DialogConfig) {
-    this.openBuiltIn(
-      { type: 'confirm', ...content },
-      {
-        ...config,
-        data: {
-          ...config.data,
-          hint: 'This is the body of my custom confirm...'
-        },
-        confirm: { component: ConfirmationModalComponent }
-      }
-    );
-  }
-
-  openDialogWithCustomContainer(
-    compOrTemplate: Type<any> | TemplateRef<any>,
-    container: HTMLElement,
-    config: DialogConfig
-  ) {
-    this.openDialog(compOrTemplate, {
-      ...config,
-      container
-    });
   }
 
   openDialogWithCustomVCR(compOrTemplate: Type<any> | TemplateRef<any>, config: DialogConfig) {
     this.templateOfCustomVCRIsAttached = true;
 
     this.openDialog(compOrTemplate, {
-      ...config,
-      vcr: this.vcr
+      ...this.normalizeConfig(config),
+      vcr: this.vcr,
     });
   }
 
@@ -187,21 +104,6 @@ export class AppComponent {
     view.detectChanges();
   }
 
-  openDialogWithGuard(compOrTemplate: Type<any> | TemplateRef<any>, config: DialogConfig) {
-    this.closeOnce = false;
-
-    const ref = this.openDialog(compOrTemplate, config);
-
-    ref.beforeClose(() =>
-      this.dialog
-        .confirm({
-          title: 'Are you sure?',
-          body: 'Are you really really sure you want close this awesome test dialog?'
-        })
-        .afterClosed$.pipe(tap(close => (this.closeOnce = !close)))
-    );
-  }
-
   openResetLocationDialog(config: DialogConfig) {
     this.openDialog(ResetLocationDialogComponent, { ...config, draggable: true });
   }
@@ -209,21 +111,22 @@ export class AppComponent {
   openDialogWithCustomData(compOrTemplate: Type<any> | TemplateRef<any>, data: object, config: DialogConfig) {
     this.openDialog(compOrTemplate, {
       ...config,
-      data
+      data,
     }).afterClosed$.subscribe({
       next: (message?: string) => {
         if (typeof message === 'string') {
           this.messageFromDialog = message;
         }
-      }
+      },
     });
   }
 
-  private clearConfig(config: DialogConfig) {
-    return Object.keys(config).reduce((acc, key) => {
-      acc[key] = config[key] === '' ? undefined : config[key];
-
-      return acc;
+  private normalizeConfig(config: Partial<DialogConfig>): any {
+    return Object.entries(config).reduce((cleanConfig, [key, value]) => {
+      if (value != null && value !== '') {
+        cleanConfig[key] = value;
+      }
+      return cleanConfig;
     }, {});
   }
 }

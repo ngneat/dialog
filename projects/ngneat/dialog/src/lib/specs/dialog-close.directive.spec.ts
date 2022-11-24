@@ -1,14 +1,14 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { createDirectiveFactory } from '@ngneat/spectator';
 
-import { DialogCloseDirective } from './dialog-close.directive';
-import { DialogService } from './dialog.service';
-import { DialogRef } from './dialog-ref';
+import { DialogCloseDirective } from '../dialog-close.directive';
+import { DialogService } from '../dialog.service';
+import { DialogRef } from '../dialog-ref';
 
 describe('DialogClose', () => {
   const createDirective = createDirectiveFactory({
     directive: DialogCloseDirective,
-    schemas: [NO_ERRORS_SCHEMA]
+    schemas: [NO_ERRORS_SCHEMA],
   });
 
   it('should get dialog-ref getting id from parent a searching in dialog-service', () => {
@@ -21,10 +21,10 @@ describe('DialogClose', () => {
           {
             provide: DialogService,
             useValue: {
-              dialogs: [dialogRefFromParent]
-            }
-          }
-        ]
+              dialogs: [dialogRefFromParent],
+            },
+          },
+        ],
       }
     );
 
@@ -39,15 +39,15 @@ describe('DialogClose', () => {
       providers: [
         {
           provide: DialogRef,
-          useValue: dialogRefFromInjector
+          useValue: dialogRefFromInjector,
         },
         {
           provide: DialogService,
           useValue: {
-            dialogs: [dialogRefFromParent]
-          }
-        }
-      ]
+            dialogs: [dialogRefFromParent],
+          },
+        },
+      ],
     });
 
     expect(spectator.directive.ref).toBe(dialogRefFromInjector as any);
@@ -56,22 +56,22 @@ describe('DialogClose', () => {
   it('on close should call dialog-ref close method, passing result', () => {
     const dialogRefFromInjector: Partial<DialogRef> = {
       id: 'from-injector',
-      close: jasmine.createSpy()
+      close: jasmine.createSpy(),
     };
 
     const spectator = createDirective(`<button [dialogClose]="'something'"></button>`, {
       providers: [
         {
           provide: DialogRef,
-          useValue: dialogRefFromInjector
+          useValue: dialogRefFromInjector,
         },
         {
           provide: DialogService,
           useValue: {
-            dialogs: []
-          }
-        }
-      ]
+            dialogs: [],
+          },
+        },
+      ],
     });
 
     spectator.click(spectator.query('button'));

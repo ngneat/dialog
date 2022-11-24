@@ -1,14 +1,14 @@
 import { Provider } from '@angular/core';
 import { byText, createComponentFactory, Spectator } from '@ngneat/spectator';
 import { Subject } from 'rxjs';
-import { DialogConfig } from './config';
-import { InternalDialogRef } from './dialog-ref';
-import { DialogComponent } from './dialog.component';
-import { DialogDraggableDirective } from './draggable.directive';
-import { DIALOG_CONFIG, NODES_TO_INSERT } from './tokens';
+import { InternalDialogRef } from '../dialog-ref';
+import { DialogComponent } from '../dialog.component';
+import { DialogDraggableDirective } from '../draggable.directive';
+import { DIALOG_CONFIG, NODES_TO_INSERT } from '../providers';
+import { DialogConfig, GlobalDialogConfig } from '../types';
 
 describe('DialogComponent', () => {
-  const defaultConfig: Partial<DialogConfig> = {
+  const defaultConfig: Partial<DialogConfig & GlobalDialogConfig> = {
     id: 'test',
     container: document.body,
     backdrop: true,
@@ -21,7 +21,7 @@ describe('DialogComponent', () => {
     width: undefined,
     height: undefined,
     data: undefined,
-    vcr: undefined
+    vcr: undefined,
   };
 
   function withConfig(config: Partial<DialogConfig> = {}): { providers: Provider[] } {
@@ -29,9 +29,9 @@ describe('DialogComponent', () => {
       providers: [
         {
           provide: DIALOG_CONFIG,
-          useValue: { ...defaultConfig, ...config }
-        }
-      ]
+          useValue: { ...defaultConfig, ...config },
+        },
+      ],
     };
   }
 
@@ -39,31 +39,27 @@ describe('DialogComponent', () => {
 
   const createComponent = createComponentFactory({
     component: DialogComponent,
-    declarations: [DialogDraggableDirective],
+    imports: [DialogDraggableDirective],
     providers: [
-      {
-        provide: DIALOG_CONFIG,
-        useValue: {}
-      },
       {
         provide: InternalDialogRef,
         useFactory: () => ({
           close: jasmine.createSpy(),
-          backdropClick$: new Subject()
-        })
+          backdropClick$: new Subject(),
+        }),
       },
       {
         provide: NODES_TO_INSERT,
-        useValue: [document.createTextNode('nodes '), document.createTextNode('inserted')]
-      }
-    ]
+        useValue: [document.createTextNode('nodes '), document.createTextNode('inserted')],
+      },
+    ],
   });
 
   afterEach(() => {
     const containerEls = document.querySelectorAll('.ngneat-dialog-content');
     const backdropEls = document.querySelectorAll('.ngneat-dialog-backdrop');
 
-    [...Array.from(containerEls), ...Array.from(backdropEls)].filter(Boolean).forEach(el => el.remove());
+    [...Array.from(containerEls), ...Array.from(backdropEls)].filter(Boolean).forEach((el) => el.remove());
   });
 
   it('should create', () => {
@@ -95,7 +91,7 @@ describe('DialogComponent', () => {
     it('backdropClick$ should point to element', () => {
       let backdropClicked = false;
       spectator.inject(InternalDialogRef).backdropClick$.subscribe({
-        next: () => (backdropClicked = true)
+        next: () => (backdropClicked = true),
       });
 
       spectator.dispatchMouseEvent('.ngneat-dialog-backdrop', 'click');
@@ -114,7 +110,7 @@ describe('DialogComponent', () => {
     it('backdropClick$ should point to body', () => {
       let backdropClicked = false;
       spectator.inject(InternalDialogRef).backdropClick$.subscribe({
-        next: () => (backdropClicked = true)
+        next: () => (backdropClicked = true),
       });
 
       spectator.dispatchMouseEvent(document.body, 'click');

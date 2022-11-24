@@ -1,12 +1,5 @@
-/*
- * Public API Surface of dialog
- */
-
-export * from './lib/dialog.module';
-export * from './lib/dialog.component';
-export * from './lib/dialog.service';
-export * from './lib/config';
+export { DialogService } from './lib/dialog.service';
 export { DialogRef } from './lib/dialog-ref';
-export { DialogContentData, DialogContent, DialogContentTypes, DialogContentSymbol } from './lib/types';
-export { DIALOG_CONFIG, DIALOG_DOCUMENT_REF } from './lib/tokens';
-export * from './lib/dialog-close.directive';
+export { provideDialogConfig, provideDialogDocRef } from './lib/providers';
+export { DialogCloseDirective } from './lib/dialog-close.directive';
+export { DialogConfig } from './lib/types';

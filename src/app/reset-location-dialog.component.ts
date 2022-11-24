@@ -1,8 +1,7 @@
-import { Component, ChangeDetectionStrategy, Inject } from '@angular/core';
-import { interval } from 'rxjs';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 
+import { ReactiveFormsModule, UntypedFormControl } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
-import { UntypedFormControl } from '@angular/forms';
 
 interface DialogData {
   title: string;
@@ -11,6 +10,8 @@ interface DialogData {
 
 @Component({
   selector: 'app-reset-location-dialog',
+  standalone: true,
+  imports: [ReactiveFormsModule],
   template: `
     <h2>You can reset locations</h2>
 
@@ -45,17 +46,16 @@ interface DialogData {
       .buttons {
         text-align: right;
       }
-    `
+    `,
   ],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResetLocationDialogComponent {
   offsetX = new UntypedFormControl(0);
   offsetY = new UntypedFormControl(0);
+  ref: DialogRef<DialogData> = inject(DialogRef);
 
-  constructor(public ref: DialogRef<DialogData>) {}
-
-  resetDrag(): void {
+  resetDrag() {
     this.ref.resetDrag({ x: this.offsetX.value, y: this.offsetY.value });
   }
 }

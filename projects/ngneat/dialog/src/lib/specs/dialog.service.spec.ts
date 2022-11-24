@@ -1,40 +1,36 @@
-import { ApplicationRef, ComponentFactoryResolver, InjectionToken, Injector, TemplateRef } from '@angular/core';
+import { ApplicationRef, Component, TemplateRef } from '@angular/core';
 import { fakeAsync, tick } from '@angular/core/testing';
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator';
-import { timer } from 'rxjs';
-import { mapTo } from 'rxjs/operators';
-import { DialogConfig } from './config';
-import { defaultConfig } from './default-config.factory';
-import { DialogRef, InternalDialogRef } from './dialog-ref';
-import { DialogComponent } from './dialog.component';
-import { DialogService } from './dialog.service';
-import { DIALOG_CONFIG, DIALOG_DOCUMENT_REF, GLOBAL_DIALOG_CONFIG, NODES_TO_INSERT } from './tokens';
+import { mapTo, timer } from 'rxjs';
+import { InternalDialogRef } from '../dialog-ref';
+import { DialogService } from '../dialog.service';
+import { DIALOG_DOCUMENT_REF, GLOBAL_DIALOG_CONFIG, provideDialogConfig } from '../providers';
 
-class FakeFactoryResolver extends ComponentFactoryResolver {
+class FakeFactoryResolver {
   componentOne = {
     destroy: jasmine.createSpy(),
     hostView: {
       destroy: jasmine.createSpy(),
-      rootNodes: [document.createTextNode('nodes 1')]
+      rootNodes: [document.createTextNode('nodes 1')],
     },
     location: {
-      nativeElement: 'fake 1'
-    }
+      nativeElement: 'fake 1',
+    },
   };
 
   componentTwo = {
     destroy: jasmine.createSpy(),
     hostView: {
       destroy: jasmine.createSpy(),
-      rootNodes: [document.createTextNode('nodes 2')]
+      rootNodes: [document.createTextNode('nodes 2')],
     },
     location: {
-      nativeElement: 'fake 2'
-    }
+      nativeElement: 'fake 2',
+    },
   };
 
   factory = {
-    create: jasmine.createSpy().and.returnValues(this.componentOne, this.componentTwo)
+    create: jasmine.createSpy().and.returnValues(this.componentOne, this.componentTwo),
   };
 
   resolveComponentFactory = jasmine.createSpy().and.returnValue(this.factory);
@@ -42,10 +38,9 @@ class FakeFactoryResolver extends ComponentFactoryResolver {
 
 class FakeTemplateRef extends TemplateRef<any> {
   elementRef = null;
-
   view = {
     rootNodes: [document.createTextNode('template'), document.createTextNode(' nodes')],
-    destroy: jasmine.createSpy()
+    destroy: jasmine.createSpy(),
   };
 
   createEmbeddedView = jasmine.createSpy().and.returnValue(this.view);
@@ -68,25 +63,14 @@ describe('DialogService', () => {
     service: DialogService,
     mocks: [ApplicationRef],
     providers: [
-      {
-        provide: GLOBAL_DIALOG_CONFIG,
-        useValue: {
-          sizes: {
-            sm: 'other sm',
-            md: 'other md',
-            lg: 'other lg',
-            fullScreen: 'other fullScreen'
-          }
-        }
-      },
-      {
-        provide: DIALOG_CONFIG,
-        useFactory: defaultConfig
-      },
-      {
-        provide: ComponentFactoryResolver,
-        useClass: FakeFactoryResolver
-      },
+      provideDialogConfig({
+        sizes: {
+          sm: { width: '20px' },
+          md: { width: '20px' },
+          lg: { width: '20px' },
+          fullScreen: { width: '20px' },
+        },
+      }),
       {
         provide: DIALOG_DOCUMENT_REF,
         useFactory: () => ({
@@ -95,19 +79,18 @@ describe('DialogService', () => {
             removeChild: jasmine.createSpy(),
             classList: {
               add: jasmine.createSpy(),
-              remove: jasmine.createSpy()
-            }
-          }
-        })
-      }
-    ]
+              remove: jasmine.createSpy(),
+            },
+          },
+        }),
+      },
+    ],
   });
 
   beforeEach(() => {
     spectator = createService();
     service = spectator.service;
     fakeAppRef = spectator.inject(ApplicationRef);
-    fakeFactory = spectator.inject<FakeFactoryResolver>(ComponentFactoryResolver as any);
     fakeDocument = spectator.inject<any>(DIALOG_DOCUMENT_REF);
   });
 
@@ -118,14 +101,12 @@ describe('DialogService', () => {
   it('should overwrite sizes', () => {
     service.open(new FakeTemplateRef());
 
-    const [injector]: Injector[] = fakeFactory.factory.create.calls.mostRecent().args;
-
-    expect(injector.get(DIALOG_CONFIG).sizes).toEqual(
+    expect(spectator.inject(GLOBAL_DIALOG_CONFIG).sizes).toEqual(
       jasmine.objectContaining({
-        sm: 'other sm',
-        md: 'other md',
-        lg: 'other lg',
-        fullScreen: 'other fullScreen'
+        sm: { width: '20px' },
+        md: { width: '20px' },
+        lg: { width: '20px' },
+        fullScreen: { width: '20px' },
       })
     );
   });
@@ -159,48 +140,21 @@ describe('DialogService', () => {
       const fakeTemplate = new FakeTemplateRef();
       const dialog = service.open(fakeTemplate, {
         data: 'test',
-        windowClass: 'custom-template'
+        windowClass: 'custom-template',
       });
 
       expect(dialog.ref).toBe(fakeTemplate);
       expect(fakeTemplate.createEmbeddedView).toHaveBeenCalledTimes(1);
       expect(fakeTemplate.createEmbeddedView).toHaveBeenCalledWith({
         $implicit: dialog,
-        config: jasmine.objectContaining({ windowClass: 'custom-template' })
+        config: jasmine.objectContaining({ windowClass: 'custom-template' }),
       });
-    });
-
-    it('should fill dialog injector', () => {
-      const fakeTemplate = new FakeTemplateRef();
-      const dialog = service.open(fakeTemplate) as InternalDialogRef;
-
-      const fakeTemplateView = fakeTemplate.view;
-
-      expect(fakeFactory.factory.create).toHaveBeenCalledTimes(1);
-      const [injector]: Injector[] = fakeFactory.factory.create.calls.mostRecent().args;
-      expect(injector.get(InternalDialogRef)).toBe(dialog);
-      expect(injector.get<any>(NODES_TO_INSERT)).toBe(fakeTemplateView.rootNodes);
     });
 
     it('should append dialog element into container', () => {
       service.open(new FakeTemplateRef());
 
-      const fakeDialogView = fakeFactory.componentOne;
-
       expect(fakeDocument.body.appendChild).toHaveBeenCalledTimes(1);
-      expect(fakeDocument.body.appendChild).toHaveBeenCalledWith(fakeDialogView.location.nativeElement);
-    });
-
-    it('should attach view to ApplicationRef', () => {
-      const fakeTemplate = new FakeTemplateRef();
-      service.open(fakeTemplate);
-
-      const fakeDialogView = fakeFactory.componentOne;
-
-      const attachSpyCalls = (fakeAppRef.attachView as jasmine.Spy).calls.allArgs();
-
-      expect(fakeAppRef.attachView).toHaveBeenCalledTimes(2);
-      expect(attachSpyCalls).toEqual([[fakeDialogView.hostView], [fakeTemplate.view]]);
     });
 
     it('should use vcr to instanciate template', () => {
@@ -210,13 +164,13 @@ describe('DialogService', () => {
       const dialog = service.open(template, {
         vcr: otherVCR as any,
         data: 'test',
-        windowClass: 'custom-template'
+        windowClass: 'custom-template',
       });
 
       expect(template.createEmbeddedView).not.toHaveBeenCalled();
       expect(otherVCR.createEmbeddedView).toHaveBeenCalledWith(template, {
         $implicit: dialog,
-        config: jasmine.objectContaining({ windowClass: 'custom-template' })
+        config: jasmine.objectContaining({ windowClass: 'custom-template' }),
       });
     });
   });
@@ -262,82 +216,25 @@ describe('DialogService', () => {
   });
 
   describe('using a component', () => {
+    @Component({ selector: '' })
     class FakeComponent {}
-
     it('should open it', () => expect(service.open(FakeComponent)).toBeTruthy());
-
-    it('should be able of get config', () => {
-      service.open(FakeComponent, { windowClass: 'custom-config' });
-
-      const [[fakeComponentInjector]]: readonly Injector[][] = fakeFactory.factory.create.calls.allArgs();
-
-      expect(fakeComponentInjector.get(DIALOG_CONFIG).windowClass).toBe('custom-config');
-    });
 
     it('should add dialog to dialogs', () => {
       const dialog = service.open(FakeComponent);
-
       expect(service.dialogs.length).toBe(1);
       expect(service.dialogs).toContain(dialog);
     });
 
-    it('should instanciate component', () => {
-      service.open(FakeComponent);
-
-      expect(fakeFactory.resolveComponentFactory).toHaveBeenCalledTimes(2);
-      expect(fakeFactory.resolveComponentFactory.calls.allArgs()).toEqual([[DialogComponent], [FakeComponent]]);
-
-      expect(fakeFactory.factory.create).toHaveBeenCalledTimes(2);
-    });
-
-    it('should fill component and dialog injector', () => {
-      const dialog = service.open(FakeComponent, {
-        data: 'test'
-      }) as InternalDialogRef;
-
-      const [
-        [fakeComponentInjector],
-        [dialogInjector]
-      ]: readonly Injector[][] = fakeFactory.factory.create.calls.allArgs();
-      expect(fakeComponentInjector.get(DialogRef)).toBe(dialog);
-      expect(fakeComponentInjector.get<any>(NODES_TO_INSERT, null)).toBeNull();
-
-      const fakeDialogView = fakeFactory.componentOne;
-
-      expect(dialogInjector.get(InternalDialogRef)).toBe(dialog);
-      expect(dialogInjector.get<any>(NODES_TO_INSERT)).toBe(fakeDialogView.hostView.rootNodes);
-    });
-
     it('should append dialog element into container', () => {
       service.open(FakeComponent);
-
-      const fakeComponentView = fakeFactory.componentTwo;
-
       expect(fakeDocument.body.appendChild).toHaveBeenCalledTimes(1);
-      expect(fakeDocument.body.appendChild).toHaveBeenCalledWith(fakeComponentView.location.nativeElement);
     });
-
     it('should attach view to ApplicationRef', () => {
       service.open(FakeComponent);
 
-      const { componentOne: fakeComponentInjectedIntoDialog, componentTwo: fakeDialogView } = fakeFactory;
-
       const attachSpyCalls = (fakeAppRef.attachView as jasmine.Spy).calls.allArgs();
-
       expect(fakeAppRef.attachView).toHaveBeenCalledTimes(2);
-      expect(attachSpyCalls).toEqual([[fakeDialogView.hostView], [fakeComponentInjectedIntoDialog.hostView]]);
-    });
-
-    it('should use injector of vcr as parent injector', () => {
-      const FROM_PARENT = new InjectionToken<string>('FROM_PARENT');
-
-      service.open(FakeComponent, {
-        vcr: { injector: Injector.create({ providers: [{ provide: FROM_PARENT, useValue: 'test' }] }) } as any
-      });
-
-      const [[fakeComponentInjector]]: readonly Injector[][] = fakeFactory.factory.create.calls.allArgs();
-
-      expect(fakeComponentInjector.get(FROM_PARENT)).toBe('test');
     });
   });
 
@@ -367,7 +264,7 @@ describe('DialogService', () => {
       });
 
       it('should pass result to guard', () => {
-        dialog.beforeClose(result => {
+        dialog.beforeClose((result) => {
           expect(result).toBe('test');
 
           return true;
@@ -394,9 +291,7 @@ describe('DialogService', () => {
         });
 
         it('using a promise', fakeAsync(() => {
-          dialog.beforeClose(
-            () => new Promise<boolean>(r => setTimeout(() => r(false), 1000))
-          );
+          dialog.beforeClose(() => new Promise<boolean>((r) => setTimeout(() => r(false), 1000)));
 
           dialog.close();
 
@@ -417,9 +312,7 @@ describe('DialogService', () => {
 
         it('using more than one guard', fakeAsync(() => {
           dialog.beforeClose(() => false);
-          dialog.beforeClose(
-            () => new Promise<boolean>(r => setTimeout(() => r(false), 1000))
-          );
+          dialog.beforeClose(() => new Promise<boolean>((r) => setTimeout(() => r(false), 1000)));
           dialog.beforeClose(() => timer(1000).pipe(mapTo(false)));
 
           dialog.close();
@@ -431,9 +324,7 @@ describe('DialogService', () => {
 
         it('when only one guard returns false', fakeAsync(() => {
           dialog.beforeClose(() => true);
-          dialog.beforeClose(
-            () => new Promise<boolean>(r => setTimeout(() => r(false), 1000))
-          );
+          dialog.beforeClose(() => new Promise<boolean>((r) => setTimeout(() => r(false), 1000)));
           dialog.beforeClose(() => timer(3000).pipe(mapTo(true)));
 
           dialog.close();
@@ -452,9 +343,7 @@ describe('DialogService', () => {
 
       it('should close dialog after all guards return true', fakeAsync(() => {
         dialog.beforeClose(() => true);
-        dialog.beforeClose(
-          () => new Promise<boolean>(r => setTimeout(() => r(true), 1000))
-        );
+        dialog.beforeClose(() => new Promise<boolean>((r) => setTimeout(() => r(true), 1000)));
         dialog.beforeClose(() => timer(3000).pipe(mapTo(true)));
 
         dialog.close();
@@ -497,9 +386,7 @@ describe('DialogService', () => {
         });
 
         it('using a promise', fakeAsync(() => {
-          dialog.beforeClose(
-            () => new Promise<boolean>(r => setTimeout(() => r(false), 1000))
-          );
+          dialog.beforeClose(() => new Promise<boolean>((r) => setTimeout(() => r(false), 1000)));
 
           service.closeAll();
 
@@ -520,9 +407,7 @@ describe('DialogService', () => {
 
         it('using more than one guard', fakeAsync(() => {
           dialog.beforeClose(() => false);
-          dialog.beforeClose(
-            () => new Promise<boolean>(r => setTimeout(() => r(false), 1000))
-          );
+          dialog.beforeClose(() => new Promise<boolean>((r) => setTimeout(() => r(false), 1000)));
           dialog.beforeClose(() => timer(1000).pipe(mapTo(false)));
 
           service.closeAll();
@@ -534,9 +419,7 @@ describe('DialogService', () => {
 
         it('when only one guard returns false', fakeAsync(() => {
           dialog.beforeClose(() => true);
-          dialog.beforeClose(
-            () => new Promise<boolean>(r => setTimeout(() => r(false), 1000))
-          );
+          dialog.beforeClose(() => new Promise<boolean>((r) => setTimeout(() => r(false), 1000)));
           dialog.beforeClose(() => timer(3000).pipe(mapTo(true)));
 
           service.closeAll();
@@ -555,9 +438,7 @@ describe('DialogService', () => {
 
       it('should close dialog after all guards return true', fakeAsync(() => {
         dialog.beforeClose(() => true);
-        dialog.beforeClose(
-          () => new Promise<boolean>(r => setTimeout(() => r(true), 1000))
-        );
+        dialog.beforeClose(() => new Promise<boolean>((r) => setTimeout(() => r(true), 1000)));
         dialog.beforeClose(() => timer(3000).pipe(mapTo(true)));
 
         service.closeAll();
@@ -582,22 +463,8 @@ describe('DialogService', () => {
 
     it('should remove child from container', () => {
       dialog.close();
-      const fakeDialogView = fakeFactory.componentOne;
 
       expect(fakeDocument.body.removeChild).toHaveBeenCalledTimes(1);
-      expect(fakeDocument.body.removeChild).toHaveBeenCalledWith(fakeDialogView.location.nativeElement);
-    });
-
-    it('should detach view from ApplicationRef', () => {
-      dialog.close();
-
-      expect(fakeAppRef.detachView).toHaveBeenCalledTimes(2);
-      const attachSpyCalls = (fakeAppRef.detachView as jasmine.Spy).calls.allArgs();
-
-      const fakeDialogView = fakeFactory.componentOne;
-
-      expect(fakeAppRef.detachView).toHaveBeenCalledTimes(2);
-      expect(attachSpyCalls).toEqual([[fakeDialogView.hostView], [fakeTemplate.view]]);
     });
 
     it('should remove references from DialogRef', () => {
@@ -610,7 +477,7 @@ describe('DialogService', () => {
         backdropClick$: null,
         beforeCloseGuards: null,
         onClose: null,
-        ref: null
+        ref: null,
       };
 
       expect(dialog).toEqual(jasmine.objectContaining(dialogCleaned));
@@ -628,7 +495,7 @@ describe('DialogService', () => {
     });
 
     it('should send result in afterClosed$', () => {
-      dialog.afterClosed$.subscribe({ next: result => expect(result).toBe('test') });
+      dialog.afterClosed$.subscribe({ next: (result) => expect(result).toBe('test') });
 
       dialog.close('test');
     });
@@ -637,48 +504,14 @@ describe('DialogService', () => {
   it('should use container to place dialog element', () => {
     const template = new FakeTemplateRef();
     const otherContainer = {
-      appendChild: jasmine.createSpy()
+      appendChild: jasmine.createSpy(),
     };
 
     service.open(template, {
-      container: otherContainer as any
+      container: otherContainer as any,
     });
 
     expect(fakeDocument.body.appendChild).not.toHaveBeenCalled();
-    expect(otherContainer.appendChild).toHaveBeenCalledWith('fake 1');
-  });
-
-  it('should overwrite default config', () => {
-    const template = new FakeTemplateRef();
-
-    const otherConfig: Partial<DialogConfig> = {
-      draggable: true,
-      size: 'lg',
-      width: '99999px',
-      height: '-999999px',
-      enableClose: false,
-      backdrop: false,
-      id: 'test',
-      windowClass: 'test',
-      sizes: {
-        lg: 'test' as any
-      }
-    };
-
-    service.open(template, otherConfig);
-
-    const [injector]: Injector[] = fakeFactory.factory.create.calls.mostRecent().args;
-
-    expect(injector.get(DIALOG_CONFIG)).toEqual(
-      jasmine.objectContaining({
-        ...otherConfig,
-        sizes: {
-          sm: 'other sm',
-          md: 'other md',
-          fullScreen: 'other fullScreen',
-          ...otherConfig.sizes
-        }
-      })
-    );
+    expect(otherContainer.appendChild).toHaveBeenCalledTimes(1);
   });
 });

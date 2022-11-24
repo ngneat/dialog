@@ -1,0 +1,39 @@
+.note {
+  background-color: #ffffcc;
+  padding: 16px 32px;
+}
+
+.dialog {
+  padding: 18px;
+}
+
+label {
+  padding: 0em 0.75em;
+  width: 200px;
+  display: inline-block;
+}
+
+input,
+select {
+  padding: 0.5em 0.75em;
+  width: 200px;
+}
+
+button {
+  margin-right: 10px;
+}
+
+form {
+  max-height: 260px;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  align-content: flex-start;
+}
+
+form > div {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  height: 32px;
+}

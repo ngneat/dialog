@@ -1,64 +1,58 @@
-import { ComponentRef, TemplateRef, Type } from '@angular/core';
-import { DialogRef } from './dialog-ref';
+import { ComponentRef, ElementRef, TemplateRef, ViewContainerRef, ViewRef } from '@angular/core';
+import { DialogRef, InternalDialogRef } from './dialog-ref';
 
-export type DialogContentTypes = 'string' | 'template';
-export type DialogContent = string | TemplateRef<any>;
-export interface DialogTitleAndBody {
-  title: DialogContent;
-  body: DialogContent;
+type Sizes = 'sm' | 'md' | 'lg' | 'fullScreen' | string;
+export type DragConstraint = 'none' | 'bounce' | 'constrain';
+
+export interface GlobalDialogConfig {
+  sizes: Partial<
+    Record<
+      Sizes,
+      { width?: string | number; height?: string | number; minHeight?: string | number; maxHeight?: string | number }
+    >
+  >;
+  backdrop: boolean;
+  container: ElementRef<Element> | Element;
+  closeButton: boolean;
+  draggable: boolean;
+  dragConstraint: DragConstraint;
+  enableClose: boolean;
+  resizable: boolean;
+  width: string | number;
+  height: string | number;
+  minHeight: string | number;
+  maxHeight: string | number;
+  size: Sizes;
+  windowClass: string;
+  onOpen: () => void | undefined;
+  onClose: () => void | undefined;
 }
 
-export interface DialogContentWithType {
-  type: DialogContentTypes;
-  content: DialogContent;
-}
-export interface DialogTitleAndBodyWithType {
-  title: DialogContentWithType;
-  body: DialogContentWithType;
-}
-
-export const DialogContentSymbol = Symbol('Dialog Content Data');
-export interface DialogContentData {
-  [DialogContentSymbol]: DialogTitleAndBodyWithType;
+export interface DialogConfig<Data = any> extends Omit<GlobalDialogConfig, 'sizes'> {
+  id: string;
+  data: Data;
+  vcr: ViewContainerRef;
 }
 
 export type JustProps<T extends object> = {
   [K in keyof T]: T[K] extends (...args: any[]) => any ? never : T[K];
 };
 
-export type ExtractDialogRefData<T extends DialogRef> = T extends DialogRef<infer Data, any, any> ? Data : never;
+export type ExtractRefProp<T> = {
+  [P in keyof T]: T[P] extends DialogRef<any> ? P : never;
+}[keyof T];
 
-type _AnyIfUnknown<T> = unknown extends T ? any : T;
+export type ExtractData<T> = T[ExtractRefProp<T>] extends DialogRef<infer Data> ? Data : never;
 
-export type ExtractDialogRefResult<T extends DialogRef> = T extends DialogRef<any, infer Result, any>
-  ? _AnyIfUnknown<Result>
-  : never;
+export interface OpenParams {
+  config: DialogConfig;
+  dialogRef: InternalDialogRef;
+}
 
-export type ExtractDialogRefType<T extends DialogRef> = T extends DialogRef<any, any, infer Type> ? Type : never;
-
-type _ExtractComponentDialogRef<T extends Type<unknown>> = T extends Type<unknown>
-  ? TupleExtract<ConstructorParameters<T>, DialogRef<unknown, unknown>>
-  : never;
-
-type ExtractComponentDialogRef<T extends Type<unknown>> = _ExtractComponentDialogRef<T> extends [infer U]
-  ? U
-  : // Any is necessary to not break things: injecting DialogRef in the component constructor is optional.
-    any;
-
-export type ComputedDialogRefType<T extends Type<unknown> | TemplateRef<unknown>> = T extends TemplateRef<unknown>
-  ? any
-  : T extends Type<unknown>
-  ? ExtractComponentDialogRef<T>
-  : any;
-
-export type ExtractDialogResolvedRef<T extends Type<unknown> | TemplateRef<unknown>> = T extends TemplateRef<unknown>
-  ? T
-  : T extends Type<infer TComponent>
-  ? ComponentRef<TComponent>
-  : never;
-
-export type TupleExtract<T extends readonly unknown[], TypeToExtract> = T extends [infer Head, ...(infer Rest)]
-  ? [Head] extends [TypeToExtract]
-    ? [Head, ...TupleExtract<Rest, TypeToExtract>]
-    : TupleExtract<Rest, TypeToExtract>
-  : [];
+export interface AttachOptions {
+  dialogRef: InternalDialogRef;
+  ref: ComponentRef<any> | TemplateRef<any>;
+  view: ViewRef;
+  attachToApp: boolean;
+  config: DialogConfig;
+}

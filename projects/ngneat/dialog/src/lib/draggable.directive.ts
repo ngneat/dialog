@@ -1,7 +1,7 @@
-import { Directive, AfterViewInit, OnDestroy, Input, ElementRef, NgZone, Renderer2, OnChanges } from '@angular/core';
-import { Subject, fromEvent } from 'rxjs';
-import { filter, switchMap, map, takeUntil } from 'rxjs/operators';
-import { DragConstraint } from './config';
+import { AfterViewInit, Directive, ElementRef, inject, Input, NgZone, OnChanges, OnDestroy } from '@angular/core';
+import { fromEvent, Subject } from 'rxjs';
+import { filter, map, switchMap, takeUntil } from 'rxjs/operators';
+import { DragConstraint } from './types';
 
 export type DragOffset = {
   x?: number;
@@ -9,7 +9,8 @@ export type DragOffset = {
 };
 
 @Directive({
-  selector: '[dialogDraggable]'
+  selector: '[dialogDraggable]',
+  standalone: true,
 })
 export class DialogDraggableDirective implements AfterViewInit, OnChanges, OnDestroy {
   @Input()
@@ -25,16 +26,17 @@ export class DialogDraggableDirective implements AfterViewInit, OnChanges, OnDes
   @Input()
   dragConstraint: DragConstraint;
 
+  private host = inject(ElementRef);
+  private zone = inject(NgZone);
+
   /** Element to be dragged */
   private target: HTMLElement;
   /** Drag handle */
-  private handle: Element;
+  private handle: HTMLElement;
   private delta = { x: 0, y: 0 };
   private offset = { x: 0, y: 0 };
   private enabled = true;
   private destroy$ = new Subject<void>();
-
-  constructor(private host: ElementRef, private zone: NgZone, private renderer: Renderer2) {}
 
   public ngAfterViewInit(): void {
     if (!this.enabled) {
@@ -49,7 +51,7 @@ export class DialogDraggableDirective implements AfterViewInit, OnChanges, OnDes
       this.enabled = true;
       /** determine if the component has been init by the handle variable */
       if (this.handle) {
-        this.renderer.setStyle(this.handle, 'cursor', 'move');
+        this.handle.style.setProperty('cursor', 'move');
       } else if (this.enabled) {
         this.init();
       }
@@ -58,7 +60,7 @@ export class DialogDraggableDirective implements AfterViewInit, OnChanges, OnDes
     if (!this.dialogDragEnabled) {
       this.enabled = false;
       if (this.handle) {
-        this.renderer.setStyle(this.handle, 'cursor', '');
+        this.handle.style.setProperty('cursor', '');
       }
     }
   }
@@ -82,17 +84,17 @@ export class DialogDraggableDirective implements AfterViewInit, OnChanges, OnDes
 
       const mousedrag$ = mousedown$.pipe(
         filter(() => this.enabled),
-        map(event => ({
+        map((event) => ({
           startX: event.clientX,
-          startY: event.clientY
+          startY: event.clientY,
         })),
         switchMap(({ startX, startY }) =>
           mousemove$.pipe(
-            map(event => {
+            map((event) => {
               event.preventDefault();
               this.delta = {
                 x: event.clientX - startX,
-                y: event.clientY - startY
+                y: event.clientY - startY,
               };
               if (this.dragConstraint === 'constrain') {
                 this.checkConstraint();
@@ -136,7 +138,7 @@ export class DialogDraggableDirective implements AfterViewInit, OnChanges, OnDes
       this.zone.runOutsideAngular(() => {
         requestAnimationFrame(() => {
           const transform = `translate(${this.translateX}px, ${this.translateY}px)`;
-          this.renderer.setStyle(this.target, 'transform', transform);
+          this.handle.style.setProperty('transform', transform);
         });
       });
     }
@@ -167,7 +169,7 @@ export class DialogDraggableDirective implements AfterViewInit, OnChanges, OnDes
 
     /** add the move cursor */
     if (this.handle && this.enabled) {
-      this.renderer.setStyle(this.handle, 'cursor', 'move');
+      this.handle.style.setProperty('cursor', 'move');
     }
 
     this.target =
@@ -181,7 +183,7 @@ export class DialogDraggableDirective implements AfterViewInit, OnChanges, OnDes
   }
 
   private checkConstraint(): void {
-    const { top, width, height, left } = this.target.getBoundingClientRect();
+    const { width, height } = this.target.getBoundingClientRect();
     const { innerWidth, innerHeight } = window;
 
     const verticalDistance = this.translateY > 0 ? this.translateY + height / 2 : this.translateY - height / 2;

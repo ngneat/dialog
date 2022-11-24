@@ -1,8 +1,9 @@
-import { Component, ChangeDetectionStrategy, Inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { interval } from 'rxjs';
 
 import { DialogRef } from '@ngneat/dialog';
-import { UntypedFormControl } from '@angular/forms';
+import { ReactiveFormsModule, UntypedFormControl } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 interface DialogData {
   title: string;
@@ -11,6 +12,8 @@ interface DialogData {
 
 @Component({
   selector: 'app-test-dialog',
+  standalone: true,
+  imports: [ReactiveFormsModule, CommonModule],
   template: `
     <h2>{{ ref.data?.title || 'Test dialog using a component' }}</h2>
 
@@ -52,14 +55,12 @@ interface DialogData {
       .buttons {
         text-align: right;
       }
-    `
+    `,
   ],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TestDialogComponent {
   timer$ = interval(1000);
-
   message = new UntypedFormControl('This dialog looks pretty cool 😎');
-
-  constructor(public ref: DialogRef<DialogData>) {}
+  ref: DialogRef<DialogData> = inject(DialogRef);
 }

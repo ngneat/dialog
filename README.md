@@ -20,42 +20,11 @@
 ✅ &nbsp;Resizable  
 ✅ &nbsp;Draggable  
 ✅ &nbsp;Multiple Dialogs Support  
-✅ &nbsp;Built-in Confirm/Success/Error Dialogs  
 ✅ &nbsp;Customizable
-
-## Table of Contents
-
-- [Installation](#installation)
-- [Usage](#usage)
-  - [Using a Component](#using-a-component)
-  - [DialogRef API](#DialogRef-API)
-  - [Using a TemplateRef](#using-a-TemplateRef)
-  - [Passing Data to Modal](#Passing-Data-to-Modal)
-- [Modal Options](#dialog-options)
-  - [Global Options](#global-options)
-  - [Instance Options](#instance-options)
-- [Built-in Confirm/Success/Error Modals](#Built-in-modals)
-- [Custom Sizes](#Custom-Sizes)
-- [Styling](#styling)
 
 ## Installation
 
-From your project folder, run:
-
-`ng add @ngneat/dialog`
-
-This command will import the `DialogModule.forRoot()` in your `AppModule`:
-
-```ts
-import { DialogModule } from '@ngneat/dialog';
-
-@NgModule({
-  declarations: [AppComponent],
-  imports: [DialogModule.forRoot()],
-  bootstrap: [AppComponent]
-})
-export class AppModule {}
-```
+`npm i @ngneat/dialog`
 
 ## Usage
 
@@ -75,22 +44,23 @@ interface Data {
     <h1>{{title}}</h1>
     <button (click)="ref.close(true)">Close</button>
   `
+  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HelloWorldComponent {
+  ref: DialogRef<Data> = inject(DialogRef);
+
   get title() {
     if (!this.ref.data) return 'Hello world';
     return this.ref.data.title;
   }
-
-  constructor(public ref: DialogRef<Data, boolean>) {}
 }
 ```
 
 Inside the component, you'll have access to a `DialogRef` provider. You can call its `close()` method to close the current modal. You can also pass `data` that'll be available for any subscribers to `afterClosed$`.
 
 > 💡 Tip
-> 
+>
 > If you define the types for your DialogRef provider, the `afterClosed$` and `close(params)` will be typed automatically.
 
 Now we can use the `DialogService` to open open the modal and display the component:
@@ -99,15 +69,19 @@ Now we can use the `DialogService` to open open the modal and display the compon
 import { DialogService } from '@ngneat/dialog';
 
 @Component({
-  template: `
-    <button (click)="open()">Open</button>
-  `
+  standalone: true,
+  template: ` <button (click)="open()">Open</button> `,
 })
 export class AppComponent implements OnInit {
-  constructor(private dialog: DialogService) {}
+  private dialog = inject(DialogService);
 
   ngOnInit() {
-    const dialogRef = this.dialog.open(HelloWorldComponent);
+    const dialogRef = this.dialog.open(HelloWorldComponent, {
+      // data is typed based on the passed generic
+      data: {
+        title: '',
+      },
+    });
   }
 }
 ```
@@ -120,7 +94,7 @@ The `DialogRef` instance exposes the following API:
 
 ```ts
 const dialogRef = this.dialog.open(HelloWorldComponent);
-dialogRef.afterClosed$.subscribe(result => {
+dialogRef.afterClosed$.subscribe((result) => {
   console.log(`After dialog has been closed ${result}`);
 });
 ```
@@ -144,8 +118,8 @@ dialogRef.resetDrag({ x: 100, y: 0 });
 - `beforeClose` - A guard that should return a `boolean`, an `observable`, or a `promise` indicating whether the modal can be closed:
 
 ```ts
-dialogRef.beforeClose(result => dialogCanBeClosed);
-dialogRef.beforeClose(result => this.service.someMethod(result));
+dialogRef.beforeClose((result) => dialogCanBeClosed);
+dialogRef.beforeClose((result) => this.service.someMethod(result));
 ```
 
 - `ref.data` - A reference to the `data` that is passed by the component opened in the modal:
@@ -158,24 +132,27 @@ import { DialogService, DialogRef } from '@ngneat/dialog';
     <h1>{{ ref.data.title }}</h1>
     <button (click)="ref.close()">Close</button>
   `
+  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HelloWorldComponent {
-  constructor(public ref: DialogRef) {}
+  ref: DialogRef<Data> = inject(DialogRef);
 }
 ```
 
 The library also provides the `dialogClose` directive helper, that you can use to close the modal:
 
 ```ts
-import { DialogService, DialogRef } from '@ngneat/dialog';
+import { DialogService, DialogCloseDirective } from '@ngneat/dialog';
 
 @Component({
+  standalone: true,
+  imports: [DialogCloseDirective],
   template: `
     <h1>Hello World</h1>
     <button dialogClose>Close</button>
     <button [dialogClose]="result">Close with result</button>
-  `
+  `,
 })
 export class HelloWorldComponent {}
 ```
@@ -189,6 +166,7 @@ import { DialogService } from '@ngneat/dialog';
 
 @Component({
   selector: 'app-root',
+  standalone: true,
   template: `
     <ng-template #modalTpl let-ref>
       <h1>Hello World</h1>
@@ -197,10 +175,10 @@ import { DialogService } from '@ngneat/dialog';
     </ng-template>
 
     <button (click)="open(modalTpl)">Open</button>
-  `
+  `,
 })
 export class AppComponent {
-  constructor(private dialog: DialogService) {}
+  private dialog = inject(DialogService);
 
   open(tpl: TemplateRef<any>) {
     this.dialog.open(tpl);
@@ -218,20 +196,18 @@ Sometimes we need to pass data from the opening component to our modal component
 import { DialogService } from '@ngneat/dialog';
 
 @Component({
-  template: `
-    <button (click)="open()">Open</button>
-  `
+  standalone: true,
+  template: ` <button (click)="open()">Open</button> `,
 })
 export class AppComponent implements OnInit {
+  private dialog = inject(DialogService);
   private id = '...';
-
-  constructor(private dialog: DialogService) {}
 
   ngOnInit() {
     const dialogRef = this.dialog.open(HelloWorldComponent, {
       data: {
-        id: this.id
-      }
+        id: this.id,
+      },
     });
   }
 }
@@ -260,30 +236,31 @@ In the `forRoot` method when importing the dialog module in the app module you c
 - `container` - A custom element to which we append the modal (default is `body`).
 
 ```ts
-import { DialogModule } from '@ngneat/dialog';
+import { provideDialogConfig } from '@ngneat/dialog';
 
-@NgModule({
-  declarations: [AppComponent],
-  imports: [DialogModule.forRoot({
-    closeButton: boolean,
-    enableClose: boolean,
-    backdrop: boolean,
-    resizable: boolean,
-    draggable: boolean,
-    draggableConstraint: none | bounce | constrain,
-    size: sm | md | lg | fullScreen | string,
-    windowClass: string,
-    width: string | number,
-    height: string | number,
-    minHeight: string | number,
-    maxHeight: string | number
-  })],
-  bootstrap: [AppComponent]
-})
-export class AppModule {}
+bootstrapApplication(AppComponent, {
+  providers: [
+    provideDialogConfig({
+      closeButton: boolean,
+      enableClose: boolean,
+      backdrop: boolean,
+      resizable: boolean,
+      draggable: boolean,
+      draggableConstraint: none | bounce | constrain,
+      sizes,
+      size: sm | md | lg | fullScreen | string,
+      windowClass: string,
+      width: string | number,
+      height: string | number,
+      minHeight: string | number,
+      maxHeight: string | number,
+    }),
+  ],
+});
 ```
 
 ### Instance Options
+
 For each dialog instance you open you can specify all the global options and also the following 3 options.
 
 - `id` - The modal unique id (defaults to random id).
@@ -293,108 +270,68 @@ For each dialog instance you open you can specify all the global options and als
 ```ts
 this.dialog.open(compOrTemplate, {
   //...
-  // all global options
+  // all global options expect sizes
   //...
   id: string,
   vcr: ViewContainerRef,
-  data: {}
+  data: {},
 });
-```
-
-## Built-in Modals
-
-The library provides built-in modals for common cases where we need to show a confirmation message, a success message, or an error message:
-
-```ts
-this.dialog
-  .confirm({
-    title: 'Are you sure?',
-    body: 'This action cannot be undone.'
-  })
-  .afterClosed$.subscribe(confirmed => console.log(confirmed));
-
-this.dialog.success({
-  title: 'Hurray!',
-  body: '<h1>You Made It!!!</h1>'
-});
-
-this.dialog.error({
-  title: 'Oh no',
-  body: tpl
-});
-```
-
-The `body` type can be a `string`, `HTML string`, or a `<ng-template>`.
-
-### Customization
-You can customize the built-in dialogs in two ways. You can specify your own component and you can customize the text of the buttons in the default dialogs.
-
-The confirm and cancel texts can either be of type `string` or `Observable<string>`. The last is useful in case you want a string that changes based on your language with something like [Transloco](https://ngneat.github.io/transloco/).
-```ts
-import { DialogModule } from '@ngneat/dialog';
-
-@NgModule({
-  declarations: [AppComponent],
-  imports: [
-    DialogModule.forRoot({
-      success: {
-        component: AppSuccessDialog,
-        confirmText: 'OK'
-      },
-      confirm: {
-        component: AppConfirmDialog,
-        confirmText: 'OK',
-        cancelText: 'Cancel'
-      },
-      error: {
-        component: AppErrorDialog,
-        confirmText: 'OK'
-      }
-    })
-  ],
-  bootstrap: [AppComponent]
-})
-export class AppModule {}
 ```
 
 ## Custom Sizes
 
-You can define the modal sizes globally by using the `sizes` option:
+The default `sizes` config is:
 
 ```ts
-import { DialogModule } from '@ngneat/dialog';
+{
+  sizes: {
+    sm: {
+      height: 'auto',
+      width: '400px',
+    },
+    md: {
+      height: 'auto',
+      width: '560px',
+    },
+    lg: {
+      height: 'auto',
+      width: '800px',
+    },
+    fullScreen: {
+      height: '100%',
+      width: '100%',
+    },
+ }
+}
+```
 
-@NgModule({
-  declarations: [AppComponent],
-  imports: [
-    DialogModule.forRoot({
+You can override it globally by using the `sizes` option:
+
+```ts
+bootstrapApplication(AppComponent, {
+  providers: [
+    provideDialogConfig({
       sizes: {
         sm: {
           width: 300, // 300px
-          minHeight: 250 // 250px
+          minHeight: 250, // 250px
         },
         md: {
           width: '60vw',
-          height: '60vh'
+          height: '60vh',
         },
         lg: {
           width: '90vw',
-          height: '90vh'
+          height: '90vh',
         },
         fullScreen: {
           width: '100vw',
-          height: '100vh'
+          height: '100vh',
         },
-        stretch: {
-          minHeight: 500,
-          maxHeight: '85%'
-        }
-      }
-    })
+      },
+    }),
   ],
-  bootstrap: [AppComponent]
-})
-export class AppModule {}
+});
 ```
 
 ## Styling
@@ -413,39 +350,7 @@ ngneat-dialog {
       .ngneat-close-dialog {
         // 'X' icon for closing the dialog
       }
-      .ngneat-dialog-primary-btn,
-      .ngneat-dialog-secondary-btn {
-        // the default dialogs action buttons
-      }
     }
   }
 }
 ```
-
-## Contributors ✨
-
-Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
-
-<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
-<!-- prettier-ignore-start -->
-<!-- markdownlint-disable -->
-<table>
-  <tr>
-    <td align="center"><a href="https://github.com/tonivj5"><img src="https://avatars2.githubusercontent.com/u/7110786?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Toni Villena</b></sub></a><br /><a href="https://github.com/@ngneat/dialog/commits?author=tonivj5" title="Code">💻</a> <a href="#infra-tonivj5" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a> <a href="https://github.com/@ngneat/dialog/commits?author=tonivj5" title="Tests">⚠️</a></td>
-    <td align="center"><a href="https://www.netbasal.com/"><img src="https://avatars1.githubusercontent.com/u/6745730?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Netanel Basal</b></sub></a><br /><a href="https://github.com/@ngneat/dialog/commits?author=NetanelBasal" title="Documentation">📖</a> <a href="#ideas-NetanelBasal" title="Ideas, Planning, & Feedback">🤔</a> <a href="https://github.com/@ngneat/dialog/commits?author=NetanelBasal" title="Code">💻</a></td>
-    <td align="center"><a href="https://github.com/theblushingcrow"><img src="https://avatars3.githubusercontent.com/u/638818?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Inbal Sinai</b></sub></a><br /><a href="https://github.com/@ngneat/dialog/commits?author=theblushingcrow" title="Documentation">📖</a></td>
-    <td align="center"><a href="https://github.com/shaharkazaz"><img src="https://avatars2.githubusercontent.com/u/17194830?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Shahar Kazaz</b></sub></a><br /><a href="https://github.com/@ngneat/dialog/commits?author=shaharkazaz" title="Code">💻</a> <a href="https://github.com/@ngneat/dialog/commits?author=shaharkazaz" title="Documentation">📖</a></td>
-    <td align="center"><a href="https://github.com/beeman"><img src="https://avatars3.githubusercontent.com/u/36491?v=4?s=100" width="100px;" alt=""/><br /><sub><b>beeman</b></sub></a><br /><a href="https://github.com/@ngneat/dialog/commits?author=beeman" title="Code">💻</a></td>
-    <td align="center"><a href="https://github.com/rhutchison"><img src="https://avatars.githubusercontent.com/u/1460261?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Ryan Hutchison</b></sub></a><br /><a href="https://github.com/@ngneat/dialog/commits?author=rhutchison" title="Code">💻</a> <a href="#ideas-rhutchison" title="Ideas, Planning, & Feedback">🤔</a></td>
-    <td align="center"><a href="https://riskchallenger.nl/"><img src="https://avatars.githubusercontent.com/u/1962982?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Wybren Kortstra</b></sub></a><br /><a href="https://github.com/@ngneat/dialog/commits?author=Langstra" title="Code">💻</a></td>
-  </tr>
-</table>
-
-<!-- markdownlint-restore -->
-<!-- prettier-ignore-end -->
-
-<!-- ALL-CONTRIBUTORS-LIST:END -->
-
-This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
-<br/>
-Logo made by <a href="https://www.flaticon.com/free-icon/business_1572571?term=dialog&page=2&position=44" title="itim2101">itim2101</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>

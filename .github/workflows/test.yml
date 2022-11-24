@@ -1,4 +1,4 @@
-name: Test
+name: CI
 
 on:
   push:
@@ -12,7 +12,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [12.x]
+        node-version: [14.x]
 
     steps:
       - uses: actions/checkout@v2
@@ -28,4 +28,5 @@ jobs:
             ${{ runner.os }}-node-
       - run: npm i
       - run: npm run test:lib:headless
+      - run: npm run build
       - run: npm run build:lib
