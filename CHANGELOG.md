@@ -2,6 +2,36 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.0.1](https://github.com/ngneat/dialog/compare/v2.1.1...v3.0.1) (2022-12-04)
+
+
+### ⚠ BREAKING CHANGES
+
+* upgrade to standalone components
+
+- Remove `DialogModule`
+- Remove built-in dialogs
+- Sizes default `height` is now `auto`
+- Expose `provideDialogConfig` function
+- `dialogClose` should be imported when used
+- The `data` property type now infered based on the public ref property in the component (see docs)
+
+### Features
+
+* customize confirm and cancel button texts of built-in dialogs ([a7eab24](https://github.com/ngneat/dialog/commit/a7eab2423ad41bcb3e2a32ece9a332c5e3381812)), closes [#47](https://github.com/ngneat/dialog/issues/47) [#62](https://github.com/ngneat/dialog/issues/62)
+* upgrade to standalone components ([f5575f5](https://github.com/ngneat/dialog/commit/f5575f59da2fb61b9c0aa229e8890eaf32a2a56c))
+
+
+### Bug Fixes
+
+* 🐛 fix types ([27c2621](https://github.com/ngneat/dialog/commit/27c2621127286c5ae24f2b361e07ea20d02faa18))
+* add reset location dialog component for demo ([266a9eb](https://github.com/ngneat/dialog/commit/266a9ebd30de438a3888fe3f558baa69768007b3))
+
+
+### Build System
+
+* fix the build script and add build test to ci ([3f1f280](https://github.com/ngneat/dialog/commit/3f1f280e1610ce4da4fdc1b7b9a8c8a1c4122ddb))
+
 ## [3.0.0](https://github.com/ngneat/dialog/compare/v2.1.1...v3.0.0) (2022-11-24)
 
 ### ⚠ BREAKING CHANGES
