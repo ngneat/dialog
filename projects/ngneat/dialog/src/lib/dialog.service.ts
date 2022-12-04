@@ -32,12 +32,11 @@ export class DialogService {
     this.dialogs.forEach((dialog) => dialog.close());
   }
 
-  open(template: TemplateRef<any>, config?: Partial<DialogConfig>);
-  open<C extends Type<any>, Data = ExtractData<InstanceType<C>>>(
+  open(template: TemplateRef<any>, config?: Partial<DialogConfig>): DialogRef;
+  open<C extends Type<any>>(
     component: C,
-    config?: Partial<DialogConfig<Data>>
-  ): DialogRef<Data>;
-  open(componentOrTemplate: TemplateRef<any> | Type<any>, config?: Partial<DialogConfig<any>>);
+    config?: Partial<DialogConfig<ExtractData<InstanceType<C>>>>
+  ): DialogRef<ExtractData<InstanceType<C>>>;
   open(componentOrTemplate: any, config: Partial<DialogConfig<any>> = {}): DialogRef {
     const mergedConfig = this.mergeConfig(config);
     mergedConfig.onOpen?.();
