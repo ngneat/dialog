@@ -69,7 +69,7 @@ export class AppComponent {
     this.backDropClicked = false;
     this.cleanConfig = this.normalizeConfig(config);
 
-    const ref = this.dialog.open(compOrTemplate, this.cleanConfig);
+    const ref = this.dialog.open(compOrTemplate as any, this.cleanConfig);
 
     ref.backdropClick$.subscribe({
       next: () => (this.backDropClicked = true),
