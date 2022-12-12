@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.0.2](https://github.com/ngneat/dialog/compare/v3.0.1...v3.0.2) (2022-12-12)
+
+
+### Bug Fixes
+
+* 🐛 allow nullable values ([59cb603](https://github.com/ngneat/dialog/commit/59cb603d5b009678b7e6d0697b18d2717151355e)), closes [#81](https://github.com/ngneat/dialog/issues/81)
+
 ### [3.0.1](https://github.com/ngneat/dialog/compare/v2.1.1...v3.0.1) (2022-12-04)
 
 
