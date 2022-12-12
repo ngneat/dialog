@@ -38,9 +38,11 @@ export type JustProps<T extends object> = {
   [K in keyof T]: T[K] extends (...args: any[]) => any ? never : T[K];
 };
 
-export type ExtractRefProp<T> = {
-  [P in keyof T]: T[P] extends DialogRef<any> ? P : never;
-}[keyof T];
+export type ExtractRefProp<T> = NonNullable<
+  {
+    [P in keyof T]: T[P] extends DialogRef<any> ? P : never;
+  }[keyof T]
+>;
 
 export type ExtractData<T> = T[ExtractRefProp<T>] extends DialogRef<infer Data> ? Data : never;
 
