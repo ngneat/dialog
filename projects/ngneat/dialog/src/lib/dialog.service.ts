@@ -10,12 +10,13 @@ import {
   Type,
   ViewRef,
 } from '@angular/core';
-import { Subject } from 'rxjs';
+import { BehaviorSubject, startWith, Subject } from 'rxjs';
 import { DialogRef, InternalDialogRef } from './dialog-ref';
 import { DialogComponent } from './dialog.component';
 import { DragOffset } from './draggable.directive';
 import { DIALOG_CONFIG, DIALOG_DOCUMENT_REF, GLOBAL_DIALOG_CONFIG, NODES_TO_INSERT } from './providers';
 import { AttachOptions, DialogConfig, ExtractData, GlobalDialogConfig, OpenParams } from './types';
+import { map } from 'rxjs/operators';
 
 const OVERFLOW_HIDDEN_CLASS = 'ngneat-dialog-hidden';
 
@@ -26,7 +27,19 @@ export class DialogService {
   private document = inject(DIALOG_DOCUMENT_REF);
   private globalConfig = inject(GLOBAL_DIALOG_CONFIG);
 
+  // Replace with Map in next major version
   dialogs: DialogRef[] = [];
+  // A Stream representing opening & closing dialogs
+  private hasOpenDialogSub = new BehaviorSubject<boolean>(false);
+  hasOpenDialogs$ = this.hasOpenDialogSub.asObservable();
+
+  hasOpenDialogs() {
+    return this.dialogs.length > 0;
+  }
+
+  isOpen(id: string) {
+    return this.dialogs.some((ref) => ref.id === id);
+  }
 
   closeAll() {
     this.dialogs.forEach((dialog) => dialog.close());
@@ -55,6 +68,7 @@ export class DialogService {
     };
 
     this.dialogs.push(dialogRef);
+    this.hasOpenDialogSub.next(true);
 
     if (this.dialogs.length === 1) {
       this.document.body.classList.add(OVERFLOW_HIDDEN_CLASS);
@@ -123,6 +137,7 @@ export class DialogService {
     const onClose = (result: unknown) => {
       this.globalConfig.onClose?.();
       this.dialogs = this.dialogs.filter(({ id }) => dialogRef.id !== id);
+      this.hasOpenDialogSub.next(this.hasOpenDialogs());
 
       container.removeChild(dialog.location.nativeElement);
       this.appRef.detachView(dialog.hostView);

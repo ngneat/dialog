@@ -76,7 +76,7 @@ export function provideDialogConfig(config: Partial<GlobalDialogConfig>): Provid
     useFactory() {
       const defaultConfig = defaultGlobalConfig();
       return {
-        ...defaultGlobalConfig(),
+        ...defaultConfig,
         ...config,
         sizes: {
           ...defaultConfig.sizes,

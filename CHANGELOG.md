@@ -21,7 +21,7 @@ All notable changes to this project will be documented in this file. See [standa
 - Sizes default `height` is now `auto`
 - Expose `provideDialogConfig` function
 - `dialogClose` should be imported when used
-- The `data` property type now infered based on the public ref property in the component (see docs)
+- The `data` property type now inferred based on the public ref property in the component (see docs)
 
 ### Features
 
