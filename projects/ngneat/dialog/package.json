@@ -1,6 +1,6 @@
 {
   "name": "@ngneat/dialog",
-  "version": "3.0.2",
+  "version": "3.1.0",
   "description": "Simple to use, highly customizable, and powerful modal for Angular Apps",
   "dependencies": {
     "tslib": "2.3.1"
