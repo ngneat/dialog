@@ -14,13 +14,11 @@
 
   animation: dialog-open 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
 
-  border-radius: 4px;
+  border-radius: var(--dialog-content-border-radius, 4px);
   box-sizing: border-box;
 
-  box-shadow: 0 11px 15px -7px rgba(0, 0, 0, 0.2), 0 24px 38px 3px rgba(0, 0, 0, 0.14),
-    0 9px 46px 8px rgba(0, 0, 0, 0.12);
-  background: #fff;
-  color: rgba(0, 0, 0, 0.87);
+  box-shadow: var(--dialog-content-box-shadow, 0px 11px 19px rgba(15, 20, 58, 0.14));
+  background: var(--dialog-content-bg, #fff);
 
   width: auto;
   max-width: 100%;
@@ -49,7 +47,7 @@
   background-color: transparent;
 
   &.ngneat-dialog-backdrop-visible {
-    background: rgba(0, 0, 0, 0.32);
+    background: var(--dialog-backdrop-bg, rgba(0, 0, 0, 0.32));
   }
 
   animation: dialog-open-backdrop 0.3s;
@@ -82,20 +80,23 @@
   position: absolute;
   top: 10px;
   cursor: pointer;
-  right: 10px;
-  width: 24px;
-  height: 24px;
-  color: #5f6368;
-  transition: color 0.2s ease-in-out;
-  z-index: 1051;
+  top: var(--dialog-close-btn-top, 6px);
+  right: var(--dialog-close-btn-right, 10px);
+  width: var(--dialog-close-btn-size, 30px);
+  height: var(--dialog-close-btn-size, 30px);
+  color: var(--dialog-close-btn-color, #5f6368);
+  transition: all 0.2s ease-in-out;
+  z-index: var(--dialog-close-z-index, 1051);
+  border-radius: 50%;
 
   svg {
-    width: 12px;
-    height: 12px;
+    width: var(--dialog-close-svg-size, 12px);
+    height: var(--dialog-close-svg-size, 12px);
   }
 
   &:hover {
-    color: #5d9ff1;
+    color: var(--dialog-close-btn-color-hover, #5f6368);
+    background-color: var(--dialog-close-btn-bg-hover, #eee);
   }
 }
 
