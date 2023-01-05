@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.2.1](https://github.com/ngneat/dialog/compare/v3.2.0...v3.2.1) (2023-01-05)
+
+
+### Bug Fixes
+
+* 🐛 remove redundant top ([42638bb](https://github.com/ngneat/dialog/commit/42638bbfdaae30c0a66715e4ad80906b4733f1a8))
+
 ## [3.2.0](https://github.com/ngneat/dialog/compare/v3.1.0...v3.2.0) (2023-01-05)
 
 
