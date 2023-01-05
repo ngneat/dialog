@@ -43,7 +43,7 @@
   height: 100%;
   width: 100%;
   padding: 30px;
-  z-index: 1050;
+  z-index: var(--dialog-backdrop-z-index, 1050);
   background-color: transparent;
 
   &.ngneat-dialog-backdrop-visible {
@@ -70,7 +70,7 @@
   cursor: move;
   width: 100%;
   height: 10px;
-  z-index: 1051;
+  z-index: var(--dialog-drag-marker-z-index, 1051);
 }
 
 .ngneat-close-dialog {
