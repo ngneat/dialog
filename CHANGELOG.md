@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.2.0](https://github.com/ngneat/dialog/compare/v3.1.0...v3.2.0) (2023-01-05)
+
+
+### Features
+
+* 🎸 add css variables ([6a6c334](https://github.com/ngneat/dialog/commit/6a6c3346a1c0b2bd3441651c4c7cc71539062307))
+
 ## [3.1.0](https://github.com/ngneat/dialog/compare/v3.0.2...v3.1.0) (2023-01-01)
 
 
