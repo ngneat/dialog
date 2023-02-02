@@ -15,7 +15,7 @@ import { DialogRef, InternalDialogRef } from './dialog-ref';
 import { DialogComponent } from './dialog.component';
 import { DragOffset } from './draggable.directive';
 import { DIALOG_CONFIG, DIALOG_DOCUMENT_REF, GLOBAL_DIALOG_CONFIG, NODES_TO_INSERT } from './providers';
-import { AttachOptions, DialogConfig, ExtractData, GlobalDialogConfig, OpenParams } from './types';
+import { AttachOptions, DialogConfig, ExtractData, ExtractResult, GlobalDialogConfig, OpenParams } from './types';
 import { map } from 'rxjs/operators';
 
 const OVERFLOW_HIDDEN_CLASS = 'ngneat-dialog-hidden';
@@ -55,7 +55,7 @@ export class DialogService {
   open<C extends Type<any>>(
     component: C,
     config?: Partial<DialogConfig<ExtractData<InstanceType<C>>>>
-  ): DialogRef<ExtractData<InstanceType<C>>>;
+  ): DialogRef<ExtractData<InstanceType<C>>, ExtractResult<InstanceType<C>>>;
   open(componentOrTemplate: any, config: Partial<DialogConfig<any>> = {}): DialogRef {
     const mergedConfig = this.mergeConfig(config);
     mergedConfig.onOpen?.();
