@@ -220,4 +220,10 @@ describe('DialogComponent', () => {
     expect(host).toBeTruthy();
     expect(host).toBe(spectator.fixture.nativeElement);
   });
+
+  it('should add a role attribute to the dialog', () => {
+    spectator = createComponent();
+
+    expect(spectator.query('[role=dialog]')).toBeTruthy();
+  });
 });

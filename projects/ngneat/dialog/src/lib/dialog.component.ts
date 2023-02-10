@@ -18,7 +18,13 @@ import { DIALOG_CONFIG, NODES_TO_INSERT } from './providers';
       [hidden]="!config.backdrop"
       [class.ngneat-dialog-backdrop-visible]="config.backdrop"
     >
-      <div #dialog class="ngneat-dialog-content" [class.ngneat-dialog-resizable]="config.resizable" [ngStyle]="styles">
+      <div
+        #dialog
+        class="ngneat-dialog-content"
+        [class.ngneat-dialog-resizable]="config.resizable"
+        [ngStyle]="styles"
+        role="dialog"
+      >
         <div
           *ngIf="config.draggable"
           class="ngneat-drag-marker"
