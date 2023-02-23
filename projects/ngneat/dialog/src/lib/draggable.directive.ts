@@ -138,7 +138,7 @@ export class DialogDraggableDirective implements AfterViewInit, OnChanges, OnDes
       this.zone.runOutsideAngular(() => {
         requestAnimationFrame(() => {
           const transform = `translate(${this.translateX}px, ${this.translateY}px)`;
-          this.handle.style.setProperty('transform', transform);
+          this.target.style.setProperty('transform', transform);
         });
       });
     }
