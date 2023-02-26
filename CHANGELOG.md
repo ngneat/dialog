@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.5.0](https://github.com/ngneat/dialog/compare/v3.4.0...v3.5.0) (2023-02-26)
+
+
+### Features
+
+* 🎸 add CloseAllDialogsDirective ([86704d0](https://github.com/ngneat/dialog/commit/86704d0fbbc057290a62025f00b92116c83df7be))
+
 ## [3.4.0](https://github.com/ngneat/dialog/compare/v3.1.0...v3.4.0) (2023-02-23)
 
 
