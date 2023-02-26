@@ -3,3 +3,4 @@ export { DialogRef } from './lib/dialog-ref';
 export { provideDialogConfig, provideDialogDocRef } from './lib/providers';
 export { DialogCloseDirective } from './lib/dialog-close.directive';
 export { DialogConfig } from './lib/types';
+export { CloseAllDialogsDirective } from './lib/close-all-dialogs.directive';
