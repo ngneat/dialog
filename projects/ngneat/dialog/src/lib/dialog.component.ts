@@ -112,6 +112,11 @@ export class DialogComponent implements OnInit, OnDestroy {
     // `dialogElement` is resolved at this point
     // And here is where dialog finally will be placed
     this.nodes.forEach((node) => dialogElement.appendChild(node));
+
+    if (this.config.zIndexGetter) {
+      const zIndex = this.config.zIndexGetter().toString();
+      backdrop.style.setProperty('--dialog-backdrop-z-index', zIndex);
+    }
   }
 
   reset(offset?: DragOffset): void {

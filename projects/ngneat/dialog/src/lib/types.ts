@@ -24,6 +24,7 @@ export interface GlobalDialogConfig {
   maxHeight: string | number;
   size: Sizes;
   windowClass: string;
+  zIndexGetter?(): number;
   onOpen: () => void | undefined;
   onClose: () => void | undefined;
 }
