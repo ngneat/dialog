@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.6.0](https://github.com/ngneat/dialog/compare/v3.5.0...v3.6.0) (2023-04-24)
+
+
+### Features
+
+* 🎸 add zIndex getter ([8d63395](https://github.com/ngneat/dialog/commit/8d63395afde5bf0b058138a10b594578ccf48f11))
+
 ## [3.5.0](https://github.com/ngneat/dialog/compare/v3.4.0...v3.5.0) (2023-02-26)
 
 
