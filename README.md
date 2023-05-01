@@ -222,7 +222,7 @@ Now we can access it inside our modal component or template, by using the `ref.d
 In the `forRoot` method when importing the dialog module in the app module you can specify the following options that will be globally applied to all dialog instances.
 
 - `closeButton` - Whether to display an 'X' for closing the modal (default is true).
-- `enableClose` - Whether a click on the backdrop should close the modal (default is true).
+- `enableClose` - Whether a click on the backdrop, or press of the escape button, should close the modal (default is true), see [enable close](#enable-close).
 - `backdrop` - Whether to show the backdrop element (default is true).
 - `resizable` - Whether the modal show be resizeable (default is false).
 - `draggable` - Whether the modal show be draggable (default is false).
@@ -242,7 +242,7 @@ bootstrapApplication(AppComponent, {
   providers: [
     provideDialogConfig({
       closeButton: boolean,
-      enableClose: boolean,
+      enableClose: boolean | 'onlyLastStrategy',
       backdrop: boolean,
       resizable: boolean,
       draggable: boolean,
@@ -277,6 +277,15 @@ this.dialog.open(compOrTemplate, {
   data: {},
 });
 ```
+
+### Enable close
+The `enableClose` property can be configured for each dialog. 
+If set to `true`, clicking on the backdrop or pressing the escape key will close the modal. 
+If set to `false`, this behavior will be disabled.
+
+Additionally, the property can be set to the string value `'onlyLastStrategy'`. 
+In this case, the behavior will only apply to the last dialog that was opened, and not to any other dialog. 
+By default, this should be the top-most dialog and behave as `true`.
 
 ## Custom Sizes
 

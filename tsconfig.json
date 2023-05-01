@@ -11,7 +11,7 @@
     "moduleResolution": "node",
     "importHelpers": true,
     "target": "ES2022",
-    "lib": ["es2018", "dom"],
+    "lib": ["es2022", "dom"],
     "paths": {
       "@ngneat/dialog": ["projects/ngneat/dialog/src/public-api.ts"]
     },
