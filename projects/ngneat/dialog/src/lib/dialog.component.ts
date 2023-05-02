@@ -3,6 +3,7 @@ import { Component, ElementRef, inject, Inject, OnDestroy, OnInit, ViewChild, Vi
 import { fromEvent, merge, Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 import { InternalDialogRef } from './dialog-ref';
+import { DialogService } from './dialog.service';
 import { coerceCssPixelValue } from './dialog.utils';
 import { DialogDraggableDirective, DragOffset } from './draggable.directive';
 import { DIALOG_CONFIG, NODES_TO_INSERT } from './providers';
@@ -75,6 +76,8 @@ export class DialogComponent implements OnInit, OnDestroy {
   private document = inject(DOCUMENT);
   private host: HTMLElement = inject(ElementRef).nativeElement;
 
+  private dialogService = inject(DialogService);
+
   constructor() {
     this.host.id = this.config.id;
 
@@ -105,7 +108,16 @@ export class DialogComponent implements OnInit, OnDestroy {
         fromEvent<KeyboardEvent>(this.document.body, 'keyup').pipe(filter(({ key }) => key === 'Escape')),
         backdropClick$
       )
-        .pipe(takeUntil(this.destroy$))
+        .pipe(
+          takeUntil(this.destroy$),
+          filter(() => {
+            if (this.config.enableClose === 'onlyLastStrategy') {
+              return this.dialogService.isLastOpened(this.config.id);
+            }
+
+            return true;
+          })
+        )
         .subscribe(() => this.closeDialog());
     }
 

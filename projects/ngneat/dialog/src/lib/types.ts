@@ -16,7 +16,7 @@ export interface GlobalDialogConfig {
   closeButton: boolean;
   draggable: boolean;
   dragConstraint: DragConstraint;
-  enableClose: boolean;
+  enableClose: boolean | 'onlyLastStrategy';
   resizable: boolean;
   width: string | number;
   height: string | number;

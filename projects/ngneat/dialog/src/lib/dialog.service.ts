@@ -41,6 +41,12 @@ export class DialogService {
     return this.dialogs.some((ref) => ref.id === id);
   }
 
+  isLastOpened(idOrRef: string | DialogRef): boolean {
+    const id = idOrRef instanceof DialogRef ? idOrRef.id : idOrRef;
+
+    return this.dialogs.at(-1)?.id === id;
+  }
+
   closeAll() {
     this.dialogs.forEach((dialog) => dialog.close());
   }
