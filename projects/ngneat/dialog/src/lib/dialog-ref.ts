@@ -17,7 +17,7 @@ export abstract class DialogRef<
   public data: Data;
 
   public backdropClick$: Observable<MouseEvent>;
-  public afterClosed$: Observable<Result>;
+  public afterClosed$: Observable<Result | undefined>;
 
   abstract close(result?: Result): void;
   abstract beforeClose(guard: GuardFN<Result>): void;
@@ -53,10 +53,10 @@ export class InternalDialogRef extends DialogRef {
 
   canClose(result: unknown): Observable<boolean> {
     const guards$ = this.beforeCloseGuards
-      .map(guard => guard(result))
-      .filter(value => value !== undefined && value !== true)
-      .map(value => {
-        return typeof value === 'boolean' ? of(value) : from(value).pipe(filter(canClose => !canClose));
+      .map((guard) => guard(result))
+      .filter((value) => value !== undefined && value !== true)
+      .map((value) => {
+        return typeof value === 'boolean' ? of(value) : from(value).pipe(filter((canClose) => !canClose));
       });
 
     return merge(...guards$).pipe(defaultIfEmpty(true), first());

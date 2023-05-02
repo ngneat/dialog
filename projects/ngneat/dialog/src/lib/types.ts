@@ -45,7 +45,16 @@ export type ExtractRefProp<T> = NonNullable<
   }[keyof T]
 >;
 
-export type ExtractData<T> = T[ExtractRefProp<T>] extends DialogRef<infer Data> ? Data : never;
+export type ExtractData<T> = ExtractRefProp<T> extends never
+  ? any
+  : T[ExtractRefProp<T>] extends DialogRef<infer Data>
+  ? Data
+  : never;
+export type ExtractResult<T> = ExtractRefProp<T> extends never
+  ? any
+  : T[ExtractRefProp<T>] extends DialogRef<any, infer Result>
+  ? Result
+  : never;
 
 export interface OpenParams {
   config: DialogConfig;
