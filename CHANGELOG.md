@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.0.0](https://github.com/ngneat/dialog/compare/v3.6.0...v4.0.0) (2023-05-02)
+
+
+### ⚠ BREAKING CHANGES
+
+* narrow result type definition
+
+- The `Result` generic is now infered based on the public ref property in the component
+- `DialogRef.afterClosed$` will now use the infered result type
+- `DialogRef.close` will now use the infered resut type
+- `DialogRef.beforeClose` guard will now  use the infered result type
+
+### Features
+
+* 🎸 add option to only enable close for last opened dialog ([dba14e8](https://github.com/ngneat/dialog/commit/dba14e835a35b8ec93320e9c22e8d113da8fa6e9)), closes [#96](https://github.com/ngneat/dialog/issues/96)
+
+
+### Bug Fixes
+
+* expose return type of dialog ref ([91a30d6](https://github.com/ngneat/dialog/commit/91a30d6dde16706625e5b5f2f88da0d2f34903ff)), closes [#86](https://github.com/ngneat/dialog/issues/86)
+
 ## [3.6.0](https://github.com/ngneat/dialog/compare/v3.5.0...v3.6.0) (2023-04-24)
 
 
