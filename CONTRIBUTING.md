@@ -13,8 +13,7 @@ npm i
 Run the tests:
 
 ```bash
-npm test
-npm run e2e
+npm run test:lib
 ```
 
 Run the playground app:
