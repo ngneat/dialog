@@ -43,12 +43,12 @@ interface Data {
   template: `
     <h1>{{title}}</h1>
     <button (click)="ref.close(true)">Close</button>
-  `
+  `,
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HelloWorldComponent {
-  ref: DialogRef<Data> = inject(DialogRef);
+  ref: DialogRef<Data, boolean> = inject(DialogRef);
 
   get title() {
     if (!this.ref.data) return 'Hello world';
@@ -61,9 +61,9 @@ Inside the component, you'll have access to a `DialogRef` provider. You can call
 
 > 💡 Tip
 >
-> If you define the types for your DialogRef provider, the `afterClosed$` and `close(params)` will be typed automatically.
+> A publicly accessible property of type `DialogRef<Input, Output>` on your component will be used to infer the input and output types of your component.
 
-Now we can use the `DialogService` to open open the modal and display the component:
+Now we can use the `DialogService` to open the modal and display the component:
 
 ```ts
 import { DialogService } from '@ngneat/dialog';
@@ -131,7 +131,7 @@ import { DialogService, DialogRef } from '@ngneat/dialog';
   template: `
     <h1>{{ ref.data.title }}</h1>
     <button (click)="ref.close()">Close</button>
-  `
+  `,
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -201,12 +201,12 @@ import { DialogService } from '@ngneat/dialog';
 })
 export class AppComponent implements OnInit {
   private dialog = inject(DialogService);
-  private id = '...';
+  private title = 'Dialog title';
 
-  ngOnInit() {
+  open() {
     const dialogRef = this.dialog.open(HelloWorldComponent, {
       data: {
-        id: this.id,
+        title: this.title,
       },
     });
   }
