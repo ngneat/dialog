@@ -55,6 +55,8 @@ export class DialogComponent implements OnInit, OnDestroy {
   private size = this.config.sizes?.[this.config.size || 'md'];
   styles = {
     width: coerceCssPixelValue(this.config.width || this.size?.width),
+    minWidth: coerceCssPixelValue(this.config.minWidth || this.size?.minWidth),
+    maxWidth: coerceCssPixelValue(this.config.maxWidth || this.size?.maxWidth),
     height: coerceCssPixelValue(this.config.height || this.size?.height),
     minHeight: coerceCssPixelValue(this.config.minHeight || this.size?.minHeight),
     maxHeight: coerceCssPixelValue(this.config.maxHeight || this.size?.maxHeight),

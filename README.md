@@ -230,6 +230,8 @@ In the `forRoot` method when importing the dialog module in the app module you c
 - `size` - Set the modal size according to your global [custom sizes](#custom-sizes) (default is `md`).
 - `windowClass` - Add a custom class to the modal container.
 - `width` - Set a custom width (default unit is `px`).
+- `minWidth` - Set a custom min-width (default unit is `px`).
+- `maxWidth` - Set a custom max-width (default unit is `px`).
 - `height` - Set a custom height (default unit is `px`).
 - `minHeight` - Set a custom min-height (default unit is `px`).
 - `maxHeight` - Set a custom max-height (default unit is `px`).
@@ -251,6 +253,8 @@ bootstrapApplication(AppComponent, {
       size: sm | md | lg | fullScreen | string,
       windowClass: string,
       width: string | number,
+      minWidth: string | number,
+      maxWidth: string | number,
       height: string | number,
       minHeight: string | number,
       maxHeight: string | number,
