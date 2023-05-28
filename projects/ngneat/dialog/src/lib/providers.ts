@@ -33,6 +33,8 @@ export function defaultGlobalConfig(): Partial<GlobalDialogConfig & DialogConfig
     size: 'md',
     windowClass: undefined,
     width: undefined,
+    minWidth: undefined,
+    maxWidth: undefined,
     height: undefined,
     minHeight: undefined,
     maxHeight: undefined,

@@ -8,7 +8,14 @@ export interface GlobalDialogConfig {
   sizes: Partial<
     Record<
       Sizes,
-      { width?: string | number; height?: string | number; minHeight?: string | number; maxHeight?: string | number }
+      {
+        width?: string | number;
+        minWidth?: string | number;
+        maxWidth?: string | number;
+        height?: string | number;
+        minHeight?: string | number;
+        maxHeight?: string | number;
+      }
     >
   >;
   backdrop: boolean;
@@ -19,6 +26,8 @@ export interface GlobalDialogConfig {
   enableClose: boolean | 'onlyLastStrategy';
   resizable: boolean;
   width: string | number;
+  minWidth: string | number;
+  maxWidth: string | number;
   height: string | number;
   minHeight: string | number;
   maxHeight: string | number;
