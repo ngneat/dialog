@@ -10,13 +10,12 @@ import {
   Type,
   ViewRef,
 } from '@angular/core';
-import { BehaviorSubject, startWith, Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { DialogRef, InternalDialogRef } from './dialog-ref';
 import { DialogComponent } from './dialog.component';
 import { DragOffset } from './draggable.directive';
 import { DIALOG_CONFIG, DIALOG_DOCUMENT_REF, GLOBAL_DIALOG_CONFIG, NODES_TO_INSERT } from './providers';
 import { AttachOptions, DialogConfig, ExtractData, ExtractResult, GlobalDialogConfig, OpenParams } from './types';
-import { map } from 'rxjs/operators';
 
 const OVERFLOW_HIDDEN_CLASS = 'ngneat-dialog-hidden';
 
@@ -161,6 +160,7 @@ export class DialogService {
         backdropClick$: null,
         beforeCloseGuards: null,
         onReset: null,
+        updateDialogConfig: null,
       });
 
       hooks.after.next(result);
@@ -174,6 +174,10 @@ export class DialogService {
       dialog.instance.reset(offset);
     };
 
+    const updateDialogConfig = (dialogConfig: Partial<Omit<DialogConfig, 'data'>>) => {
+      dialog.instance.updateDialogConfig(dialogConfig);
+    };
+
     dialogRef.mutate({
       id: config.id,
       data: config.data,
@@ -181,6 +185,7 @@ export class DialogService {
       onClose,
       afterClosed$: hooks.after.asObservable(),
       onReset,
+      updateDialogConfig,
     });
 
     container.appendChild(dialog.location.nativeElement);

@@ -7,6 +7,7 @@ import { DialogService } from './dialog.service';
 import { coerceCssPixelValue } from './dialog.utils';
 import { DialogDraggableDirective, DragOffset } from './draggable.directive';
 import { DIALOG_CONFIG, NODES_TO_INSERT } from './providers';
+import { DialogConfig } from '@ngneat/dialog';
 
 @Component({
   selector: 'ngneat-dialog',
@@ -72,6 +73,8 @@ export class DialogComponent implements OnInit, OnDestroy {
   private draggable: DialogDraggableDirective;
 
   private destroy$ = new Subject<void>();
+  private configChanged$ = new Subject<void>();
+  private resetConfigBasedListenerCondition$ = merge(this.destroy$, this.configChanged$);
 
   private nodes = inject(NODES_TO_INSERT);
 
@@ -96,14 +99,50 @@ export class DialogComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    const dialogElement = this.dialogElement.nativeElement;
+    this.evaluateConfigBasedFields();
+
+    // `dialogElement` is resolved at this point
+    // And here is where dialog finally will be placed
+    this.nodes.forEach((node) => dialogElement.appendChild(node));
+  }
+
+  reset(offset?: DragOffset): void {
+    if (this.config.draggable) {
+      this.draggable.reset(offset);
+    }
+  }
+
+  updateDialogConfig(dialogConfig: Partial<Omit<DialogConfig, 'data'>>): void {
+    this.config = {
+      ...this.config,
+      ...dialogConfig,
+    };
+
+    this.configChanged$.next();
+    this.evaluateConfigBasedFields();
+  }
+
+  closeDialog() {
+    this.dialogRef.close();
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+
+    this.dialogRef = null;
+    this.nodes = null;
+  }
+
+  private evaluateConfigBasedFields(): void {
     const backdrop = this.config.backdrop ? this.backdrop.nativeElement : this.document.body;
     const dialogElement = this.dialogElement.nativeElement;
-
     const backdropClick$ = fromEvent<MouseEvent>(backdrop, 'click', { capture: true }).pipe(
       filter(({ target }) => !dialogElement.contains(target as Element))
     );
 
-    backdropClick$.pipe(takeUntil(this.destroy$)).subscribe(this.dialogRef.backdropClick$);
+    backdropClick$.pipe(takeUntil(this.resetConfigBasedListenerCondition$)).subscribe(this.dialogRef.backdropClick$);
 
     // backwards compatibility with non-split option
     const closeConfig =
@@ -121,7 +160,7 @@ export class DialogComponent implements OnInit, OnDestroy {
       backdropClick$.pipe(map(() => closeConfig.backdrop))
     )
       .pipe(
-        takeUntil(this.destroy$),
+        takeUntil(this.resetConfigBasedListenerCondition$),
         filter((strategy) => {
           if (!strategy) return false;
           if (strategy === 'onlyLastStrategy') {
@@ -132,31 +171,9 @@ export class DialogComponent implements OnInit, OnDestroy {
       )
       .subscribe(() => this.closeDialog());
 
-    // `dialogElement` is resolved at this point
-    // And here is where dialog finally will be placed
-    this.nodes.forEach((node) => dialogElement.appendChild(node));
-
     if (this.config.zIndexGetter) {
       const zIndex = this.config.zIndexGetter().toString();
       backdrop.style.setProperty('--dialog-backdrop-z-index', zIndex);
     }
-  }
-
-  reset(offset?: DragOffset): void {
-    if (this.config.draggable) {
-      this.draggable.reset(offset);
-    }
-  }
-
-  closeDialog() {
-    this.dialogRef.close();
-  }
-
-  ngOnDestroy() {
-    this.destroy$.next();
-    this.destroy$.complete();
-
-    this.dialogRef = null;
-    this.nodes = null;
   }
 }

@@ -115,6 +115,12 @@ dialogRef.resetDrag();
 dialogRef.resetDrag({ x: 100, y: 0 });
 ```
 
+- `updateDialogConfig` - A method that can be called to update dialog config once it has been opened. All config properties can be updated despite data:
+
+```ts
+dialogRef.updateDialogConfig({draggable: true});
+```
+
 - `beforeClose` - A guard that should return a `boolean`, an `observable`, or a `promise` indicating whether the modal can be closed:
 
 ```ts

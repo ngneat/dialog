@@ -199,6 +199,34 @@ describe('DialogComponent', () => {
     });
   });
 
+  describe('config update', () => {
+    beforeEach(() => {
+      spectator = createComponent(withConfig({ enableClose: true }));
+    });
+
+    it('should properly update draggable in config', () => {
+      expect(spectator.component.config.draggable).toBeFalse();
+      spectator.component.updateDialogConfig({ draggable: true });
+      expect(spectator.component.config.draggable).toBeTruthy();
+    });
+
+    it('should properly update size and id in config', () => {
+      expect(spectator.component.config.id).toBe('test');
+      expect(spectator.component.config.size).toBe('md');
+      spectator.component.updateDialogConfig({ size: 'lg', id: 'unique' });
+      expect(spectator.component.config.id).toBe('unique');
+      expect(spectator.component.config.size).toBe('lg');
+    });
+
+    it('should properly update width and enableClose in config', () => {
+      expect(spectator.component.config.enableClose).toBeTruthy();
+      expect(spectator.component.config.width).toBe(undefined);
+      spectator.component.updateDialogConfig({ width: '200px', enableClose: false });
+      expect(spectator.component.config.enableClose).toBeFalse();
+      expect(spectator.component.config.width).toBe('200px');
+    });
+  });
+
   describe('when draggable is enabled', () => {
     beforeEach(() => (spectator = createComponent(withConfig({ draggable: true }))));
 
