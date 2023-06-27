@@ -1,3 +1,6 @@
+import { DialogWithConfig } from './types';
+import { Type } from '@angular/core';
+
 function isNil(value: unknown): value is undefined | null {
   return value === undefined || value === null;
 }
@@ -12,4 +15,8 @@ export function coerceCssPixelValue(value: any): string {
   }
 
   return isString(value) ? value : `${value}px`;
+}
+
+export function isDialogWithConfig(value: Type<unknown> | any): value is typeof DialogWithConfig {
+  return value.prototype instanceof DialogWithConfig;
 }

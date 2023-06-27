@@ -10,13 +10,13 @@ import {
   Type,
   ViewRef,
 } from '@angular/core';
-import { BehaviorSubject, startWith, Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { DialogRef, InternalDialogRef } from './dialog-ref';
 import { DialogComponent } from './dialog.component';
 import { DragOffset } from './draggable.directive';
 import { DIALOG_CONFIG, DIALOG_DOCUMENT_REF, GLOBAL_DIALOG_CONFIG, NODES_TO_INSERT } from './providers';
 import { AttachOptions, DialogConfig, ExtractData, ExtractResult, GlobalDialogConfig, OpenParams } from './types';
-import { map } from 'rxjs/operators';
+import { isDialogWithConfig } from './dialog.utils';
 
 const OVERFLOW_HIDDEN_CLASS = 'ngneat-dialog-hidden';
 
@@ -56,8 +56,9 @@ export class DialogService {
     component: C,
     config?: Partial<DialogConfig<ExtractData<InstanceType<C>>>>
   ): DialogRef<ExtractData<InstanceType<C>>, ExtractResult<InstanceType<C>>>;
-  open(componentOrTemplate: any, config: Partial<DialogConfig<any>> = {}): DialogRef {
-    const mergedConfig = this.mergeConfig(config);
+  open(componentOrTemplate: Type<unknown> | any, config: Partial<DialogConfig<any>> = {}): DialogRef {
+    const componentConfig = isDialogWithConfig(componentOrTemplate) ? componentOrTemplate.getModalConfig() : {};
+    const mergedConfig = this.mergeConfig(config, componentConfig);
     mergedConfig.onOpen?.();
 
     const dialogRef = new InternalDialogRef({
@@ -216,11 +217,15 @@ export class DialogService {
     });
   }
 
-  private mergeConfig(inlineConfig: Partial<DialogConfig>): DialogConfig & GlobalDialogConfig {
+  private mergeConfig(
+    inlineConfig: Partial<DialogConfig>,
+    componentBasedConfig: Partial<DialogConfig>
+  ): DialogConfig & GlobalDialogConfig {
     return {
       ...this.globalConfig,
       id: nanoid(),
       ...inlineConfig,
+      ...componentBasedConfig,
       sizes: this.globalConfig?.sizes,
     } as DialogConfig & GlobalDialogConfig;
   }
