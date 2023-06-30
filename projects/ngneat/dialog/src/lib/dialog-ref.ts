@@ -24,7 +24,10 @@ export abstract class DialogRef<
   abstract resetDrag(offset?: DragOffset): void;
 }
 
+type DialogAnimationState = 'void' | 'enter' | 'exit';
+
 export class InternalDialogRef extends DialogRef {
+  _state: DialogAnimationState = 'void';
   public backdropClick$: Subject<MouseEvent>;
 
   beforeCloseGuards: GuardFN<unknown>[] = [];
@@ -40,7 +43,11 @@ export class InternalDialogRef extends DialogRef {
   close(result?: unknown): void {
     this.canClose(result)
       .pipe(filter<boolean>(Boolean))
-      .subscribe({ next: () => this.onClose(result) });
+      .subscribe({
+        next: () => {
+          this.onClose(result);
+        },
+      });
   }
 
   beforeClose(guard: GuardFN<unknown>) {
@@ -68,5 +75,9 @@ export class InternalDialogRef extends DialogRef {
 
   asDialogRef(): DialogRef {
     return this;
+  }
+
+  _getAnimationState(): DialogAnimationState {
+    return this._state;
   }
 }
