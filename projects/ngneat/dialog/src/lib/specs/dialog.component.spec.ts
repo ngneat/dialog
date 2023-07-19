@@ -6,7 +6,7 @@ import { DialogComponent } from '../dialog.component';
 import { DialogService } from '../dialog.service';
 import { DialogDraggableDirective } from '../draggable.directive';
 import { DIALOG_CONFIG, NODES_TO_INSERT } from '../providers';
-import { DialogConfig, GlobalDialogConfig } from '../types';
+import { CloseStrategy, DialogConfig, GlobalDialogConfig } from '../types';
 
 describe('DialogComponent', () => {
   const defaultConfig: Partial<DialogConfig & GlobalDialogConfig> = {
@@ -120,164 +120,82 @@ describe('DialogComponent', () => {
     });
   });
 
-  describe('when enableClose is enabled should call close', () => {
-    beforeEach(() => (spectator = createComponent(withConfig({ enableClose: true }))));
-
-    it('should call close on escape', () => {
-      const { close } = spectator.inject(InternalDialogRef);
-
-      spectator.dispatchKeyboardEvent(document.body, 'keyup', 'Enter');
-
-      expect(close).not.toHaveBeenCalled();
-
-      spectator.dispatchKeyboardEvent(document.body, 'keyup', 'Escape');
-
-      expect(close).toHaveBeenCalled();
-    });
-
-    it('should call close on click backdrop', () => {
-      const { close } = spectator.inject(InternalDialogRef);
-
-      spectator.dispatchMouseEvent('.ngneat-dialog-content', 'click');
-
-      expect(close).not.toHaveBeenCalled();
-
-      spectator.dispatchMouseEvent(document.body, 'click');
-
-      expect(close).not.toHaveBeenCalled();
-
-      spectator.dispatchMouseEvent('.ngneat-dialog-backdrop', 'click');
-
-      expect(close).toHaveBeenCalled();
-    });
-  });
-
-  describe('when enableClose is disabled should not call close', () => {
-    beforeEach(() => (spectator = createComponent(withConfig({ enableClose: false }))));
-
-    it('should not call close on escape', () => {
-      const { close } = spectator.inject(InternalDialogRef);
-
-      spectator.dispatchKeyboardEvent(document.body, 'keyup', 'Escape');
-
-      expect(close).not.toHaveBeenCalled();
-    });
-
-    it('should not call close on click backdrop', () => {
-      const { close: close } = spectator.inject(InternalDialogRef);
-
-      spectator.dispatchMouseEvent('.ngneat-dialog-content', 'click');
-
-      expect(close).not.toHaveBeenCalled();
-
-      spectator.dispatchMouseEvent(document.body, 'click');
-
-      expect(close).not.toHaveBeenCalled();
-
-      spectator.dispatchMouseEvent('.ngneat-dialog-backdrop', 'click');
-
-      expect(close).not.toHaveBeenCalled();
-    });
-  });
-
-  describe('when enableClose is set to onlyLastStrategy should call close only for last opened dialog', () => {
-    let dialogService: SpyObject<DialogService>;
-
-    beforeEach(() => {
-      spectator = createComponent(withConfig({ enableClose: 'onlyLastStrategy', id: 'close-last-open-dialog' }));
-      dialogService = spectator.inject(DialogService);
-
-      dialogService.dialogs.push(Object.assign(spectator.component.dialogRef, { id: 'close-last-open-dialog' }));
-    });
-
-    it('should call close on escape as only dialog', () => {
-      const { close } = spectator.inject(InternalDialogRef);
-
-      spectator.dispatchKeyboardEvent(document.body, 'keyup', 'Enter');
-
-      expect(close).not.toHaveBeenCalled();
-
-      spectator.dispatchKeyboardEvent(document.body, 'keyup', 'Escape');
-
-      expect(close).toHaveBeenCalled();
-    });
-
-    it('should call close on click backdrop as only dialog', () => {
-      const { close } = spectator.inject(InternalDialogRef);
-
-      spectator.dispatchMouseEvent('.ngneat-dialog-content', 'click');
-
-      expect(close).not.toHaveBeenCalled();
-
-      spectator.dispatchMouseEvent(document.body, 'click');
-
-      expect(close).not.toHaveBeenCalled();
-
-      spectator.dispatchMouseEvent('.ngneat-dialog-backdrop', 'click');
-
-      expect(close).toHaveBeenCalled();
-    });
-
-    it('should call close on escape as last dialog', () => {
-      dialogService.dialogs.splice(0, 0, { id: 'first-dialog' } as InternalDialogRef);
-
-      const { close: closeForLastOpenedDialog } = spectator.inject(InternalDialogRef);
-
-      spectator.dispatchKeyboardEvent(document.body, 'keyup', 'Enter');
-
-      expect(closeForLastOpenedDialog).not.toHaveBeenCalled();
-
-      spectator.dispatchKeyboardEvent(document.body, 'keyup', 'Escape');
-
-      expect(closeForLastOpenedDialog).toHaveBeenCalled();
-    });
-
-    it('should call close on click backdrop as last dialog', () => {
-      dialogService.dialogs.splice(0, 0, { id: 'first-dialog' } as InternalDialogRef);
-      const { close: closeForLastOpenedDialog } = spectator.inject(InternalDialogRef);
-
-      spectator.dispatchMouseEvent('.ngneat-dialog-content', 'click');
-
-      expect(closeForLastOpenedDialog).not.toHaveBeenCalled();
-
-      spectator.dispatchMouseEvent(document.body, 'click');
-
-      expect(closeForLastOpenedDialog).not.toHaveBeenCalled();
-
-      spectator.dispatchMouseEvent('.ngneat-dialog-backdrop', 'click');
-
-      expect(closeForLastOpenedDialog).toHaveBeenCalled();
-    });
-
-    it('should not call close on escape as not last dialog', () => {
-      dialogService.dialogs.push({ id: 'last-dialog' } as InternalDialogRef);
-
-      const { close: closeForLastOpenedDialog } = spectator.inject(InternalDialogRef);
-
-      spectator.dispatchKeyboardEvent(document.body, 'keyup', 'Enter');
-
-      expect(closeForLastOpenedDialog).not.toHaveBeenCalled();
-
-      spectator.dispatchKeyboardEvent(document.body, 'keyup', 'Escape');
-
-      expect(closeForLastOpenedDialog).not.toHaveBeenCalled();
-    });
-
-    it('should not call close on click backdrop as not last dialog', () => {
-      dialogService.dialogs.push({ id: 'last-dialog' } as InternalDialogRef);
-      const { close: closeForLastOpenedDialog } = spectator.inject(InternalDialogRef);
-
-      spectator.dispatchMouseEvent('.ngneat-dialog-content', 'click');
-
-      expect(closeForLastOpenedDialog).not.toHaveBeenCalled();
-
-      spectator.dispatchMouseEvent(document.body, 'click');
-
-      expect(closeForLastOpenedDialog).not.toHaveBeenCalled();
-
-      spectator.dispatchMouseEvent('.ngneat-dialog-backdrop', 'click');
-
-      expect(closeForLastOpenedDialog).not.toHaveBeenCalled();
+  describe('enableClose', () => {
+    const closeStrategies: CloseStrategy[] = [true, false, 'onlyLastStrategy'];
+    const dialogPositions = <const>['only', 'last', 'not-last'];
+    const cases: {
+      _value: DialogConfig['enableClose'];
+      _position: typeof dialogPositions[keyof typeof dialogPositions];
+      backdrop: CloseStrategy;
+      escape: CloseStrategy;
+    }[] = [
+      ...closeStrategies.map((_value) => ({
+        _value,
+        escape: _value,
+        backdrop: _value,
+      })),
+      ...closeStrategies.flatMap((escape) =>
+        closeStrategies.map((backdrop) => ({
+          _value: { escape, backdrop },
+          escape,
+          backdrop,
+        }))
+      ),
+    ].flatMap((context) =>
+      dialogPositions.map((pos) => ({
+        _value: context._value,
+        _position: pos,
+        backdrop: context.backdrop === 'onlyLastStrategy' ? pos !== 'not-last' : context.backdrop,
+        escape: context.escape === 'onlyLastStrategy' ? pos !== 'not-last' : context.escape,
+      }))
+    );
+    cases.forEach(({ _value, _position, backdrop, escape }) => {
+      describe(`set to ${JSON.stringify(_value)}`, () => {
+        describe(`as the ${_position} dialog`, () => {
+          let dialogService: SpyObject<DialogService>;
+          beforeEach(() => {
+            spectator = createComponent(withConfig({ enableClose: _value, id: 'close-last-open-dialog' }));
+            dialogService = spectator.inject(DialogService);
+            dialogService.dialogs.push(Object.assign(spectator.component.dialogRef, { id: 'close-last-open-dialog' }));
+            if (_position === 'last') dialogService.dialogs.splice(0, 0, { id: 'first-dialog' } as InternalDialogRef);
+            if (_position === 'not-last') dialogService.dialogs.push({ id: 'last-dialog' } as InternalDialogRef);
+          });
+          if (backdrop !== false)
+            it('should call close on backdrop click', () => {
+              const { close } = spectator.inject(InternalDialogRef);
+              spectator.dispatchMouseEvent('.ngneat-dialog-content', 'click');
+              expect(close).not.toHaveBeenCalled();
+              spectator.dispatchMouseEvent(document.body, 'click');
+              expect(close).not.toHaveBeenCalled();
+              spectator.dispatchMouseEvent('.ngneat-dialog-backdrop', 'click');
+              expect(close).toHaveBeenCalled();
+            });
+          else
+            it('should not call close on backdrop click', () => {
+              const { close } = spectator.inject(InternalDialogRef);
+              spectator.dispatchMouseEvent('.ngneat-dialog-content', 'click');
+              expect(close).not.toHaveBeenCalled();
+              spectator.dispatchMouseEvent(document.body, 'click');
+              expect(close).not.toHaveBeenCalled();
+              spectator.dispatchMouseEvent('.ngneat-dialog-backdrop', 'click');
+              expect(close).not.toHaveBeenCalled();
+            });
+          if (escape !== false)
+            it('should call close on escape', () => {
+              const { close } = spectator.inject(InternalDialogRef);
+              spectator.dispatchKeyboardEvent(document.body, 'keyup', 'Enter');
+              expect(close).not.toHaveBeenCalled();
+              spectator.dispatchKeyboardEvent(document.body, 'keyup', 'Escape');
+              expect(close).toHaveBeenCalled();
+            });
+          else
+            it('should not call close on escape', () => {
+              const { close } = spectator.inject(InternalDialogRef);
+              spectator.dispatchKeyboardEvent(document.body, 'keyup', 'Escape');
+              expect(close).not.toHaveBeenCalled();
+            });
+        });
+      });
     });
   });
 
