@@ -244,7 +244,10 @@ bootstrapApplication(AppComponent, {
   providers: [
     provideDialogConfig({
       closeButton: boolean,
-      enableClose: boolean | 'onlyLastStrategy',
+      enableClose: boolean | 'onlyLastStrategy' | {
+        escape: boolean | 'onlyLastStrategy',
+        backdrop: boolean | 'onlyLastStrategy',
+      },
       backdrop: boolean,
       resizable: boolean,
       draggable: boolean,
@@ -283,7 +286,11 @@ this.dialog.open(compOrTemplate, {
 ```
 
 ### Enable close
-The `enableClose` property can be configured for each dialog. 
+The `enableClose` property can be configured for each dialog.
+It can either be an object with the keys `escape` and `backdrop` for more granular control,
+or one of the values described below directly.
+The latter will apply the set value to both close triggers (escape and backdrop).
+
 If set to `true`, clicking on the backdrop or pressing the escape key will close the modal. 
 If set to `false`, this behavior will be disabled.
 

@@ -57,10 +57,16 @@
       <label>Close Button</label>
       <input type="checkbox" formControlName="closeButton" />
     </div>
-    <div>
-      <label>Enable Close ❌</label>
-      <input type="checkbox" formControlName="enableClose" />
-    </div>
+    <ng-container formGroupName="enableClose">
+      <div>
+        <label>Escape to Close ❌</label>
+        <input type="checkbox" formControlName="escape" />
+      </div>
+      <div>
+        <label>Backdrop to Close ❌</label>
+        <input type="checkbox" formControlName="backdrop" />
+      </div>
+    </ng-container>
   </form>
 
   <p *ngIf="backDropClicked">You've clicked the backdrop 👏</p>

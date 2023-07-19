@@ -3,6 +3,7 @@ import { DialogRef, InternalDialogRef } from './dialog-ref';
 
 type Sizes = 'sm' | 'md' | 'lg' | 'fullScreen' | string;
 export type DragConstraint = 'none' | 'bounce' | 'constrain';
+export type CloseStrategy = boolean | 'onlyLastStrategy';
 
 export interface GlobalDialogConfig {
   sizes: Partial<
@@ -23,7 +24,12 @@ export interface GlobalDialogConfig {
   closeButton: boolean;
   draggable: boolean;
   dragConstraint: DragConstraint;
-  enableClose: boolean | 'onlyLastStrategy';
+  enableClose:
+    | CloseStrategy
+    | {
+        escape: CloseStrategy;
+        backdrop: CloseStrategy;
+      };
   resizable: boolean;
   width: string | number;
   minWidth: string | number;

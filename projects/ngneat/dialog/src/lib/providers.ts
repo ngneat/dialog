@@ -26,7 +26,10 @@ export function defaultGlobalConfig(): Partial<GlobalDialogConfig & DialogConfig
     container: inject(DIALOG_DOCUMENT_REF).body,
     backdrop: true,
     closeButton: true,
-    enableClose: true,
+    enableClose: {
+      backdrop: true,
+      escape: true,
+    },
     draggable: false,
     dragConstraint: 'none',
     resizable: false,
