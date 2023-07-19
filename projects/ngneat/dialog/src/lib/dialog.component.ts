@@ -107,12 +107,12 @@ export class DialogComponent implements OnInit, OnDestroy {
 
     // backwards compatibility with non-split option
     const closeConfig =
-      typeof this.config.enableClose === 'object'
-        ? this.config.enableClose
-        : {
+      typeof this.config.enableClose === 'boolean' || this.config.enableClose === 'onlyLastStrategy'
+        ? {
             escape: this.config.enableClose,
             backdrop: this.config.enableClose,
-          };
+          }
+        : this.config.enableClose;
     merge(
       fromEvent<KeyboardEvent>(this.document.body, 'keyup').pipe(
         filter(({ key }) => key === 'Escape'),
