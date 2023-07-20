@@ -28,7 +28,10 @@ export class AppComponent {
     id: [''],
     height: [''],
     width: [''],
-    enableClose: [true],
+    enableClose: this.fb.group({
+      escape: [true],
+      backdrop: [true],
+    }),
     closeButton: [true],
     backdrop: [true],
     resizable: [false],

@@ -1,7 +1,7 @@
 import { CommonModule, DOCUMENT } from '@angular/common';
 import { Component, ElementRef, inject, Inject, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { fromEvent, merge, Subject } from 'rxjs';
-import { filter, takeUntil } from 'rxjs/operators';
+import { filter, map, takeUntil } from 'rxjs/operators';
 import { InternalDialogRef } from './dialog-ref';
 import { DialogService } from './dialog.service';
 import { coerceCssPixelValue } from './dialog.utils';
@@ -105,23 +105,32 @@ export class DialogComponent implements OnInit, OnDestroy {
 
     backdropClick$.pipe(takeUntil(this.destroy$)).subscribe(this.dialogRef.backdropClick$);
 
-    if (this.config.enableClose) {
-      merge(
-        fromEvent<KeyboardEvent>(this.document.body, 'keyup').pipe(filter(({ key }) => key === 'Escape')),
-        backdropClick$
+    // backwards compatibility with non-split option
+    const closeConfig =
+      typeof this.config.enableClose === 'boolean' || this.config.enableClose === 'onlyLastStrategy'
+        ? {
+            escape: this.config.enableClose,
+            backdrop: this.config.enableClose,
+          }
+        : this.config.enableClose;
+    merge(
+      fromEvent<KeyboardEvent>(this.document.body, 'keyup').pipe(
+        filter(({ key }) => key === 'Escape'),
+        map(() => closeConfig.escape)
+      ),
+      backdropClick$.pipe(map(() => closeConfig.backdrop))
+    )
+      .pipe(
+        takeUntil(this.destroy$),
+        filter((strategy) => {
+          if (!strategy) return false;
+          if (strategy === 'onlyLastStrategy') {
+            return this.dialogService.isLastOpened(this.config.id);
+          }
+          return true;
+        })
       )
-        .pipe(
-          takeUntil(this.destroy$),
-          filter(() => {
-            if (this.config.enableClose === 'onlyLastStrategy') {
-              return this.dialogService.isLastOpened(this.config.id);
-            }
-
-            return true;
-          })
-        )
-        .subscribe(() => this.closeDialog());
-    }
+      .subscribe(() => this.closeDialog());
 
     // `dialogElement` is resolved at this point
     // And here is where dialog finally will be placed
