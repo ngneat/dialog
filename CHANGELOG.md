@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.1.0](https://github.com/ngneat/dialog/compare/v4.0.0...v4.1.0) (2023-08-02)
+
+
+### Features
+
+* **config:** split up backdrop+escape enableClose ([5d8700d](https://github.com/ngneat/dialog/commit/5d8700d2e2231760718bbad7adc11d184b756edf)), closes [#34](https://github.com/ngneat/dialog/issues/34)
+* configure min-width and max-width sizes ([fb7dd0c](https://github.com/ngneat/dialog/commit/fb7dd0c10159a89d878c4c6390a0273565ad1aaa))
+
 ## [4.0.0](https://github.com/ngneat/dialog/compare/v3.6.0...v4.0.0) (2023-05-02)
 
 
