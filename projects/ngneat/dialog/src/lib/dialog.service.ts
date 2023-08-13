@@ -10,13 +10,14 @@ import {
   Type,
   ViewRef,
 } from '@angular/core';
-import { BehaviorSubject, startWith, Subject } from 'rxjs';
+import { BehaviorSubject, Subject, take } from 'rxjs';
 import { DialogRef, InternalDialogRef } from './dialog-ref';
 import { DialogComponent } from './dialog.component';
 import { DragOffset } from './draggable.directive';
 import { DIALOG_CONFIG, DIALOG_DOCUMENT_REF, GLOBAL_DIALOG_CONFIG, NODES_TO_INSERT } from './providers';
 import { AttachOptions, DialogConfig, ExtractData, ExtractResult, GlobalDialogConfig, OpenParams } from './types';
-import { map } from 'rxjs/operators';
+import { provideAnimations } from '@angular/platform-browser/animations';
+import { filter } from 'rxjs/operators';
 
 const OVERFLOW_HIDDEN_CLASS = 'ngneat-dialog-hidden';
 
@@ -141,33 +142,43 @@ export class DialogService {
     };
 
     const onClose = (result: unknown) => {
-      this.globalConfig.onClose?.();
-      this.dialogs = this.dialogs.filter(({ id }) => dialogRef.id !== id);
-      this.hasOpenDialogSub.next(this.hasOpenDialogs());
+      dialog.instance._animationStateChanged
+        .pipe(
+          filter((event) => event.state === 'closed'),
+          take(1)
+        )
+        .subscribe((event) => {
+          this.globalConfig.onClose?.();
 
-      container.removeChild(dialog.location.nativeElement);
-      this.appRef.detachView(dialog.hostView);
-      this.appRef.detachView(view);
+          this.dialogs = this.dialogs.filter(({ id }) => dialogRef.id !== id);
+          this.hasOpenDialogSub.next(this.hasOpenDialogs());
 
-      dialog.destroy();
-      view.destroy();
+          container.removeChild(dialog.location.nativeElement);
+          this.appRef.detachView(dialog.hostView);
+          this.appRef.detachView(view);
 
-      dialogRef.backdropClick$.complete();
+          dialog.destroy();
+          view.destroy();
 
-      dialogRef.mutate({
-        ref: null,
-        onClose: null,
-        afterClosed$: null,
-        backdropClick$: null,
-        beforeCloseGuards: null,
-        onReset: null,
-      });
+          dialogRef.backdropClick$.complete();
 
-      hooks.after.next(result);
-      hooks.after.complete();
-      if (this.dialogs.length === 0) {
-        this.document.body.classList.remove(OVERFLOW_HIDDEN_CLASS);
-      }
+          dialogRef.mutate({
+            ref: null,
+            onClose: null,
+            afterClosed$: null,
+            backdropClick$: null,
+            beforeCloseGuards: null,
+            onReset: null,
+          });
+
+          hooks.after.next(result);
+          hooks.after.complete();
+          if (this.dialogs.length === 0) {
+            this.document.body.classList.remove(OVERFLOW_HIDDEN_CLASS);
+          }
+        });
+
+      dialogRef._state = 'exit';
     };
 
     const onReset = (offset?: DragOffset) => {
@@ -209,6 +220,7 @@ export class DialogService {
             provide: DIALOG_CONFIG,
             useValue: config,
           },
+          provideAnimations(),
         ],
         parent: this.injector,
       }),

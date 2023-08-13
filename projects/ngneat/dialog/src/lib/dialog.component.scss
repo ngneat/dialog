@@ -3,16 +3,6 @@
   flex-direction: column;
   overflow: hidden;
   position: relative;
-  @keyframes dialog-open {
-    0% {
-      transform: translateX(50px);
-    }
-    100% {
-      transform: none;
-    }
-  }
-
-  animation: dialog-open 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
 
   border-radius: var(--dialog-content-border-radius, 4px);
   box-sizing: border-box;
@@ -48,18 +38,6 @@
 
   &.ngneat-dialog-backdrop-visible {
     background: var(--dialog-backdrop-bg, rgba(0, 0, 0, 0.32));
-  }
-
-  animation: dialog-open-backdrop 0.3s;
-
-  @keyframes dialog-open-backdrop {
-    0% {
-      opacity: 0;
-    }
-
-    100% {
-      opacity: 1;
-    }
   }
 }
 

@@ -1,5 +1,14 @@
 import { CommonModule, DOCUMENT } from '@angular/common';
-import { Component, ElementRef, inject, Inject, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  inject,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+  ViewEncapsulation,
+} from '@angular/core';
 import { fromEvent, merge, Subject } from 'rxjs';
 import { filter, map, takeUntil } from 'rxjs/operators';
 import { InternalDialogRef } from './dialog-ref';
@@ -7,11 +16,60 @@ import { DialogService } from './dialog.service';
 import { coerceCssPixelValue } from './dialog.utils';
 import { DialogDraggableDirective, DragOffset } from './draggable.directive';
 import { DIALOG_CONFIG, NODES_TO_INSERT } from './providers';
+import { DialogConfig } from '@ngneat/dialog';
+import { animate, animateChild, group, keyframes, query, state, style, transition, trigger } from '@angular/animations';
+
+export const _defaultParams = {
+  params: { enterAnimationDuration: '150ms', exitAnimationDuration: '75ms' },
+};
 
 @Component({
   selector: 'ngneat-dialog',
   standalone: true,
   imports: [DialogDraggableDirective, CommonModule],
+  animations: [
+    trigger('dialogContent', [
+      // Note: The `enter` animation transitions to `transform: none`, because for some reason
+      // specifying the transform explicitly, causes IE both to blur the dialog content and
+      // decimate the animation performance. Leaving it as `none` solves both issues.
+      state('void, exit', style({ opacity: 0, transform: 'scale(0.7)' })),
+      state('enter', style({ transform: 'none' })),
+      transition(
+        '* => enter',
+        group([
+          animate(
+            '0.4s cubic-bezier(0.25, 0.8, 0.25, 1)',
+            keyframes([style({ opacity: 0, transform: 'translateX(50px)' }), style({ opacity: 1, transform: 'none' })])
+          ),
+          query('@*', animateChild(), { optional: true }),
+        ]),
+        _defaultParams
+      ),
+      transition(
+        '* => void, * => exit',
+        group([
+          animate('0.4s cubic-bezier(0.4, 0.0, 0.2, 1)', style({ opacity: 0 })),
+          query('@*', animateChild(), { optional: true }),
+        ]),
+        _defaultParams
+      ),
+    ]),
+    trigger('dialogContainer', [
+      transition(
+        '* => void, * => exit',
+        group([
+          animate('0.4s cubic-bezier(0.4, 0.0, 0.2, 1)', style({ opacity: 0 })),
+          query('@*', animateChild(), { optional: true }),
+        ]),
+        _defaultParams
+      ),
+    ]),
+  ],
+  host: {
+    '[@dialogContainer]': `this.dialogRef._getAnimationState()`,
+    '(@dialogContainer.start)': '_onAnimationStart($event)',
+    '(@dialogContainer.done)': '_onAnimationDone($event)',
+  },
   template: `
     <div
       #backdrop
@@ -21,6 +79,9 @@ import { DIALOG_CONFIG, NODES_TO_INSERT } from './providers';
     >
       <div
         #dialog
+        [@dialogContent]="this.dialogRef._getAnimationState()"
+        (@dialogContent.start)="_onAnimationStart($event)"
+        (@dialogContent.done)="_onAnimationDone($event)"
         class="ngneat-dialog-content"
         [class.ngneat-dialog-resizable]="config.resizable"
         [ngStyle]="styles"
@@ -49,6 +110,7 @@ import { DIALOG_CONFIG, NODES_TO_INSERT } from './providers';
   encapsulation: ViewEncapsulation.None,
 })
 export class DialogComponent implements OnInit, OnDestroy {
+  _animationStateChanged = new EventEmitter<{ state: string; totalTime: number }>();
   config = inject(DIALOG_CONFIG);
   dialogRef = inject(InternalDialogRef);
 
@@ -96,6 +158,16 @@ export class DialogComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    const dialogElement = this.dialogElement.nativeElement;
+    this.evaluateConfigBasedFields();
+
+    // `dialogElement` is resolved at this point
+    // And here is where dialog finally will be placed
+    this.nodes.forEach((node) => dialogElement.appendChild(node));
+    this.dialogRef._state = 'enter';
+  }
+
+  private evaluateConfigBasedFields(): void {
     const backdrop = this.config.backdrop ? this.backdrop.nativeElement : this.document.body;
     const dialogElement = this.dialogElement.nativeElement;
 
@@ -139,6 +211,22 @@ export class DialogComponent implements OnInit, OnDestroy {
     if (this.config.zIndexGetter) {
       const zIndex = this.config.zIndexGetter().toString();
       backdrop.style.setProperty('--dialog-backdrop-z-index', zIndex);
+    }
+  }
+
+  _onAnimationStart(event): any {
+    if (event.toState === 'enter') {
+      this._animationStateChanged.next({ state: 'opening', totalTime: event.totalTime });
+    } else if (event.toState === 'exit' || event.toState === 'void') {
+      this._animationStateChanged.next({ state: 'closing', totalTime: event.totalTime });
+    }
+  }
+
+  _onAnimationDone(event) {
+    if (event.toState === 'enter') {
+      // this._openAnimationDone(totalTime);
+    } else if (event.toState === 'exit') {
+      this._animationStateChanged.next({ state: 'closed', totalTime: event.totalTime });
     }
   }
 
