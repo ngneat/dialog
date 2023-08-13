@@ -83,3 +83,14 @@ export interface AttachOptions {
   attachToApp: boolean;
   config: DialogConfig;
 }
+
+export class DialogWithConfig {
+  private static _dialogConfig?: Partial<DialogConfig>;
+  static getModalConfig = () => {
+    return DialogWithConfig._dialogConfig;
+  };
+
+  constructor(dialogConfig: Partial<DialogConfig>) {
+    DialogWithConfig._dialogConfig = dialogConfig;
+  }
+}

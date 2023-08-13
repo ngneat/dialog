@@ -5,6 +5,7 @@ import { mapTo, timer } from 'rxjs';
 import { InternalDialogRef } from '../dialog-ref';
 import { DialogService } from '../dialog.service';
 import { DIALOG_DOCUMENT_REF, GLOBAL_DIALOG_CONFIG, provideDialogConfig } from '../providers';
+import { DialogWithConfig } from '../types';
 
 class FakeFactoryResolver {
   componentOne = {
@@ -235,6 +236,28 @@ describe('DialogService', () => {
 
       const attachSpyCalls = (fakeAppRef.attachView as jasmine.Spy).calls.allArgs();
       expect(fakeAppRef.attachView).toHaveBeenCalledTimes(2);
+    });
+
+    it('should respect dialog config with the highest priority', () => {
+      @Component({ selector: '' })
+      class FakeComponentWithConfig extends DialogWithConfig {
+        constructor() {
+          super({
+            data: {
+              testProperty: true,
+            },
+          });
+        }
+      }
+
+      service.open(FakeComponentWithConfig, {
+        data: {
+          testProperty: false,
+        },
+      });
+
+      const dialog = service.open(FakeComponentWithConfig);
+      expect(dialog.data.testProperty).toEqual(true);
     });
   });
 
