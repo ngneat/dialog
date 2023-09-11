@@ -118,12 +118,12 @@ describe('DialogService', () => {
     expect(idValidityRegex.test(dialog.id)).toBe(true);
   });
 
-  it('should throw if two dialogs has the same id', () => {
-    service.open(new FakeTemplateRef(), { id: 'same' });
-
-    expect(() => service.open(new FakeTemplateRef(), { id: 'same' })).toThrowError(
-      'Please, ID must be unique, but there is already a dialog created with this ID: same'
-    );
+  it('should skip opening if two dialogs has the same id', () => {
+    const onOpenSpy = jasmine.createSpy();
+    const open = () => service.open(new FakeTemplateRef(), { id: 'same', onOpen: onOpenSpy });
+    open();
+    open();
+    expect(onOpenSpy).toHaveBeenCalledTimes(1);
   });
 
   describe('using a template', () => {
