@@ -10,13 +10,12 @@ import {
   Type,
   ViewRef,
 } from '@angular/core';
-import { BehaviorSubject, startWith, Subject } from 'rxjs';
-import { DialogRef, InternalDialogRef } from './dialog-ref';
-import { DialogComponent } from './dialog.component';
-import { DragOffset } from './draggable.directive';
-import { DIALOG_CONFIG, DIALOG_DOCUMENT_REF, GLOBAL_DIALOG_CONFIG, NODES_TO_INSERT } from './providers';
-import { AttachOptions, DialogConfig, ExtractData, ExtractResult, GlobalDialogConfig, OpenParams } from './types';
-import { map } from 'rxjs/operators';
+import {BehaviorSubject, Subject} from 'rxjs';
+import {DialogRef, InternalDialogRef} from './dialog-ref';
+import {DialogComponent} from './dialog.component';
+import {DragOffset} from './draggable.directive';
+import {DIALOG_CONFIG, DIALOG_DOCUMENT_REF, GLOBAL_DIALOG_CONFIG, NODES_TO_INSERT} from './providers';
+import {AttachOptions, DialogConfig, ExtractData, ExtractResult, GlobalDialogConfig, OpenParams} from './types';
 
 const OVERFLOW_HIDDEN_CLASS = 'ngneat-dialog-hidden';
 
@@ -56,8 +55,12 @@ export class DialogService {
     component: C,
     config?: Partial<DialogConfig<ExtractData<InstanceType<C>>>>
   ): DialogRef<ExtractData<InstanceType<C>>, ExtractResult<InstanceType<C>>>;
-  open(componentOrTemplate: any, config: Partial<DialogConfig<any>> = {}): DialogRef {
+  open(componentOrTemplate: any, config: Partial<DialogConfig> = {}): DialogRef {
     const mergedConfig = this.mergeConfig(config);
+    if (this.isOpen(mergedConfig.id)) {
+      return;
+    }
+
     mergedConfig.onOpen?.();
 
     const dialogRef = new InternalDialogRef({
@@ -65,8 +68,6 @@ export class DialogService {
       data: mergedConfig.data,
       backdropClick$: new Subject<MouseEvent>(),
     });
-
-    this.throwIfIDAlreadyExists(mergedConfig.id);
 
     const params: OpenParams = {
       config: mergedConfig,
@@ -81,9 +82,9 @@ export class DialogService {
     }
 
     return componentOrTemplate instanceof TemplateRef
-      ? (this.openTemplate(componentOrTemplate, params) as any)
+      ? this.openTemplate(componentOrTemplate, params)
       : typeof componentOrTemplate === 'function'
-      ? (this.openComponent(componentOrTemplate, params) as any)
+      ? this.openComponent(componentOrTemplate, params)
       : throwMustBeAComponentOrATemplateRef(componentOrTemplate);
   }
 
@@ -223,12 +224,6 @@ export class DialogService {
       ...inlineConfig,
       sizes: this.globalConfig?.sizes,
     } as DialogConfig & GlobalDialogConfig;
-  }
-
-  private throwIfIDAlreadyExists(id: string) {
-    if (this.dialogs.find((dialog) => dialog.id === id)) {
-      throw new Error(`Please, ID must be unique, but there is already a dialog created with this ID: ${id}`);
-    }
   }
 }
 
