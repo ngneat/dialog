@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [4.1.1](https://github.com/ngneat/dialog/compare/v4.1.0...v4.1.1) (2023-09-11)
+
+
+### Bug Fixes
+
+* 🐛 ignore open dialogs instead of throwing an error ([6779fc4](https://github.com/ngneat/dialog/commit/6779fc4481e11ba205a612aa00c1456c888195f5))
+
 ## [4.1.0](https://github.com/ngneat/dialog/compare/v4.0.0...v4.1.0) (2023-08-02)
 
 
