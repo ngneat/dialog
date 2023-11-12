@@ -3,16 +3,16 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build",
-    "deploy": "ng deploy --base-href=https://ngneat.github.io/dialog/",
+    "start": "nx serve playground",
+    "build": "nx build playground",
+    "deploy": "nx deploy --base-href=https://ngneat.github.io/dialog/",
     "hooks:pre-commit": "node hooks/pre-commit.js",
     "commit": "git-cz",
-    "build:lib": "ng build @ngneat/dialog --configuration production && npm run copy",
-    "copy": "cp -r README.md dist/ngneat/dialog",
-    "test:lib": "ng test @ngneat/dialog",
-    "release": "cd projects/ngneat/dialog && standard-version --infile ../../../CHANGELOG.md",
-    "test:lib:headless": "cross-env CI=true npm run test:lib"
+    "build:lib": "nx build @ngneat/dialog --configuration production",
+    "test:lib": "nx test @ngneat/dialog",
+    "release": "nx run dialog:version",
+    "test:lib:headless": "cross-env CI=true npm run test:lib",
+    "prepare": "husky install"
   },
   "private": true,
   "dependencies": {
@@ -31,18 +31,27 @@
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^15.2.7",
+    "@angular-devkit/core": "^15.2.7",
+    "@angular-devkit/schematics": "^15.2.7",
     "@angular/cli": "^15.2.7",
     "@angular/compiler-cli": "^15.2.8",
     "@commitlint/cli": "17.6.1",
     "@commitlint/config-angular": "17.6.1",
     "@commitlint/config-conventional": "17.6.1",
+    "@jscutlery/semver": "^4.0.0",
     "@ngneat/spectator": "14.0.0",
+    "@nx/angular": "17.1.1",
+    "@nx/js": "17.1.1",
+    "@nx/workspace": "17.1.1",
+    "@schematics/angular": "^15.2.7",
+    "@swc-node/register": "~1.6.7",
+    "@swc/core": "~1.3.85",
     "@types/jasmine": "4.3.0",
     "@types/node": "^12.11.1",
     "angular-cli-ghpages": "1.0.5",
     "cross-env": "^5.2.0",
-    "git-cz": "^3.2.1",
-    "husky": "^3.0.1",
+    "git-cz": "4.9.0",
+    "husky": "8.0.3",
     "jasmine-core": "~3.6.0",
     "jasmine-spec-reporter": "~5.0.0",
     "karma": "~6.3.9",
@@ -50,11 +59,14 @@
     "karma-coverage-istanbul-reporter": "~3.0.2",
     "karma-jasmine": "~4.0.0",
     "karma-jasmine-html-reporter": "^1.5.0",
-    "lint-staged": "^9.2.0",
+    "lint-staged": "^15.1.0",
     "ng-packagr": "^15.0.0",
-    "prettier": "2.8.0",
-    "standard-version": "9.5.0",
-    "ts-node": "~8.3.0",
+    "nx": "17.1.1",
+    "postcss": "^8.4.5",
+    "postcss-import": "~14.1.0",
+    "postcss-preset-env": "~7.5.0",
+    "postcss-url": "~10.1.3",
+    "prettier": "3.0.3",
     "typescript": "~4.8.4"
   },
   "config": {
@@ -67,11 +79,5 @@
       "prettier --write",
       "git add"
     ]
-  },
-  "husky": {
-    "hooks": {
-      "commit-msg": "commitlint -e $GIT_PARAMS",
-      "pre-commit": "npm run hooks:pre-commit && lint-staged"
-    }
   }
 }

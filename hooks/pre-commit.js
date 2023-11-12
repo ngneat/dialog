@@ -5,7 +5,7 @@ const chalk = require('chalk');
 const words = {
   fit: '\\s*fit\\(',
   fdescribe: '\\s*fdescribe\\(',
-  debugger: '(debugger);?'
+  debugger: '(debugger);?',
 };
 let status = 0;
 for (let word of Object.keys(words)) {
@@ -14,7 +14,7 @@ for (let word of Object.keys(words)) {
   const badFiles = execSync(gitCommand).toString();
   const filesAsArray = badFiles.split('\n');
   const tsFileRegex = /\.ts$/;
-  const onlyTsFiles = filesAsArray.filter(file => tsFileRegex.test(file.trim()));
+  const onlyTsFiles = filesAsArray.filter((file) => tsFileRegex.test(file.trim()));
   if (onlyTsFiles.length) {
     status = 1;
     console.log(chalk.bgRed.black.bold(`The following files contains '${word}' in them:`));
