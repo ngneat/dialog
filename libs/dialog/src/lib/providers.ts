@@ -13,13 +13,6 @@ export const DIALOG_DOCUMENT_REF = new InjectionToken(
   },
 );
 
-export const DIALOG_CONFIG = new InjectionToken<GlobalDialogConfig & DialogConfig>('config', {
-  providedIn: 'root',
-  factory() {
-    return {} as any;
-  },
-});
-
 export function defaultGlobalConfig(): Partial<GlobalDialogConfig & DialogConfig> {
   return {
     id: undefined,

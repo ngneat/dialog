@@ -15,8 +15,8 @@ import { BehaviorSubject, Subject } from 'rxjs';
 import { DialogRef, InternalDialogRef } from './dialog-ref';
 import { DialogComponent } from './dialog.component';
 import { DragOffset } from './draggable.directive';
-import { DIALOG_CONFIG, DIALOG_DOCUMENT_REF, GLOBAL_DIALOG_CONFIG, NODES_TO_INSERT } from './providers';
-import { AttachOptions, DialogConfig, ExtractData, ExtractResult, GlobalDialogConfig, OpenParams } from './types';
+import { DIALOG_DOCUMENT_REF, GLOBAL_DIALOG_CONFIG, NODES_TO_INSERT } from './providers';
+import { AttachOptions, DialogConfig, ExtractData, ExtractResult, GlobalDialogConfig } from './types';
 
 const OVERFLOW_HIDDEN_CLASS = 'ngneat-dialog-hidden';
 
@@ -58,22 +58,25 @@ export class DialogService {
   ): DialogRef<ExtractData<InstanceType<C>>, ExtractResult<InstanceType<C>>>;
   open(componentOrTemplate: any, config: Partial<DialogConfig> = {}): DialogRef {
     const mergedConfig = this.mergeConfig(config);
-    if (this.isOpen(mergedConfig.id)) {
+
+    const dialogRef = new InternalDialogRef({
+      config: mergedConfig,
+      backdropClick$: new Subject<MouseEvent>(),
+    });
+
+    const attachOptions =
+      componentOrTemplate instanceof TemplateRef
+        ? this.openTemplate(componentOrTemplate, dialogRef)
+        : typeof componentOrTemplate === 'function'
+        ? this.openComponent(componentOrTemplate, dialogRef)
+        : throwMustBeAComponentOrATemplateRef(componentOrTemplate);
+
+    if (this.isOpen(dialogRef.id)) {
+      attachOptions.view.destroy();
       return;
     }
 
     mergedConfig.onOpen?.();
-
-    const dialogRef = new InternalDialogRef({
-      id: mergedConfig.id,
-      data: mergedConfig.data,
-      backdropClick$: new Subject<MouseEvent>(),
-    });
-
-    const params: OpenParams = {
-      config: mergedConfig,
-      dialogRef,
-    };
 
     this.dialogs.push(dialogRef);
     this.hasOpenDialogSub.next(true);
@@ -82,14 +85,11 @@ export class DialogService {
       this.document.body.classList.add(OVERFLOW_HIDDEN_CLASS);
     }
 
-    return componentOrTemplate instanceof TemplateRef
-      ? this.openTemplate(componentOrTemplate, params)
-      : typeof componentOrTemplate === 'function'
-      ? this.openComponent(componentOrTemplate, params)
-      : throwMustBeAComponentOrATemplateRef(componentOrTemplate);
+    return this.attach(dialogRef, attachOptions);
   }
 
-  private openTemplate(template: TemplateRef<any>, { config, dialogRef }: OpenParams) {
+  private openTemplate(template: TemplateRef<any>, dialogRef: InternalDialogRef) {
+    const config = dialogRef.config;
     const context = {
       $implicit: dialogRef,
       config,
@@ -97,16 +97,14 @@ export class DialogService {
 
     const view = config.vcr?.createEmbeddedView(template, context) || template.createEmbeddedView(context);
 
-    return this.attach({
-      dialogRef,
-      config,
+    return {
       ref: template,
       view,
       attachToApp: !config.vcr,
-    });
+    };
   }
 
-  private openComponent(Component: Type<any>, { config, dialogRef }: OpenParams) {
+  private openComponent(Component: Type<any>, dialogRef: InternalDialogRef) {
     const componentRef = createComponent(Component, {
       elementInjector: Injector.create({
         providers: [
@@ -114,29 +112,23 @@ export class DialogService {
             provide: DialogRef,
             useValue: dialogRef,
           },
-          {
-            provide: DIALOG_CONFIG,
-            useValue: config,
-          },
         ],
-        parent: config.vcr?.injector || this.injector,
+        parent: dialogRef.config.vcr?.injector || this.injector,
       }),
       environmentInjector: this.injector,
     });
 
-    return this.attach({
-      dialogRef,
-      config,
+    return {
       ref: componentRef,
       view: componentRef.hostView,
       attachToApp: true,
-    });
+    };
   }
 
-  private attach({ dialogRef, config, ref, view, attachToApp }: AttachOptions): DialogRef<any, any, any> {
-    const dialog = this.createDialog(config, dialogRef, view);
+  private attach(dialogRef: InternalDialogRef, { ref, view, attachToApp }: AttachOptions): DialogRef<any, any, any> {
+    const dialog = this.createDialog(dialogRef, view);
 
-    const container = config.container instanceof ElementRef ? config.container.nativeElement : config.container;
+    const container = getNativeElement(dialogRef.config.container);
 
     const hooks = {
       after: new Subject<unknown>(),
@@ -167,7 +159,7 @@ export class DialogService {
 
       hooks.after.next(result);
       hooks.after.complete();
-      if (this.dialogs.length === 0) {
+      if (!this.hasOpenDialogs()) {
         this.document.body.classList.remove(OVERFLOW_HIDDEN_CLASS);
       }
     };
@@ -177,8 +169,6 @@ export class DialogService {
     };
 
     dialogRef.mutate({
-      id: config.id,
-      data: config.data,
       ref,
       onClose,
       afterClosed$: hooks.after.asObservable(),
@@ -195,7 +185,7 @@ export class DialogService {
     return dialogRef.asDialogRef();
   }
 
-  private createDialog(config: DialogConfig, dialogRef: InternalDialogRef, view: ViewRef) {
+  private createDialog(dialogRef: InternalDialogRef, view: ViewRef) {
     return createComponent(DialogComponent, {
       elementInjector: Injector.create({
         providers: [
@@ -207,10 +197,6 @@ export class DialogService {
             provide: NODES_TO_INSERT,
             useValue: (view as any).rootNodes,
           },
-          {
-            provide: DIALOG_CONFIG,
-            useValue: config,
-          },
         ],
         parent: this.injector,
       }),
@@ -221,7 +207,6 @@ export class DialogService {
   private mergeConfig(inlineConfig: Partial<DialogConfig>): DialogConfig & GlobalDialogConfig {
     return {
       ...this.globalConfig,
-      id: nanoid(),
       ...inlineConfig,
       sizes: this.globalConfig?.sizes,
     } as DialogConfig & GlobalDialogConfig;
@@ -232,6 +217,6 @@ function throwMustBeAComponentOrATemplateRef(value: unknown): never {
   throw new TypeError(`Dialog must receive a Component or a TemplateRef, but this has been passed instead: ${value}`);
 }
 
-function nanoid() {
-  return `dialog-${Math.random().toString(36).substring(7)}`;
+function getNativeElement(element: Element | ElementRef): Element {
+  return element instanceof ElementRef ? element.nativeElement : element;
 }

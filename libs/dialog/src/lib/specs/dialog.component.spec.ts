@@ -1,4 +1,3 @@
-import { Provider } from '@angular/core';
 import { byText, createComponentFactory, Spectator, SpyObject } from '@ngneat/spectator';
 import { Subject } from 'rxjs';
 
@@ -6,7 +5,7 @@ import { InternalDialogRef } from '../dialog-ref';
 import { DialogComponent } from '../dialog.component';
 import { DialogService } from '../dialog.service';
 import { DialogDraggableDirective } from '../draggable.directive';
-import { DIALOG_CONFIG, NODES_TO_INSERT } from '../providers';
+import { NODES_TO_INSERT } from '../providers';
 import { CloseStrategy, DialogConfig, GlobalDialogConfig } from '../types';
 
 describe('DialogComponent', () => {
@@ -26,15 +25,9 @@ describe('DialogComponent', () => {
     vcr: undefined,
   };
 
-  function withConfig(config: Partial<DialogConfig> = {}): { providers: Provider[] } {
-    return {
-      providers: [
-        {
-          provide: DIALOG_CONFIG,
-          useValue: { ...defaultConfig, ...config },
-        },
-      ],
-    };
+  let config = defaultConfig;
+  function setConfig(inline: Partial<DialogConfig> = {}) {
+    config = { ...defaultConfig, ...inline };
   }
 
   let spectator: Spectator<DialogComponent>;
@@ -48,6 +41,9 @@ describe('DialogComponent', () => {
         useFactory: () => ({
           close: jasmine.createSpy(),
           backdropClick$: new Subject(),
+          get config() {
+            return config;
+          },
         }),
       },
       {
@@ -55,6 +51,10 @@ describe('DialogComponent', () => {
         useValue: [document.createTextNode('nodes '), document.createTextNode('inserted')],
       },
     ],
+  });
+
+  beforeEach(() => {
+    setConfig();
   });
 
   afterEach(() => {
@@ -70,7 +70,8 @@ describe('DialogComponent', () => {
   });
 
   it('should set id in its host', () => {
-    spectator = createComponent(withConfig({ id: 'test' }));
+    setConfig({ id: 'test' });
+    spectator = createComponent();
 
     spectator.detectChanges();
 
@@ -84,7 +85,10 @@ describe('DialogComponent', () => {
   });
 
   describe('when backdrop is enabled', () => {
-    beforeEach(() => (spectator = createComponent(withConfig({ backdrop: true }))));
+    beforeEach(() => {
+      setConfig({ backdrop: true });
+      spectator = createComponent();
+    });
 
     it('should create backdrop div, and set its class', () => {
       expect(spectator.query('.ngneat-dialog-backdrop')).toBeTruthy();
@@ -103,7 +107,10 @@ describe('DialogComponent', () => {
   });
 
   describe('when backdrop is disabled', () => {
-    beforeEach(() => (spectator = createComponent(withConfig({ backdrop: false }))));
+    beforeEach(() => {
+      setConfig({ backdrop: false });
+      spectator = createComponent();
+    });
 
     it('should create backdrop div, and set its class', () => {
       expect(spectator.query('.ngneat-dialog-backdrop')).toBeHidden();
@@ -155,7 +162,8 @@ describe('DialogComponent', () => {
         describe(`as the ${_position} dialog`, () => {
           let dialogService: SpyObject<DialogService>;
           beforeEach(() => {
-            spectator = createComponent(withConfig({ enableClose: _value, id: 'close-last-open-dialog' }));
+            setConfig({ enableClose: _value, id: 'close-last-open-dialog' });
+            spectator = createComponent();
             dialogService = spectator.inject(DialogService);
             dialogService.dialogs.push(Object.assign(spectator.component.dialogRef, { id: 'close-last-open-dialog' }));
             if (_position === 'last') dialogService.dialogs.splice(0, 0, { id: 'first-dialog' } as InternalDialogRef);
@@ -201,7 +209,10 @@ describe('DialogComponent', () => {
   });
 
   describe('when draggable is enabled', () => {
-    beforeEach(() => (spectator = createComponent(withConfig({ draggable: true }))));
+    beforeEach(() => {
+      setConfig({ draggable: true });
+      spectator = createComponent();
+    });
 
     it('should show draggable marker and instance draggable directive', () => {
       expect(spectator.query('.ngneat-drag-marker')).toBeTruthy();
@@ -210,7 +221,10 @@ describe('DialogComponent', () => {
   });
 
   describe('when draggable is disabled', () => {
-    beforeEach(() => (spectator = createComponent(withConfig({ draggable: false }))));
+    beforeEach(() => {
+      setConfig({ draggable: false });
+      spectator = createComponent();
+    });
 
     it('should not show draggable marker and not instance draggable directive', () => {
       expect(spectator.query('.ngneat-drag-marker')).toBeFalsy();
@@ -219,13 +233,15 @@ describe('DialogComponent', () => {
   });
 
   it('when resizable is enabled should set its class', () => {
-    spectator = createComponent(withConfig({ resizable: true }));
+    setConfig({ resizable: true });
+    spectator = createComponent();
 
     expect(spectator.query('.ngneat-dialog-resizable')).toBeTruthy();
   });
 
   it('should set windowClass at host element', () => {
-    spectator = createComponent(withConfig({ windowClass: 'this-is-a-test-class' }));
+    setConfig({ windowClass: 'this-is-a-test-class' });
+    spectator = createComponent();
 
     const host = spectator.query('.this-is-a-test-class', { root: true });
 
@@ -234,7 +250,8 @@ describe('DialogComponent', () => {
   });
 
   it('should set multiple classes from windowClass at host element', () => {
-    spectator = createComponent(withConfig({ windowClass: ' test-class-1 test-class-2 ' }));
+    setConfig({ windowClass: ' test-class-1 test-class-2 ' });
+    spectator = createComponent();
 
     const host = spectator.query('.test-class-1.test-class-2', { root: true });
 
