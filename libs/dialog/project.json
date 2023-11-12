@@ -1,0 +1,39 @@
+{
+  "name": "@ngneat/dialog",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "library",
+  "sourceRoot": "libs/dialog/src",
+  "prefix": "lib",
+  "targets": {
+    "build": {
+      "executor": "@nx/angular:package",
+      "options": {
+        "tsConfig": "libs/dialog/tsconfig.lib.json",
+        "project": "libs/dialog/ng-package.json"
+      },
+      "configurations": {
+        "production": {
+          "tsConfig": "libs/dialog/tsconfig.lib.prod.json"
+        }
+      }
+    },
+    "test": {
+      "executor": "@angular-devkit/build-angular:karma",
+      "options": {
+        "main": "libs/dialog/src/test.ts",
+        "tsConfig": "libs/dialog/tsconfig.spec.json",
+        "karmaConfig": "libs/dialog/karma.conf.js"
+      }
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["libs/dialog/src/**/*.ts", "libs/dialog/src/**/*.html"]
+      },
+      "outputs": ["{options.outputFile}"]
+    },
+    "version": {
+      "executor": "@jscutlery/semver:version"
+    }
+  }
+}
