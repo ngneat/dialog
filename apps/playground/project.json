@@ -18,7 +18,7 @@
         "main": "apps/playground/src/main.ts",
         "polyfills": "apps/playground/src/polyfills.ts",
         "tsConfig": "apps/playground/tsconfig.app.json",
-        "assets": ["apps/playground/src/favicon.ico", "apps/playground/src/assets"],
+        "assets": ["apps/playground/src/favicon.svg", "apps/playground/src/assets"],
         "styles": ["apps/playground/src/styles.scss"],
         "scripts": [],
         "vendorChunk": true,
