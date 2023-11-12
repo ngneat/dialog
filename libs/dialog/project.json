@@ -25,6 +25,13 @@
         "karmaConfig": "libs/dialog/karma.conf.js"
       }
     },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["libs/dialog/src/**/*.ts", "libs/dialog/src/**/*.html"]
+      },
+      "outputs": ["{options.outputFile}"]
+    },
     "version": {
       "executor": "@jscutlery/semver:version"
     }

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-
 import { ReactiveFormsModule, UntypedFormControl } from '@angular/forms';
+
 import { DialogRef } from '@ngneat/dialog';
 
 interface DialogData {

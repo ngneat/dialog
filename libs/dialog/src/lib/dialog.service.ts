@@ -11,6 +11,7 @@ import {
   ViewRef,
 } from '@angular/core';
 import { BehaviorSubject, Subject } from 'rxjs';
+
 import { DialogRef, InternalDialogRef } from './dialog-ref';
 import { DialogComponent } from './dialog.component';
 import { DragOffset } from './draggable.directive';

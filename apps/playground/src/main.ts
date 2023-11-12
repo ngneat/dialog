@@ -1,5 +1,7 @@
 import { bootstrapApplication } from '@angular/platform-browser';
+
 import { provideDialogConfig } from '@ngneat/dialog';
+
 import { AppComponent } from './app/app.component';
 
 let zIndex = 100;

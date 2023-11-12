@@ -1,9 +1,9 @@
 import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { interval } from 'rxjs';
-
-import { DialogRef } from '@ngneat/dialog';
 import { ReactiveFormsModule, UntypedFormControl } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+
+import { DialogRef } from '@ngneat/dialog';
 
 interface DialogData {
   title: string;

@@ -40,4 +40,16 @@ jobs:
         uses: ./.github/actions/node-setup
 
       - name: Run tests
-        run: npm run test:lib:headless
+        run: npm run ci:test
+
+    lint:
+      runs-on: ubuntu-latest
+
+      steps:
+        - uses: actions/checkout@v3
+
+        - name: Setup node
+          uses: ./.github/actions/node-setup
+
+        - name: Run tests
+          run: npm run ci:lint

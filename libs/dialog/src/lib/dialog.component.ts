@@ -1,7 +1,8 @@
 import { CommonModule, DOCUMENT } from '@angular/common';
-import { Component, ElementRef, inject, Inject, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, ElementRef, inject, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { fromEvent, merge, Subject } from 'rxjs';
 import { filter, map, takeUntil } from 'rxjs/operators';
+
 import { InternalDialogRef } from './dialog-ref';
 import { DialogService } from './dialog.service';
 import { coerceCssPixelValue } from './dialog.utils';

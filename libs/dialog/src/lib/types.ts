@@ -1,4 +1,5 @@
 import { ComponentRef, ElementRef, TemplateRef, ViewContainerRef, ViewRef } from '@angular/core';
+
 import { DialogRef, InternalDialogRef } from './dialog-ref';
 
 type Sizes = 'sm' | 'md' | 'lg' | 'fullScreen' | string;

@@ -1,10 +1,11 @@
 import { Component, TemplateRef, Type, ViewChild, ViewContainerRef } from '@angular/core';
 import { ReactiveFormsModule, UntypedFormBuilder } from '@angular/forms';
-import { DialogCloseDirective, DialogService, DialogConfig } from '@ngneat/dialog';
 import { interval } from 'rxjs';
 import { shareReplay } from 'rxjs/operators';
-
 import { CommonModule } from '@angular/common';
+
+import { DialogCloseDirective, DialogService, DialogConfig } from '@ngneat/dialog';
+
 import { ResetLocationDialogComponent } from './reset-location-dialog.component';
 import { TestDialogComponent } from './test-dialog.component';
 

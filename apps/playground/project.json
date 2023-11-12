@@ -76,6 +76,13 @@
         "browserTarget": "playground:build"
       }
     },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["apps/playground/src/**/*.ts", "apps/playground/src/**/*.html"]
+      },
+      "outputs": ["{options.outputFile}"]
+    },
     "test": {
       "executor": "@angular-devkit/build-angular:karma",
       "options": {

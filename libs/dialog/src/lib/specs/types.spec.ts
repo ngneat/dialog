@@ -11,7 +11,7 @@ type Equal<X, Y> = (<T>() => T extends X ? 1 : 2) extends <T>() => T extends Y ?
 type WellDefinedStringData = ExtractData<{ ref: DialogRef<string> }>;
 type WellDefinedObjectData = ExtractData<{ ref: DialogRef<{ key: string }> }>;
 type WellDefinedUnknownData = ExtractData<{ ref: DialogRef<unknown> }>;
-type WellDefinedAnyData = ExtractData<{ ref: DialogRef<any> }>;
+type WellDefinedAnyData = ExtractData<{ ref: DialogRef }>;
 type ImplicitAnyData = ExtractData<{ ref: DialogRef }>;
 type MissingRefData = ExtractData<{}>;
 
@@ -29,7 +29,7 @@ type dataCases = [
 type WellDefinedStringResult = ExtractResult<{ ref: DialogRef<unknown, string> }>;
 type WellDefinedObjectResult = ExtractResult<{ ref: DialogRef<unknown, { key: string }> }>;
 type WellDefinedUnknownResult = ExtractResult<{ ref: DialogRef<unknown, unknown> }>;
-type WellDefinedAnyResult = ExtractResult<{ ref: DialogRef<unknown, any> }>;
+type WellDefinedAnyResult = ExtractResult<{ ref: DialogRef<unknown> }>;
 type ImplicitAnyResult = ExtractResult<{ ref: DialogRef<unknown> }>;
 type MissingRefResult = ExtractResult<{}>;
 

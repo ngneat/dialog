@@ -2,39 +2,10 @@ import { ApplicationRef, Component, TemplateRef } from '@angular/core';
 import { fakeAsync, tick } from '@angular/core/testing';
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator';
 import { mapTo, timer } from 'rxjs';
+
 import { InternalDialogRef } from '../dialog-ref';
 import { DialogService } from '../dialog.service';
 import { DIALOG_DOCUMENT_REF, GLOBAL_DIALOG_CONFIG, provideDialogConfig } from '../providers';
-
-class FakeFactoryResolver {
-  componentOne = {
-    destroy: jasmine.createSpy(),
-    hostView: {
-      destroy: jasmine.createSpy(),
-      rootNodes: [document.createTextNode('nodes 1')],
-    },
-    location: {
-      nativeElement: 'fake 1',
-    },
-  };
-
-  componentTwo = {
-    destroy: jasmine.createSpy(),
-    hostView: {
-      destroy: jasmine.createSpy(),
-      rootNodes: [document.createTextNode('nodes 2')],
-    },
-    location: {
-      nativeElement: 'fake 2',
-    },
-  };
-
-  factory = {
-    create: jasmine.createSpy().and.returnValues(this.componentOne, this.componentTwo),
-  };
-
-  resolveComponentFactory = jasmine.createSpy().and.returnValue(this.factory);
-}
 
 class FakeTemplateRef extends TemplateRef<any> {
   elementRef = null;
@@ -50,7 +21,6 @@ describe('DialogService', () => {
   let spectator: SpectatorService<DialogService>;
   let service: DialogService;
   let fakeAppRef: ApplicationRef;
-  let fakeFactory: FakeFactoryResolver;
   let fakeDocument: {
     body: {
       appendChild: jasmine.Spy;
@@ -216,7 +186,7 @@ describe('DialogService', () => {
   });
 
   describe('using a component', () => {
-    @Component({ selector: '' })
+    @Component({ selector: '', template: '' })
     class FakeComponent {}
     it('should open it', () => expect(service.open(FakeComponent)).toBeTruthy());
 
@@ -232,8 +202,6 @@ describe('DialogService', () => {
     });
     it('should attach view to ApplicationRef', () => {
       service.open(FakeComponent);
-
-      const attachSpyCalls = (fakeAppRef.attachView as jasmine.Spy).calls.allArgs();
       expect(fakeAppRef.attachView).toHaveBeenCalledTimes(2);
     });
   });

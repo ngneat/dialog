@@ -1,6 +1,7 @@
 import { Provider } from '@angular/core';
 import { byText, createComponentFactory, Spectator, SpyObject } from '@ngneat/spectator';
 import { Subject } from 'rxjs';
+
 import { InternalDialogRef } from '../dialog-ref';
 import { DialogComponent } from '../dialog.component';
 import { DialogService } from '../dialog.service';

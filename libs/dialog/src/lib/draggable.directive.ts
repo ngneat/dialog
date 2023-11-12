@@ -1,6 +1,7 @@
 import { AfterViewInit, Directive, ElementRef, inject, Input, NgZone, OnChanges, OnDestroy } from '@angular/core';
 import { fromEvent, Subject } from 'rxjs';
 import { filter, map, switchMap, takeUntil } from 'rxjs/operators';
+
 import { DragConstraint } from './types';
 
 export type DragOffset = {
