@@ -155,10 +155,11 @@ import { DialogService, DialogRef } from '@ngneat/dialog';
 })
 export class MyVeryCommonDialogComponent {
   ref: DialogRef<Data> = inject(DialogRef);
-  
+
   constructor() {
     this.ref.updateConfig({
-      id: 'my-very-common-dialog'
+      height: '200px',
+      width: '400px',
     });
   }
 }
@@ -299,7 +300,9 @@ bootstrapApplication(AppComponent, {
 
 For each dialog instance you open you can specify all the global options and also the following 3 options.
 
-- `id` - The modal unique id (defaults to random id). 
+- `id` - The modal's unique id, the defaults are:
+  - If a component is passed - the component's name (e.g. `MyCustomDialog`).
+  - Otherwise, a random id is given.
 > [!Note]  
 > while not required, it is recommended to set it to prevent unwanted multiple instances of the same dialog.
 - `vcr` - A custom `ViewContainerRef` to use.
@@ -339,21 +342,21 @@ The default `sizes` config is:
   sizes: {
     sm: {
       height: 'auto',
-      width: '400px',
+        width: '400px',
     },
     md: {
       height: 'auto',
-      width: '560px',
+        width: '560px',
     },
     lg: {
       height: 'auto',
-      width: '800px',
+        width: '800px',
     },
     fullScreen: {
       height: '100%',
-      width: '100%',
+        width: '100%',
     },
- }
+  }
 }
 ```
 

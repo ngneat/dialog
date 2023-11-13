@@ -158,7 +158,8 @@ export class MyVeryCommonDialogComponent {
   
   constructor() {
     this.ref.updateConfig({
-      id: 'my-very-common-dialog'
+      height: '200px',
+      width: '400px',
     });
   }
 }
@@ -299,7 +300,9 @@ bootstrapApplication(AppComponent, {
 
 For each dialog instance you open you can specify all the global options and also the following 3 options.
 
-- `id` - The modal unique id (defaults to random id).
+- `id` - The modal's unique id, the defaults are:
+  - If a component is passed - the component's name (e.g. `MyCustomDialog`).
+  - Otherwise, a random id is given.
 > [!Note]  
 > while not required, it is recommended to set it to prevent unwanted multiple instances of the same dialog.
 - `vcr` - A custom `ViewContainerRef` to use.
