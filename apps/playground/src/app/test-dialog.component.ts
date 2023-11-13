@@ -63,8 +63,4 @@ export class TestDialogComponent {
   timer$ = interval(1000);
   message = new UntypedFormControl('This dialog looks pretty cool 😎');
   ref: DialogRef<DialogData> = inject(DialogRef);
-
-  constructor() {
-    this.ref.updateConfig({ id: 'test-dialog' });
-  }
 }

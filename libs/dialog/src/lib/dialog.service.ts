@@ -59,17 +59,24 @@ export class DialogService {
   open(componentOrTemplate: any, config: Partial<DialogConfig> = {}): DialogRef {
     const mergedConfig = this.mergeConfig(config);
 
+    if (isComponent(componentOrTemplate)) {
+      mergedConfig.id ??= componentOrTemplate.name;
+    }
+
+    if (this.isOpen(mergedConfig.id)) {
+      return;
+    }
+
     const dialogRef = new InternalDialogRef({
       config: mergedConfig,
       backdropClick$: new Subject<MouseEvent>(),
     });
 
-    const attachOptions =
-      componentOrTemplate instanceof TemplateRef
-        ? this.openTemplate(componentOrTemplate, dialogRef)
-        : typeof componentOrTemplate === 'function'
-        ? this.openComponent(componentOrTemplate, dialogRef)
-        : throwMustBeAComponentOrATemplateRef(componentOrTemplate);
+    const attachOptions = isTemplate(componentOrTemplate)
+      ? this.openTemplate(componentOrTemplate, dialogRef)
+      : isComponent(componentOrTemplate)
+      ? this.openComponent(componentOrTemplate, dialogRef)
+      : throwMustBeAComponentOrATemplateRef(componentOrTemplate);
 
     if (this.isOpen(dialogRef.id)) {
       attachOptions.view.destroy();
@@ -219,4 +226,12 @@ function throwMustBeAComponentOrATemplateRef(value: unknown): never {
 
 function getNativeElement(element: Element | ElementRef): Element {
   return element instanceof ElementRef ? element.nativeElement : element;
+}
+
+function isTemplate(tplOrComp: any): tplOrComp is TemplateRef<any> {
+  return tplOrComp instanceof TemplateRef;
+}
+
+function isComponent(tplOrComp: any): tplOrComp is Type<any> {
+  return !isTemplate(tplOrComp) && typeof tplOrComp === 'function';
 }
