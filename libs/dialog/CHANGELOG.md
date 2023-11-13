@@ -1,6 +1,15 @@
 # Changelog
 
-All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
+
+# [4.2.0](https://github.com/ngneat/dialog/compare/v4.1.1...v4.2.0) (2023-11-13)
+
+
+### Features
+
+* 🎸 allow updating the config via dialog ref ([9e33a61](https://github.com/ngneat/dialog/commit/9e33a6112a2a380c3291901b3ca70e0e25493489))
+
+
 
 ### [4.1.1](https://github.com/ngneat/dialog/compare/v4.1.0...v4.1.1) (2023-09-11)
 
