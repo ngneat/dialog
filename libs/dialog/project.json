@@ -1,5 +1,5 @@
 {
-  "name": "@ngneat/dialog",
+  "name": "dialog",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "library",
   "sourceRoot": "libs/dialog/src",
@@ -33,7 +33,10 @@
       "outputs": ["{options.outputFile}"]
     },
     "version": {
-      "executor": "@jscutlery/semver:version"
+      "executor": "@jscutlery/semver:version",
+      "options": {
+        "tagPrefix": "v"
+      }
     }
   }
 }
