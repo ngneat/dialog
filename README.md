@@ -140,6 +140,33 @@ export class HelloWorldComponent {
 }
 ```
 
+- `ref.updateConfig` - An update function for the config, a common use case would be a reusable component setting its own common properties:
+
+```ts
+import { DialogService, DialogRef } from '@ngneat/dialog';
+
+@Component({
+  template: `
+    <h1>{{ ref.data.title }}</h1>
+    <button (click)="ref.close()">Close</button>
+  `,
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class MyVeryCommonDialogComponent {
+  ref: DialogRef<Data> = inject(DialogRef);
+
+  constructor() {
+    this.ref.updateConfig({
+      height: '200px',
+      width: '400px',
+    });
+  }
+}
+```
+
+> You can only update the config before the dialog is opened in the component's constructor.
+
 The library also provides the `dialogClose` directive helper, that you can use to close the modal:
 
 ```ts
@@ -273,7 +300,11 @@ bootstrapApplication(AppComponent, {
 
 For each dialog instance you open you can specify all the global options and also the following 3 options.
 
-- `id` - The modal unique id (defaults to random id).
+- `id` - The modal's unique id, the defaults are:
+  - If a component is passed - the component's name (e.g. `MyCustomDialog`).
+  - Otherwise, a random id is given.
+> [!Note]  
+> while not required, it is recommended to set an id in order to prevent unwanted multiple instances of the same dialog.
 - `vcr` - A custom `ViewContainerRef` to use.
 - `data` - A `data` object that will be passed to the modal template or component.
 
@@ -311,21 +342,21 @@ The default `sizes` config is:
   sizes: {
     sm: {
       height: 'auto',
-      width: '400px',
+        width: '400px',
     },
     md: {
       height: 'auto',
-      width: '560px',
+        width: '560px',
     },
     lg: {
       height: 'auto',
-      width: '800px',
+        width: '800px',
     },
     fullScreen: {
       height: '100%',
-      width: '100%',
+        width: '100%',
     },
- }
+  }
 }
 ```
 

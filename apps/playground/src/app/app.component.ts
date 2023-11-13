@@ -78,7 +78,7 @@ export class AppComponent {
 
     const ref = this.dialog.open(compOrTemplate as any, this.cleanConfig);
 
-    ref.backdropClick$.subscribe({
+    ref?.backdropClick$.subscribe({
       next: () => (this.backDropClicked = true),
     });
 
@@ -119,7 +119,7 @@ export class AppComponent {
     this.openDialog(compOrTemplate, {
       ...config,
       data,
-    }).afterClosed$.subscribe({
+    })?.afterClosed$.subscribe({
       next: (message?: string) => {
         if (typeof message === 'string') {
           this.messageFromDialog = message;

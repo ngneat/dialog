@@ -1,4 +1,4 @@
-const { execSync } = require('child_process');
+const { execSync } = require('node:child_process');
 const chalk = require('chalk');
 
 /** Map of forbidden words and their match regex */

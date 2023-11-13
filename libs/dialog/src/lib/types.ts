@@ -1,6 +1,6 @@
 import { ComponentRef, ElementRef, TemplateRef, ViewContainerRef, ViewRef } from '@angular/core';
 
-import { DialogRef, InternalDialogRef } from './dialog-ref';
+import { DialogRef } from './dialog-ref';
 
 type Sizes = 'sm' | 'md' | 'lg' | 'fullScreen' | string;
 export type DragConstraint = 'none' | 'bounce' | 'constrain';
@@ -51,13 +51,16 @@ export interface DialogConfig<Data = any> extends Omit<GlobalDialogConfig, 'size
   vcr: ViewContainerRef;
 }
 
-export type JustProps<T extends object> = {
-  [K in keyof T]: T[K] extends (...args: any[]) => any ? never : T[K];
-};
+export type JustProps<T extends object> = Pick<
+  T,
+  {
+    [K in keyof T]: T[K] extends (...args: any[]) => any ? never : K;
+  }[keyof T]
+>;
 
 export type ExtractRefProp<T> = NonNullable<
   {
-    [P in keyof T]: T[P] extends DialogRef<any> ? P : never;
+    [P in keyof T]: T[P] extends DialogRef ? P : never;
   }[keyof T]
 >;
 
@@ -72,15 +75,8 @@ export type ExtractResult<T> = ExtractRefProp<T> extends never
   ? Result
   : never;
 
-export interface OpenParams {
-  config: DialogConfig;
-  dialogRef: InternalDialogRef;
-}
-
 export interface AttachOptions {
-  dialogRef: InternalDialogRef;
   ref: ComponentRef<any> | TemplateRef<any>;
   view: ViewRef;
   attachToApp: boolean;
-  config: DialogConfig;
 }

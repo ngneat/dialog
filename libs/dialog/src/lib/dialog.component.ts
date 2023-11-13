@@ -1,5 +1,14 @@
 import { CommonModule, DOCUMENT } from '@angular/common';
-import { Component, ElementRef, inject, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  inject,
+  isDevMode,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+  ViewEncapsulation,
+} from '@angular/core';
 import { fromEvent, merge, Subject } from 'rxjs';
 import { filter, map, takeUntil } from 'rxjs/operators';
 
@@ -7,7 +16,7 @@ import { InternalDialogRef } from './dialog-ref';
 import { DialogService } from './dialog.service';
 import { coerceCssPixelValue } from './dialog.utils';
 import { DialogDraggableDirective, DragOffset } from './draggable.directive';
-import { DIALOG_CONFIG, NODES_TO_INSERT } from './providers';
+import { NODES_TO_INSERT } from './providers';
 
 @Component({
   selector: 'ngneat-dialog',
@@ -50,8 +59,8 @@ import { DIALOG_CONFIG, NODES_TO_INSERT } from './providers';
   encapsulation: ViewEncapsulation.None,
 })
 export class DialogComponent implements OnInit, OnDestroy {
-  config = inject(DIALOG_CONFIG);
   dialogRef = inject(InternalDialogRef);
+  config = this.dialogRef.config;
 
   private size = this.config.sizes?.[this.config.size || 'md'];
   styles = {
@@ -82,8 +91,6 @@ export class DialogComponent implements OnInit, OnDestroy {
   private dialogService = inject(DialogService);
 
   constructor() {
-    this.host.id = this.config.id;
-
     // Append nodes to dialog component, template or component could need
     // something from the dialog component
     // for example, if `[dialogClose]` is used into a directive,
@@ -94,6 +101,19 @@ export class DialogComponent implements OnInit, OnDestroy {
       const classNames = this.config.windowClass.split(/\s/).filter((x) => x);
       classNames.forEach((name) => this.host.classList.add(name));
     }
+
+    if (!this.config.id) {
+      const id = `dialog-${crypto.randomUUID()}`;
+      this.config.id = id;
+      this.dialogRef.updateConfig({ id });
+      if (isDevMode()) {
+        console.warn(
+          `[@ngneat/dialog]: Dialog id is not provided, generated id is ${id}, providing an id is recommended to prevent unexpected multiple behavior`,
+        );
+      }
+    }
+
+    this.host.id = this.config.id;
   }
 
   ngOnInit() {
