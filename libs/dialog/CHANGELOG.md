@@ -2,6 +2,22 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+# [5.0.0](/compare/v4.1.1...v5.0.0) (2023-11-28)
+
+
+### Features
+
+* 🎸 allow updating the config via dialog ref 9e33a61
+* 🎸 update to new control flow b827e4e
+* 🎸 update to ng17 9bf838c
+
+
+### BREAKING CHANGES
+
+* 🧨 peer dep is angular 17
+
+
+
 # [4.2.0](https://github.com/ngneat/dialog/compare/v4.1.1...v4.2.0) (2023-11-13)
 
 
