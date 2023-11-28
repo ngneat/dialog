@@ -36,15 +36,16 @@ import { NODES_TO_INSERT } from './providers';
         [ngStyle]="styles"
         role="dialog"
       >
+        @if (config.draggable) {
         <div
-          *ngIf="config.draggable"
           class="ngneat-drag-marker"
           dialogDraggable
           [dialogDragEnabled]="true"
           [dialogDragTarget]="dialog"
           [dragConstraint]="config.dragConstraint"
         ></div>
-        <div class="ngneat-close-dialog" *ngIf="config.closeButton" (click)="closeDialog()">
+        } @if (config.closeButton) {
+        <div class="ngneat-close-dialog" (click)="closeDialog()">
           <svg viewBox="0 0 329.26933 329" xmlns="http://www.w3.org/2000/svg">
             <path
               fill="currentColor"
@@ -52,6 +53,7 @@ import { NODES_TO_INSERT } from './providers';
             />
           </svg>
         </div>
+        }
       </div>
     </div>
   `,
