@@ -281,6 +281,7 @@ bootstrapApplication(AppComponent, {
       backdrop: boolean,
       resizable: boolean,
       draggable: boolean,
+      overflow: boolean,
       draggableConstraint: none | bounce | constrain,
       sizes,
       size: sm | md | lg | fullScreen | string,
