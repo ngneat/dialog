@@ -77,8 +77,8 @@ export class AppComponent {
     this.backDropClicked = false;
     this.cleanConfig = this.normalizeConfig(config);
 
-    if (this.cleanConfig.overflow) document.body.classList.add('overflow');
-    else document.body.classList.remove('overflow');
+    if (this.cleanConfig.overflow) document.body.style.setProperty('--dialog-overflow', 'visible');
+    else document.body.style.setProperty('--dialog-overflow', 'hidden');
 
     const ref = this.dialog.open(compOrTemplate as any, this.cleanConfig);
 

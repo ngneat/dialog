@@ -115,6 +115,10 @@ export class DialogComponent implements OnInit, OnDestroy {
       }
     }
 
+    if (this.config.overflow) {
+      document.body.style.setProperty('--dialog-overflow', 'visible');
+    }
+
     this.host.id = this.config.id;
   }
 
