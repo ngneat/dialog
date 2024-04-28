@@ -3,10 +3,12 @@
   flex-direction: column;
   overflow: hidden;
   position: relative;
+
   @keyframes dialog-open {
     0% {
       transform: translateX(50px);
     }
+
     100% {
       transform: none;
     }
@@ -97,6 +99,6 @@
   }
 }
 
-body.ngneat-dialog-hidden {
+body.ngneat-dialog-hidden:not(.overflow) {
   overflow: hidden;
 }

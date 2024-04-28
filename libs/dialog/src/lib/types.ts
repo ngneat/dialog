@@ -32,6 +32,7 @@ export interface GlobalDialogConfig {
         backdrop: CloseStrategy;
       };
   resizable: boolean;
+  overflow: boolean;
   width: string | number;
   minWidth: string | number;
   maxWidth: string | number;
