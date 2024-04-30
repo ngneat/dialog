@@ -37,6 +37,7 @@ export class AppComponent {
     backdrop: [true],
     resizable: [false],
     draggable: [false],
+    overflow: [true],
     dragConstraint: ['none'],
     size: [''],
     windowClass: [''],
@@ -75,6 +76,9 @@ export class AppComponent {
   openDialog(compOrTemplate: Type<any> | TemplateRef<any>, config: DialogConfig) {
     this.backDropClicked = false;
     this.cleanConfig = this.normalizeConfig(config);
+
+    if (this.cleanConfig.overflow) document.body.style.setProperty('--dialog-overflow', 'visible');
+    else document.body.style.setProperty('--dialog-overflow', 'hidden');
 
     const ref = this.dialog.open(compOrTemplate as any, this.cleanConfig);
 
