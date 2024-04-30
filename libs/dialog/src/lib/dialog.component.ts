@@ -14,7 +14,7 @@ import { filter, map, takeUntil } from 'rxjs/operators';
 
 import { InternalDialogRef } from './dialog-ref';
 import { DialogService } from './dialog.service';
-import { coerceCssPixelValue } from './dialog.utils';
+import { coerceCssPixelValue, generateUUID } from './dialog.utils';
 import { DialogDraggableDirective, DragOffset } from './draggable.directive';
 import { NODES_TO_INSERT } from './providers';
 
@@ -105,7 +105,7 @@ export class DialogComponent implements OnInit, OnDestroy {
     }
 
     if (!this.config.id) {
-      const id = `dialog-${crypto.randomUUID()}`;
+      const id = `dialog-${generateUUID()}`;
       this.config.id = id;
       this.dialogRef.updateConfig({ id });
       if (isDevMode()) {
