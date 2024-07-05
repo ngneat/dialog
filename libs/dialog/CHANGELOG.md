@@ -2,6 +2,20 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+# [5.1.0](/compare/v5.0.0...v5.1.0) (2024-07-05)
+
+
+### Bug Fixes
+
+* allow nullable values again 86f6605, closes #119 #81
+
+
+### Features
+
+* overflow functionality c3a710f
+
+
+
 # [5.0.0](/compare/v4.1.1...v5.0.0) (2023-11-28)
 
 
