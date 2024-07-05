@@ -59,10 +59,11 @@ export type JustProps<T extends object> = Pick<
   }[keyof T]
 >;
 
-export type ExtractRefProp<T> = NonNullable<
+export type ExtractRefProp<T> = Exclude<
   {
     [P in keyof T]: T[P] extends DialogRef ? P : never;
-  }[keyof T]
+  }[keyof T],
+  undefined | null
 >;
 
 export type ExtractData<T> = ExtractRefProp<T> extends never
