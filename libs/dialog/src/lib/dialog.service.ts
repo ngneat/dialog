@@ -6,6 +6,7 @@ import {
   inject,
   Injectable,
   Injector,
+  reflectComponentType,
   TemplateRef,
   Type,
   ViewRef,
@@ -60,7 +61,7 @@ export class DialogService {
     const mergedConfig = this.mergeConfig(config);
 
     if (isComponent(componentOrTemplate)) {
-      mergedConfig.id ??= componentOrTemplate.name;
+      mergedConfig.id ??= reflectComponentType(componentOrTemplate)?.selector;
     }
 
     if (this.isOpen(mergedConfig.id)) {
