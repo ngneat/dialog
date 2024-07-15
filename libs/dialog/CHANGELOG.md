@@ -2,6 +2,15 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [5.1.1](/compare/v5.1.0...v5.1.1) (2024-07-15)
+
+
+### Bug Fixes
+
+* use component selector as default 3aee938, closes #123
+
+
+
 # [5.1.0](/compare/v5.0.0...v5.1.0) (2024-07-05)
 
 
