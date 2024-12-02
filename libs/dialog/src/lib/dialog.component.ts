@@ -145,7 +145,10 @@ export class DialogComponent implements OnInit, OnDestroy {
         filter(({ key }) => key === 'Escape'),
         map(() => closeConfig.escape),
       ),
-      backdropClick$.pipe(map(() => closeConfig.backdrop)),
+      backdropClick$.pipe(
+        filter(() => this.document.getSelection()?.toString() === ''),
+        map(() => closeConfig.backdrop),
+      ),
     )
       .pipe(
         takeUntil(this.destroy$),

@@ -94,8 +94,17 @@ describe('DialogComponent', () => {
       expect(spectator.query('.ngneat-dialog-backdrop')).toBeTruthy();
     });
 
+    it('should not close when text is selected', () => {
+      const { close } = spectator.inject(InternalDialogRef);
+      spyOn(document, 'getSelection').and.returnValue({ toString: () => 'selected text' } as Selection);
+
+      spectator.dispatchMouseEvent('.ngneat-dialog-backdrop', 'click');
+      expect(close).not.toHaveBeenCalled();
+    });
+
     it('backdropClick$ should point to element', () => {
       let backdropClicked = false;
+      spyOn(document, 'getSelection').and.returnValue({ toString: () => '' } as Selection);
       spectator.inject(InternalDialogRef).backdropClick$.subscribe({
         next: () => (backdropClicked = true),
       });
