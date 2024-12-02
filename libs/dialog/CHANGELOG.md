@@ -2,6 +2,15 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [5.1.2](/compare/v5.1.1...v5.1.2) (2024-12-02)
+
+
+### Bug Fixes
+
+* prevent dialog from closing  when selecting elements from the dialog 54908f2, closes #129
+
+
+
 ## [5.1.1](/compare/v5.1.0...v5.1.1) (2024-07-15)
 
 
