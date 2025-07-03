@@ -2,6 +2,15 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+# [5.2.0](/compare/v5.1.2...v5.2.0) (2025-07-03)
+
+
+### Features
+
+* 🎸 support fullscreenElement 2993c2a
+
+
+
 ## [5.1.2](/compare/v5.1.1...v5.1.2) (2024-12-02)
 
 
