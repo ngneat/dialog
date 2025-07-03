@@ -136,7 +136,7 @@ export class DialogService {
   private attach(dialogRef: InternalDialogRef, { ref, view, attachToApp }: AttachOptions): DialogRef<any, any, any> {
     const dialog = this.createDialog(dialogRef, view);
 
-    const container = getNativeElement(dialogRef.config.container);
+    const container = this.document.fullscreenElement || getNativeElement(dialogRef.config.container);
 
     const hooks = {
       after: new Subject<unknown>(),
